@@ -13,6 +13,10 @@
   "keywords": [],
   "author": "Matt Bozelka, Robert Contreras, Julia Diliberto",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/captainMattador/YAWB-APP.git"
+  },
   "dependencies": {
     "axios": "^0.8.0",
     "firebase": "^2.3.2",
