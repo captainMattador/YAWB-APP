@@ -7,8 +7,9 @@
     "start": "electron --debug=5858 main.js",
     "sass": "node-sass --include-path scss app/scss/main.scss public/styles/main.css",
     "sass:w": "nodemon -e scss -x \"npm run sass\"",
-    "build": "webpack -w",
-    "build-prod": "PROD_ENV=1 webpack"
+    "build": "npm run sass:w & npm run webpack-dev",
+    "webpack-dev": "webpack -w",
+    "webpack-prod": "PROD_ENV=1 webpack"
   },
   "keywords": [],
   "author": "Matt Bozelka, Robert Contreras, Julia Diliberto",
