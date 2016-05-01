@@ -1,0 +1,46 @@
+// site wide colors
+@import '../colors';
+
+// mixins
+@import '../mixins';
+
+/****************************
+User log in Component
+****************************/
+.entry{
+  height: 100%;
+}
+
+.entry .table{
+  width:100%;
+  max-width: 400px;
+  height: 100%;
+  margin:0 auto;
+}
+
+.entry .cell{
+  width:100%;
+  margin:0 auto;
+}
+
+.entry .content{
+  float: left;
+  text-align: center;
+  width: 100%;
+  padding: 30px;
+  border: 1px solid $divider-color;
+  background-color: $white-color;
+}
+.entry h2{
+  font-size: 1.8em;
+  text-align: left;
+  padding-bottom: 20px;
+}
+
+.entry p{
+  padding: 10px 0;
+}
+
+.entry button{
+  width: 100%;
+}

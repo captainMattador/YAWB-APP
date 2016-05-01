@@ -1,0 +1,134 @@
+
+@import '../mixins';
+@import '../colors';
+
+/*********************************************
+Top header bar in a room
+*********************************************/
+.top-bar{
+    height: 70px;
+    background-color: $white-color;
+    border-bottom: 1px solid $divider-color;
+}
+
+/*********************************************
+The main canvas where all the magic happens
+*********************************************/
+.canvas{
+    text-align: center;
+    padding: 20px;
+}
+
+#canvas{
+    width:980px;
+    height:551px;
+    display: inline-block;
+    background-color: $white-color;
+    -webkit-box-shadow: 0 1px 30px 0 #d6d8db;
+    box-shadow: 0 1px 100px 0 #d6d8db;
+}
+
+/*********************************************
+User list - display for all
+the current users viewing in
+a room
+*********************************************/
+.room-user-list{
+    position: absolute;
+    bottom: -150px;
+    left: 0;
+    float: left;
+    height:150px;
+    background-color: $white-color;
+    border-top: 1px solid $divider-color;
+}
+
+.room-user-list.active{
+    bottom: 0;
+}
+
+.room-user-list .toggle-list {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    width: 70px;
+    font-size: 1.8em;
+    margin-left: -35px;
+    padding: 5px 0;
+    border: 1px solid $divider-color;
+    border-bottom: 1px solid $white-color;
+    background-color: $white-color;
+    z-index: 100;
+    cursor: pointer;
+    @include border-radius(8px, 8px, 0, 0);
+}
+
+.room-user-list .toggle-list .up{
+    display: block;
+}
+
+.room-user-list .toggle-list .down{
+    display: none;
+}
+
+.room-user-list.active .toggle-list .up{
+    display: none;
+}
+
+.room-user-list.active .toggle-list .down{
+    display: block;
+}
+
+.scroll-list{
+    position: relative;
+    float: left;
+    width: 100%;
+    height:150px;
+    overflow-x: hidden;
+}
+
+.scroll-list-users{
+    position: absolute;
+    top:0;
+    left: 0;
+    float: left;
+    width: 100%;
+    height:150px;
+    cursor: -moz-grab; cursor: -webkit-grab; cursor: grab;
+}
+
+.scroll-list-users.down{
+    cursor: -moz-grabbing; cursor: -webkit-grabbing; cursor: grabbing;
+}
+
+.scroll-list-user{
+    position: relative;
+    float: left;
+    display: block;
+    height:150px;
+    width:150px;
+    text-align: center;
+    @include border-box();
+}
+
+.scroll-list-user-image{
+    width:150px;
+    height:150px;
+    padding: 10px;
+}
+
+.scroll-list-user-image .table{
+    display:table;
+    width: 100%;
+    height:100%;
+    @include border-radius();
+    background-color: $primary-color-light;
+    border: 1px solid $primary-color;
+}
+
+.scroll-list-user-image .cell{
+    display:table-cell;
+    vertical-align: middle;
+    font-size: 3.5em;
+    color:$primary-color-dark;
+}

@@ -1,0 +1,21 @@
+
+
+@mixin perfect-bkg($img, $color: transparent) {
+  background: $color url($img) no-repeat center center;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+@mixin border-radius($top-left: 50%, $top-right: 50%, $bottom-right: 50%, $bottom-left: 50%) {
+   -webkit-border-radius: $top-left $top-right $bottom-right $bottom-left;
+   -moz-border-radius: $top-left $top-right $bottom-right $bottom-left;
+   border-radius:$top-left $top-right $bottom-right $bottom-left;
+}
+
+@mixin border-box() {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}

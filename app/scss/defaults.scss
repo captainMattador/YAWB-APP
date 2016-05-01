@@ -1,0 +1,162 @@
+
+
+// site wide colors
+@import 'colors';
+
+html, body{
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+*, *:before, *:after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+section, header, main, nav, footer{
+    float: left;
+    width: 100%;
+}
+
+body{
+    font-family: 'Roboto', sans-serif;
+    font-size: 62.5%;
+    color: $mid-color;
+    background-color: $light-color;
+}
+
+h1, h2, h3, h4, h5, h6{
+    font-family: 'Roboto Condensed', sans-serif;
+    line-height: 110%;
+}
+
+h1{
+    font-size: 4em;
+}
+
+h2{
+    font-size: 3.5em;
+}
+
+h3{
+    font-size: 3em;
+}
+
+h4{
+    font-size: 2.8em;
+}
+
+h5{
+    font-size: 2.6em;
+}
+
+h6{
+    font-size: 2.4em;
+}
+
+p, li{
+    font-size: 1.6em;
+    line-height: 160%;
+}
+
+a{
+    outline: 0;
+    border: none;
+    color: $accent-color;
+    text-decoration: none;
+}
+
+a img {
+    outline: 0;
+    border: none;
+}
+
+a:hover {
+    text-decoration: underline
+}
+
+input[type="submit"], a.cta-btn, button.cta-btn{
+    font-family: 'Roboto', sans-serif;
+    display: inline-block;
+    text-transform: uppercase;
+    border-color: $primary-color;
+    background-color: $primary-color;
+    color: $white-color;
+    font-size: 2em;
+    padding: 12px 40px;
+    cursor: pointer;
+    -webkit-transition: all 100ms ease-in;
+    -moz-transition: all 100ms ease-in;
+    -ms-transition: all 100ms ease-in;
+    -o-transition: all 100ms ease-in;
+    transition: all 100ms ease-in;
+}
+
+input[type="submit"]:hover, a.cta-btn:hover, button.cta-btn:hover{
+    text-decoration: none;
+    border-color: $primary-color-dark;
+    background-color: $primary-color-dark;
+}
+
+input[type="submit"].secondary, a.cta-btn.secondary, button.cta-btn.secondary{
+    border-color: $accent-color;
+    background-color: $accent-color;
+}
+
+input[type="submit"].secondary:hover, a.cta-btn.secondary:hover, button.cta-btn.secondary:hover{
+    border-color: $accent-color-dark;
+    background-color: $accent-color-dark;
+}
+
+input[type="submit"]{
+    outline: 0;
+    -webkit-appearance: none;
+}
+
+button{
+    background: none;
+    border: 0;
+    outline: 0;
+    -webkit-appearance: none;
+}
+
+img{
+    display: inline-block;
+}
+
+strong{
+    font-weight:bold;
+}
+
+em{
+    font-style: italic;
+}
+
+.site-wrapper, div#app{
+    float: left;
+    width:100%;
+    height:100%;
+    overflow: hidden;
+}
+
+.table{
+  display: table;
+}
+
+.cell{
+  display: table-cell;
+  vertical-align: middle;
+}
+
+// inputs and form elements
+
+input, textarea{
+    font-family: 'Roboto', sans-serif;
+    width:100%;
+    font-size: 1.6em;
+    border: 1px solid $divider-color;
+    color: $mid-color;
+    padding: 15px 10px;
+}
