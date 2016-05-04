@@ -122,6 +122,17 @@ button{
     -webkit-appearance: none;
 }
 
+
+input[type=submit]:disabled,
+input[type="submit"].secondary:disabled,
+input[type=submit]:disabled:hover,
+input[type="submit"].secondary:disabled:hover,
+button:disabled, button:disabled:hover {
+  border-color: $light-color;
+  background-color: $light-color;
+  cursor: default;
+}
+
 img{
     display: inline-block;
 }
@@ -150,6 +161,7 @@ em{
   vertical-align: middle;
 }
 
+
 // inputs and form elements
 
 input, textarea{
@@ -157,6 +169,15 @@ input, textarea{
     width:100%;
     font-size: 1.6em;
     border: 1px solid $divider-color;
+    outline: 0;
     color: $mid-color;
     padding: 15px 10px;
+}
+
+input.dirty.invalid, textarea.dirty.invalid{
+    border: 1px solid $accent-color;
+}
+
+.error{
+  color: $accent-color;
 }

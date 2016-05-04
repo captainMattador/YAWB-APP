@@ -1,11 +1,19 @@
-import React from 'react';
 
-const Main = ({children, history}) => {
-  return (
-    <div className="site-wrapper">
-      {children}
-    </div>
-  )
+import React from 'react';
+import { hashHistory } from 'react-router'
+
+class Main extends React.Component {
+  /*
+    returns the children routes to the UI.
+    Main is top level route
+  */
+  render(){
+    return (
+      <div className="site-wrapper">
+        {this.props.children}
+      </div>
+    )
+  }
 }
 
-export default Main
+export default Main;

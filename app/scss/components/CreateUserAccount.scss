@@ -1,12 +1,17 @@
 // site wide colors
 @import '../colors';
 
-// mixins 
+// mixins
 @import '../mixins';
 
 /****************************
 User log in Component
 ****************************/
+
+.ceate-account{
+  background: #fff;
+  padding: 40px;
+}
 .login{
   display: table;
   width:100%;

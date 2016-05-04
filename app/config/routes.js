@@ -1,14 +1,20 @@
+
+// react specific imports
 import React from 'react';
+import { Router, Route, hashHistory, IndexRoute } from 'react-router';
+
+// compontent specific routes
 import Main from '../components/Main';
-import Entry from '../components/Entry';
-import UserProfile from '../components/UserProfile';
-import Room from '../components/Room/Room';
-import { Route, IndexRoute } from 'react-router';
+import EntryCheck from '../components/EntryCheck';
+import LoginUserAccount from '../components/LoginUserAccount';
+import CreateUserAccount from '../components/CreateUserAccount';
 
 export default (
-  <Route path="/" component={Main}>
-    <Route path="user-profile/" component={UserProfile} />
-    <Route path="room/:number" component={Room} />
-    <IndexRoute component={Entry} />
-  </Route>
+  <Router history={hashHistory}>
+    <Route path="/" component={Main}>
+      <Route path="login-account" component={LoginUserAccount} />
+      <Route path="create-account" component={CreateUserAccount} />
+      <IndexRoute component={EntryCheck} />
+    </Route>
+  </Router>
 );
