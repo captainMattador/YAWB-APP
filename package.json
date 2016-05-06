@@ -9,7 +9,7 @@
     "sass:w": "nodemon -e scss -x \"npm run sass\"",
     "build": "npm run sass:w & npm run webpack-dev",
     "webpack-dev": "webpack -w",
-    "webpack-prod": "PROD_ENV=1 webpack"
+    "webpack-prod": "PROD_ENV=1 webpack --json | webpack-bundle-size-analyzer"
   },
   "keywords": [],
   "author": "Matt Bozelka, Robert Contreras, Julia Diliberto",
@@ -21,13 +21,12 @@
   "dependencies": {
     "firebase": "^2.4.2",
     "react": "^15.0.2",
-    "react-dom": "^15.0.2",
-    "react-router": "^2.4.0"
+    "react-dom": "^15.0.2"
   },
   "devDependencies": {
     "electron-prebuilt": "^0.37.7",
-    "node-sass": "^3.4.2",
-    "nodemon": "^1.9.1",
+    "node-sass": "3.4.2",
+    "nodemon": "1.9.1",
     "babel-core": "^6.3.13",
     "babel-loader": "^6.2.0",
     "babel-preset-es2015": "^6.3.13",

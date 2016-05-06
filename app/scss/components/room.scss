@@ -6,9 +6,56 @@
 Top header bar in a room
 *********************************************/
 .top-bar{
+    position: relative;
     height: 70px;
     background-color: $white-color;
     border-bottom: 1px solid $divider-color;
+}
+
+.user-info{
+    position: absolute;
+    top: 5px;
+    right: 30px;
+    width: 60px;
+    height:auto;
+    cursor: pointer;
+}
+
+.user-profile-image{
+    display: table;
+    width: 60px;
+    height: 60px;
+    text-align: center;
+    background-color: $accent-color-dark;
+    border:3px solid $light-color;
+    @include border-radius();
+}
+
+.user-profile-image span{
+    vertical-align: middle;
+    display: table-cell;
+    color:$white-color;
+    font-size: 3em;
+}
+
+.settings-pane{
+    display: none;
+    margin-left: -60px;
+    margin-top: 10px;
+    width: 120px;
+    background: $white-color;
+    border: 1px solid $divider-color;
+    box-shadow: 0 1px 10px 0 $divider-color;
+    @include border-radius(8px, 8px, 8px, 8px);
+}
+
+.user-info:hover .settings-pane{
+    display: block;
+}
+
+.settings-pane li{
+    padding: 10px;
+    font-size: 1.1em;
 }
 
 /*********************************************
@@ -24,8 +71,8 @@ The main canvas where all the magic happens
     height:551px;
     display: inline-block;
     background-color: $white-color;
-    -webkit-box-shadow: 0 1px 30px 0 #d6d8db;
-    box-shadow: 0 1px 100px 0 #d6d8db;
+    -webkit-box-shadow: 0 1px 30px 0 $divider-color;
+    box-shadow: 0 1px 100px 0 $divider-color;
 }
 
 /*********************************************

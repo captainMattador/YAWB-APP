@@ -34,7 +34,7 @@ class UserProfile extends React.Component {
   render(){
     return (
       <div className="user">
-        <h1>Welcome to your room!</h1>
+        <h1>This is where you can update your profile</h1>
       </div>
     )
   }
