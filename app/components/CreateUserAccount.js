@@ -16,11 +16,28 @@ class CreateUserAccount extends React.Component {
     this.blur = this.blur.bind(this);
     this.createAccountHandler = this.createAccountHandler.bind(this);
     this.formVals = {};
+
+    // loading events
+    this.loading = new CustomEvent('loading', {detail: {}, bubbles: true,
+        cancelable: true});
+    this.loadingDone = new CustomEvent('loading-done', {detail: {}, bubbles: true,
+            cancelable: true});
+  }
+
+  errorMsg(title, msg, isError){
+    return new CustomEvent('msg', {detail: {
+        title: title,
+        msg: msg,
+        isError: isError
+      },
+        bubbles: true,
+        cancelable: true
+      });
   }
 
   // account was valid
   createAccountHandler(){
-    this.refs.loader.classList.add('active');
+    window.dispatchEvent(this.loading);
     this.props.fireBase.createUser({
       email : this.formVals.email,
       password : this.formVals.password
@@ -29,11 +46,11 @@ class CreateUserAccount extends React.Component {
 
   createAccountCallBack(error, userData){
     if (error) {
-      this.refs.loader.classList.remove('active');
-      this._updateError(true, 'This email address is already in use.');
+      window.dispatchEvent(this.loadingDone);
+      window.dispatchEvent(this.errorMsg('Error', 'This email address is already in use.', true));
       return;
     }
-    
+
     let self = this;
     let postsUser = this.props.fireBase.child("Users").child(userData.uid);
     postsUser.set({
@@ -45,23 +62,26 @@ class CreateUserAccount extends React.Component {
     this.props.fireBase.authWithPassword({
       email: this.formVals.email,
       password : this.formVals.password
-    });
+    }, this.authWithPasswordCallback.bind(this));
   }
-  
+
+  authWithPasswordCallback(error, data){
+    window.dispatchEvent(this.loadingDone);
+  }
+
   handleSubmit(e){
     e.preventDefault();
     let valid = this.validateForm();
     let vals = {};
-    
+
     if(valid){
-      this._updateError(false, '');
       this.formVals = this.getSubmitVals();
       this.createAccountHandler();
     }else{
-      this._updateError(true, 'Invalid form. Please fix errors.');
+      window.dispatchEvent(this.errorMsg('Error', 'Invalid form. Please fix errors.', true));
     }
   }
-  
+
   getSubmitVals(){
     var inputs = this.refs.form.querySelectorAll('input'),
         vals = {};
@@ -70,33 +90,33 @@ class CreateUserAccount extends React.Component {
     }
     return vals;
   }
-  
+
   validateForm(){
-    
+
     let inputs = this.refs.form.querySelectorAll('input[required]');
     let inputLength = inputs.length;
     let validLength = 0;
-    
+
     if(this.refs.form.classList.contains('clean')){
       this.refs.form.classList.add('dirty');
       this.refs.form.classList.remove('clean');
     }
-    
+
     for(var i = 0; i < inputLength; i++){
       let valid = this.validateInput(inputs[i]);
       if(valid) validLength++;
     }
-    
+
     return (inputLength === validLength);
   }
-  
+
   blur(e){
     this.validateInput(e.target);
   }
-  
+
   validateInput(input){
     let valid = false;
-    
+
     if(input.type === 'email'){
       valid = validateEmail(input.value);
     }else if(input.hasAttribute('data-match')){
@@ -109,24 +129,12 @@ class CreateUserAccount extends React.Component {
     (valid) ? input.classList.remove('invalid') : input.classList.add('invalid');
     return valid;
   }
-  
-  _updateError(error, msg){
-    this.setState({
-      formError: error,
-      errorMessage: msg
-    });
-  }
-  
-  _rendorError(){
-    if(this.state.formError)
-      return <p className="error">{this.state.errorMessage}</p>;
-  }
-  
+
   backHandler(e){
     e.preventDefault();
     this.props.updateTopLevelRoute(this.props.mainRoutes['LOGIN_USER_ACCOUNT_ROUTE']);
   }
-    
+
   render(){
     return (
       <div className="ceate-account">
@@ -142,8 +150,6 @@ class CreateUserAccount extends React.Component {
         <button
           className="cta-btn"
           onClick={(e) => this.backHandler(e)}>Back</button>
-        {this._rendorError()}
-        <div ref="loader" className="loader"></div>
       </div>
     )
   }

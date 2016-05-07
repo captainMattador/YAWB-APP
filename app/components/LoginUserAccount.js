@@ -6,44 +6,66 @@ class LoginUserAccount extends React.Component {
 
   constructor(){
     super();
-    
+
     this.state = {
       formError: false,
       errorMessage: '',
       loading: ''
     };
-    
+
     this.blur = this.blur.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.formVals = {};
+
+    // custom events
+    this.loading = new CustomEvent('loading', {detail: {}, bubbles: true,
+        cancelable: true});
+    this.loadingDone = new CustomEvent('loading-done', {detail: {}, bubbles: true,
+            cancelable: true});
+  }
+
+  errorMsg(title, msg, isError){
+    return new CustomEvent('msg', {detail: {
+        title: title,
+        msg: msg,
+        isError: isError
+      },
+        bubbles: true,
+        cancelable: true
+      });
   }
 
   loginHandler(){
     let self = this;
-    this.refs.loader.classList.add('active');
+    window.dispatchEvent(this.loading);
     this.props.fireBase.authWithPassword({
       email: this.formVals.email,
       password : this.formVals.password
-    }, function(){
-      self.refs.loader.classList.remove('active');
-      self._updateError(true, 'Error: Invalid username/password');
-    });
+    }, this.authWithPasswordCallback.bind(this));
   }
-  
+
+  authWithPasswordCallback(error, data){
+    window.dispatchEvent(this.loadingDone);
+    if (error) {
+      window.dispatchEvent(this.errorMsg('Error', 'Invalid username/password', true));
+    } else {
+      console.log("Authenticated successfully with payload:", data);
+    }
+  }
+
   handleSubmit(e){
     e.preventDefault();
     let valid = this.validateForm();
     let vals = {};
-    
+
     if(valid){
-      this._updateError(false, '');
       this.formVals = this.getSubmitVals();
       this.loginHandler();
     }else{
-      this._updateError(true, 'Invalid form. Please fix errors.');
+      window.dispatchEvent(this.errorMsg('Error', 'Invalid form. Please fix errors.', true));
     }
   }
-  
+
   getSubmitVals(){
     var inputs = this.refs.form.querySelectorAll('input[required]'),
         vals = {};
@@ -52,33 +74,33 @@ class LoginUserAccount extends React.Component {
     }
     return vals;
   }
-  
+
   validateForm(){
-    
+
     let inputs = this.refs.form.querySelectorAll('input[required]');
     let inputLength = inputs.length;
     let validLength = 0;
-    
+
     if(this.refs.form.classList.contains('clean')){
       this.refs.form.classList.add('dirty');
       this.refs.form.classList.remove('clean');
     }
-    
+
     for(var i = 0; i < inputLength; i++){
       let valid = this.validateInput(inputs[i]);
       if(valid) validLength++;
     }
-    
+
     return (inputLength === validLength);
   }
-  
+
   blur(e){
     this.validateInput(e.target);
   }
-  
+
   validateInput(input){
     let valid = false;
-    
+
     if(input.type === 'email'){
       valid = validateEmail(input.value);
     }else{
@@ -87,30 +109,15 @@ class LoginUserAccount extends React.Component {
     (valid) ? input.classList.remove('invalid') : input.classList.add('invalid');
     return valid;
   }
-  
-  _updateError(error, msg){
-    this.setState({
-      formError: error,
-      errorMessage: msg
-    });
-  }
-  
-  _rendorError(){
-    if(this.state.formError)
-      return <p className="error">{this.state.errorMessage}</p>;
-  }
-  
+
   updateTopLevelRoute(e){
     e.preventDefault();
     this.props.updateTopLevelRoute(this.props.mainRoutes['CREATE_USER_ACCOUNT_ROUTE']);
   }
-  
+
   componentDidMount(){
-    
-    this._updateError(true, this.props.message);
-  
   }
-  
+
   render(){
     return (
       <div className="entry">
@@ -127,11 +134,9 @@ class LoginUserAccount extends React.Component {
               <button
                 className="cta-btn secondary"
                 onClick={(e) => this.updateTopLevelRoute(e)}>Create an Account</button>
-              {this._rendorError()}
             </div>
           </div>
         </div>
-        <div ref="loader" className="loader"></div>
       </div>
     )
   }

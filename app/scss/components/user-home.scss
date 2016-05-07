@@ -1,0 +1,47 @@
+// site wide colors
+@import '../colors';
+
+// mixins
+@import '../mixins';
+
+/****************************
+User log in Component
+****************************/
+.user-home{
+  height: 100%;
+}
+
+.user-home .table{
+  width:100%;
+  max-width: 400px;
+  height: 100%;
+  margin:0 auto;
+}
+
+.user-home .cell{
+  width:100%;
+  margin:0 auto;
+}
+
+.user-home .content{
+  float: left;
+  text-align: center;
+  width: 100%;
+  padding: 30px;
+  margin-top: -70px;
+  border: 1px solid $divider-color;
+  background-color: $white-color;
+}
+.user-home h2{
+  font-size: 1.8em;
+  text-align: left;
+  padding-bottom: 20px;
+}
+
+.user-home p{
+  padding: 10px 0;
+}
+
+.user-home button{
+  width: 100%;
+}
