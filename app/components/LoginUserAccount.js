@@ -134,8 +134,6 @@ class LoginUserAccount extends React.Component {
     console.log('I left the input');
   }
 
-  fbInstance.push(data);
-
   render(){
     return (
       <div className="entry">
