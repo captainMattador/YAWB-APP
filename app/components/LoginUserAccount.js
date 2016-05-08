@@ -10,8 +10,11 @@ class LoginUserAccount extends React.Component {
     this.state = {
       formError: false,
       errorMessage: '',
-      loading: ''
+      loading: '',
+      testVal: ''
     };
+
+    this.funcTest = this.funcTest.bind(this);
 
     this.blur = this.blur.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -62,7 +65,8 @@ class LoginUserAccount extends React.Component {
       this.formVals = this.getSubmitVals();
       this.loginHandler();
     }else{
-      window.dispatchEvent(this.errorMsg('Error', 'Invalid form. Please fix errors.', true));
+      window.dispatchEvent(this.errorMsg('Matt\'s comment', 'Sending a message to the window', false));
+      //window.dispatchEvent(this.errorMsg('Error', 'Invalid form. Please fix errors.', true));
     }
   }
 
@@ -118,6 +122,20 @@ class LoginUserAccount extends React.Component {
   componentDidMount(){
   }
 
+  funcTest(event){
+    event.preventDefault();
+    this.setState({
+      testVal: event.target.value
+    });
+  }
+
+  blurTest(event){
+    event.preventDefault();
+    console.log('I left the input');
+  }
+
+  fbInstance.push(data);
+
   render(){
     return (
       <div className="entry">
@@ -130,6 +148,13 @@ class LoginUserAccount extends React.Component {
                 <Input name="password" type="password" minLength={1} placeholder="Password" blur={this.blur} required={true}/>
                 <input className="cta-btn" ref="submit" type="submit" value="Log in"/>
               </form>
+
+              <input
+                value={this.state.testVal}
+                onChange={this.funcTest}
+                onBlur={this.blurTest.bind(this)}/>
+
+              <h1>{this.state.testVal}</h1>
               <p><em>-or-</em></p>
               <button
                 className="cta-btn secondary"
