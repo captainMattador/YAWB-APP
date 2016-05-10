@@ -1,5 +1,6 @@
 import React from 'react';
 import Input from './FormComponents/Input';
+import {updateRoute, loading, msg} from '../utils/CustomEvents';
 import {validateEmail} from '../utils/helpers';
 
 class LoginUserAccount extends React.Component {
@@ -7,52 +8,25 @@ class LoginUserAccount extends React.Component {
   constructor(){
     super();
 
-    this.state = {
-      formError: false,
-      errorMessage: '',
-      loading: '',
-      testVal: ''
-    };
-
-    this.funcTest = this.funcTest.bind(this);
-
+    this.formVals = {};
     this.blur = this.blur.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.formVals = {};
-
-    // custom events
-    this.loading = new CustomEvent('loading', {detail: {}, bubbles: true,
-        cancelable: true});
-    this.loadingDone = new CustomEvent('loading-done', {detail: {}, bubbles: true,
-            cancelable: true});
-  }
-
-  errorMsg(title, msg, isError){
-    return new CustomEvent('msg', {detail: {
-        title: title,
-        msg: msg,
-        isError: isError
-      },
-        bubbles: true,
-        cancelable: true
-      });
+    this.updateTopLevelRoute = this.updateTopLevelRoute.bind(this);
   }
 
   loginHandler(){
     let self = this;
-    window.dispatchEvent(this.loading);
-    this.props.fireBase.authWithPassword({
+    loading(true);
+    YAWB.fbRef.authWithPassword({
       email: this.formVals.email,
       password : this.formVals.password
     }, this.authWithPasswordCallback.bind(this));
   }
 
   authWithPasswordCallback(error, data){
-    window.dispatchEvent(this.loadingDone);
+    loading(false);
     if (error) {
-      window.dispatchEvent(this.errorMsg('Error', 'Invalid username/password', true));
-    } else {
-      console.log("Authenticated successfully with payload:", data);
+      msg('Error', 'Invalid username/password', true);
     }
   }
 
@@ -65,8 +39,7 @@ class LoginUserAccount extends React.Component {
       this.formVals = this.getSubmitVals();
       this.loginHandler();
     }else{
-      window.dispatchEvent(this.errorMsg('Matt\'s comment', 'Sending a message to the window', false));
-      //window.dispatchEvent(this.errorMsg('Error', 'Invalid form. Please fix errors.', true));
+      msg('Error', 'Invalid form. Please fix errors.', true);
     }
   }
 
@@ -116,22 +89,7 @@ class LoginUserAccount extends React.Component {
 
   updateTopLevelRoute(e){
     e.preventDefault();
-    this.props.updateTopLevelRoute(this.props.mainRoutes['CREATE_USER_ACCOUNT_ROUTE']);
-  }
-
-  componentDidMount(){
-  }
-
-  funcTest(event){
-    event.preventDefault();
-    this.setState({
-      testVal: event.target.value
-    });
-  }
-
-  blurTest(event){
-    event.preventDefault();
-    console.log('I left the input');
+    updateRoute('CREATE_USER_ACCOUNT_ROUTE');
   }
 
   render(){
@@ -146,17 +104,10 @@ class LoginUserAccount extends React.Component {
                 <Input name="password" type="password" minLength={1} placeholder="Password" blur={this.blur} required={true}/>
                 <input className="cta-btn" ref="submit" type="submit" value="Log in"/>
               </form>
-
-              <input
-                value={this.state.testVal}
-                onChange={this.funcTest}
-                onBlur={this.blurTest.bind(this)}/>
-
-              <h1>{this.state.testVal}</h1>
               <p><em>-or-</em></p>
               <button
                 className="cta-btn secondary"
-                onClick={(e) => this.updateTopLevelRoute(e)}>Create an Account</button>
+                onClick={this.updateTopLevelRoute}>Create an Account</button>
             </div>
           </div>
         </div>

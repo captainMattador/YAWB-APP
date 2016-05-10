@@ -6,13 +6,13 @@ import Firebase from 'firebase';
 // Main is top level UI component
 // and it renders the next level page
 // based on currentPage
+import LoadingRoute from './LoadingRoute';
 import LoginUserAccount from './LoginUserAccount';
 import CreateUserAccount from './CreateUserAccount';
 import UserHome from './User/UserHome';
 import UserProfile from './User/UserProfile';
 import Room from './Room/Room';
-import Error from './Error';
-import Message from './UiComponents/Message';
+import Message from './GlobalMessanger/Message';
 
 class Main extends React.Component {
 
@@ -20,26 +20,25 @@ class Main extends React.Component {
     super();
 
     this.firebaseBaseUrl = 'https://radiant-fire-5562.firebaseio.com/';
-    this.fbRef = new Firebase(this.firebaseBaseUrl);
-
     this.state = {
-      displayMsg: true,
-      user: null,
-      roomNumber: null,
       currentRoute: 0
     };
 
     this.routes = {
-      LOGIN_USER_ACCOUNT_ROUTE : 0,
-      CREATE_USER_ACCOUNT_ROUTE : 1,
-      USER_HOME_ROUTE : 2,
-      UPDATE_PROFILE_ROUTE : 3,
-      ROOM_ROUTE : 4,
+      LOADING_ROUTE : 0,
+      LOGIN_USER_ACCOUNT_ROUTE : 1,
+      CREATE_USER_ACCOUNT_ROUTE : 2,
+      USER_HOME_ROUTE : 3,
+      UPDATE_PROFILE_ROUTE : 4,
+      ROOM_ROUTE : 5,
     };
 
+    this.getUser = this.getUser.bind(this);
+    this.getUserError = this.getUserError.bind(this);
     this.authDataCallback = this.authDataCallback.bind(this);
-    this.updateTopLevelRoute = this.updateTopLevelRoute.bind(this);
+    this._updateTopLevelRoute = this._updateTopLevelRoute.bind(this);
     this.loadScreen = this.loadScreen.bind(this);
+    this.updateRoute = this.updateRoute.bind(this);
   }
 
   /**
@@ -49,21 +48,28 @@ class Main extends React.Component {
    * or the auth token expires
    */
   componentDidMount(){
+    // set the Fire Base base ref globally for
+    // the rest of the app to use
+    YAWB.fbRef = new Firebase(this.firebaseBaseUrl);
+    YAWB.fbRef.onAuth(this.authDataCallback.bind(this));
 
     // custom gloabl events. Any child
     // may call these to show the loading
     // screen
     window.addEventListener('loading', this.loadScreen, false);
     window.addEventListener('loading-done', this.loadScreen, false);
-
-    this.fbRef.onAuth(this.authDataCallback.bind(this));
-
+    window.addEventListener('update-route', this.updateRoute, false);
   }
 
   componentWillUnmount(){
     // clean up listeners
     window.removeEventListener('loading', this.loadScreen, false);
     window.removeEventListener('loading-done', this.loadScreen, false);
+    window.removeEventListener('update-route', this.updateRoute, false);
+  }
+
+  updateRoute(e){
+    this._updateTopLevelRoute(this.routes[e.detail.route]);
   }
 
   loadScreen(e){
@@ -82,17 +88,45 @@ class Main extends React.Component {
    * the room
    */
   authDataCallback(authData) {
+    let userRef;
+
+    // a user just logged in
     if (authData) {
-      /* successcully found a logged in user */
-      this.setState({user: authData.uid});
-      this.updateTopLevelRoute(this.routes['USER_HOME_ROUTE']);
-    } else {
-      /* no one is logged in */
-      this.updateTopLevelRoute(this.routes['LOGIN_USER_ACCOUNT_ROUTE']);
+      userRef = YAWB.fbRef.child("Users").child(authData.uid);
+      userRef.once('value', this.getUser, this.getUserError);
+    }
+
+    // a user is either logging out,
+    // or they are just coming into the app.
+    else {
+      // user is logging out
+      if(typeof YAWB.user.uid !== 'undefined'){
+        userRef = YAWB.fbRef.child("Users").child(YAWB.user.uid);
+        userRef.update({
+          activeRoom: null
+        });
+        YAWB.user = {};
+        YAWB.roomId = null;
+      }
+      this._updateTopLevelRoute(this.routes['LOGIN_USER_ACCOUNT_ROUTE']);
     }
   }
 
-  updateTopLevelRoute(pageID){
+  getUser(snapshot){
+    YAWB.user = snapshot.val();
+    if(YAWB.user.activeRoom){
+      YAWB.roomId = YAWB.user.activeRoom;
+      this._updateTopLevelRoute(this.routes['ROOM_ROUTE']);
+    }else{
+      this._updateTopLevelRoute(this.routes['USER_HOME_ROUTE']);
+    }
+  }
+
+  getUserError(error){
+    console.log(error);
+  }
+
+  _updateTopLevelRoute(pageID){
     this.setState({
       currentRoute: pageID
     });
@@ -101,44 +135,19 @@ class Main extends React.Component {
   _renderRoute(){
     switch(this.state.currentRoute){
         case 0:
-          return <LoginUserAccount
-            updateTopLevelRoute={this.updateTopLevelRoute}
-            mainRoutes={this.routes}
-            currentRoute={this.state.currentRoute}
-            fireBase={this.fbRef}/>;
+          return <LoadingRoute/>;
         case 1:
-          return <CreateUserAccount
-            updateTopLevelRoute={this.updateTopLevelRoute}
-            mainRoutes={this.routes}
-            currentRoute={this.state.currentRoute}
-            fireBase={this.fbRef}/>;
+          return <LoginUserAccount/>;
         case 2:
-          return <UserHome
-            updateTopLevelRoute={this.updateTopLevelRoute}
-            mainRoutes={this.routes}
-            currentRoute={this.state.currentRoute}
-            roomNumber={this.state.roomNumber}
-            user={this.state.user}
-            fireBase={this.fbRef}/>;
+          return <CreateUserAccount/>;
         case 3:
-          return <UserProfile
-            updateTopLevelRoute={this.updateTopLevelRoute}
-            mainRoutes={this.routes}
-            currentRoute={this.state.currentRoute}
-            fireBase={this.fbRef}/>;
+          return <UserHome/>;
         case 4:
-          return <Room
-            updateTopLevelRoute={this.updateTopLevelRoute}
-            mainRoutes={this.routes}
-            currentRoute={this.state.currentRoute}
-            roomNumber={this.state.roomNumber}
-            user={this.state.user}
-            fireBase={this.fbRef}/>;
+          return <UserProfile/>;
+        case 5:
+          return <Room/>;
         default:
-          return <Error
-            updateTopLevelRoute={this.updateTopLevelRoute}
-            mainRoutes={this.routes}
-            currentRoute={this.state.currentRoute}/>;
+          return <LoginUserAccount/>;
       }
   }
 

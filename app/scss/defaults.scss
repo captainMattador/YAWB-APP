@@ -186,7 +186,7 @@ input.dirty.invalid, textarea.dirty.invalid{
   color: $accent-color;
 }
 
-.loader{
+.loader, .loading-page{
     display: none;
     position: fixed;
     top:0;
@@ -200,6 +200,11 @@ input.dirty.invalid, textarea.dirty.invalid{
     z-index: 100;
 }
 
-.loader.active{
+.loader.active,{
     display: block;
+}
+
+.loading-page{
+  display: block;
+  background-color: $light-color;
 }

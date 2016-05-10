@@ -1,4 +1,5 @@
 import React from 'react';
+import {updateRoute, loading, msg} from '../../utils/CustomEvents';
 import Input from '../FormComponents/Input';
 import TopBar from '../UiComponents/TopBar';
 
@@ -10,43 +11,19 @@ class UserHome extends React.Component {
     super();
     this.userRef;
     this.roomRef;
-
-    this.state = {
-      user: {
-        fname: '',
-        lname: '',
-        email: '',
-        uid: ''
-      }
-    }
-
-    this.formVals = {};
+    this.roomNumVal;
 
     this.createRoom = this.createRoom.bind(this);
-    this.getUser = this.getUser.bind(this);
-    this.getUserError = this.getUserError.bind(this);
-    this.getRooms = this.getRooms.bind(this);
-    this.getRoomsError = this.getRoomsError.bind(this);
+
+    this.createNewRoom = this.createNewRoom.bind(this);
+    this.createNewRoomError = this.createNewRoomError.bind(this);
+
     this.handleEnterRoomSubmit = this.handleEnterRoomSubmit.bind(this);
+
+    this.enterRoom = this.enterRoom.bind(this);
+    this.enterRoomError = this.enterRoomError.bind(this);
+
     this.blur = this.blur.bind(this);
-    this.msg = this.msg.bind(this);
-
-    // custom events
-    this.loading = new CustomEvent('loading', {detail: {}, bubbles: true,
-        cancelable: true});
-    this.loadingDone = new CustomEvent('loading-done', {detail: {}, bubbles: true,
-            cancelable: true});
-  }
-
-  msg(title, msg, isError){
-    return new CustomEvent('msg', {detail: {
-        title: title,
-        msg: msg,
-        isError: isError
-      },
-        bubbles: true,
-        cancelable: true
-      });
   }
 
   /**
@@ -56,52 +33,106 @@ class UserHome extends React.Component {
    * to get the data needed
    */
   componentWillMount(){
-    this.userRef = this.props.fireBase.child("Users").child(this.props.user);
-    this.userRef.once('value', this.getUser, this.getUserError);
-    this.roomRef = this.props.fireBase.child("Rooms");
-  }
-
-  getUser(snapshot){
-    this.setState({
-      user: snapshot.val()
-    });
-  }
-
-  getUserError(error){
-    console.log(error);
+    this.userRef = YAWB.fbRef.child("Users").child(YAWB.user.uid);
+    this.roomRef = YAWB.fbRef.child("Rooms");
   }
 
   createRoom(e){
     e.preventDefault();
-    window.dispatchEvent(this.loading);
+    loading(true);
     this.refs.createRoom.disabled = true;
-    this.roomRef.once('value', this.getRooms, this.getRoomsError);
+    this.roomRef.once('value', this.createNewRoom, this.createNewRoomError);
   }
 
-  getRooms(snapshot){
+  createNewRoom(snapshot){
     let rooms = snapshot.val();
     let roomNum = this.generateRoomNum();
     let postsNewRoom = this.roomRef.child(roomNum);
 
     if(rooms){
-
       let ifRoomExists = this.checkIfRoomExists(rooms, roomNum);
       while(ifRoomExists){
         roomNum = this.generateRoomNum();
         ifRoomExists = this.checkIfRoomExists(rooms, roomNum);
       }
-
     }
 
     postsNewRoom.set({
-      owner: this.state.user.uid,
+      owner: YAWB.user.uid,
       roomId: roomNum
     });
 
-    this.setState({
-      roomNumber: roomNum
+    YAWB.user.activeRoom = roomNum;
+
+    this.userRef.update({
+      activeRoom: roomNum
     });
-    window.dispatchEvent(this.loadingDone);
+
+    loading(false);
+    updateRoute('ROOM_ROUTE');
+  }
+
+  createNewRoomError(error){
+    console.log(error);
+  }
+
+  /**
+  * handle entering a room by entering an existing room id
+  */
+  handleEnterRoomSubmit(e){
+    e.preventDefault();
+    let input = e.target.querySelector('input[name=roomNumber]');
+    let valid = this.validateForm(input);
+
+    if(valid){
+      this.roomNumVal = input.value;
+      loading(true);
+      this.roomRef.once('value', this.enterRoom, this.enterRoomError);
+    }else{
+      msg('Error', 'You must enter a room number.', true);
+    }
+  }
+
+  blur(e){
+    this.validateInput(e.target);
+  }
+
+  validateForm(input){
+    if(this.refs.form.classList.contains('clean')){
+      this.refs.form.classList.add('dirty');
+      this.refs.form.classList.remove('clean');
+    }
+    return this.validateInput(input);
+  }
+
+  validateInput(input){
+    let valid = false;
+    valid = (input.getAttribute('minlength') < input.value.length);
+    (valid) ? input.classList.remove('invalid') : input.classList.add('invalid');
+    return valid;
+  }
+
+  enterRoom(snapshot){
+    let rooms = snapshot.val();
+    let ifRoomExists = this.checkIfRoomExists(rooms, this.roomNumVal);
+
+    if(!rooms || !ifRoomExists){
+      msg('Error', 'No room currently matches that number.', true);
+      loading(false);
+      return;
+    }
+
+    // room exists so enter the room
+    this.userRef.update({
+      activeRoom: this.roomNumVal
+    });
+    YAWB.user.activeRoom = this.roomNumVal;
+    loading(false);
+    updateRoute('ROOM_ROUTE');
+  }
+
+  enterRoomError(){
+    console.log('error entering the room');
   }
 
   checkIfRoomExists(obj, roomNum){
@@ -116,74 +147,10 @@ class UserHome extends React.Component {
     return Math.floor((Math.random() * MAX_ROOM_NUM) + MIN_ROOM_NUM);
   }
 
-  /*
-    handle errors when trying to get the rooms list
-  */
-  getRoomsError(error){
-    console.log(error);
-  }
-
-  componentDidMount(){
-  }
-
-  /*
-    handling of the enter room form
-  */
-
-  handleEnterRoomSubmit(e){
-    e.preventDefault();
-    let valid = this.validateForm();
-
-    if(valid){
-      this.formVals = this.getSubmitVals();
-    }else{
-      window.dispatchEvent(this.msg('Error', 'You must enter a room number.', true));
-    }
-  }
-
-  getSubmitVals(){
-    var inputs = this.refs.form.querySelectorAll('input'),
-        vals = {};
-    for(var i = 0; i < inputs.length; i++ ){
-      vals[inputs[i].name] = inputs[i].value;
-    }
-    return vals;
-  }
-
-  validateForm(){
-
-    let inputs = this.refs.form.querySelectorAll('input[required]');
-    let inputLength = inputs.length;
-    let validLength = 0;
-
-    if(this.refs.form.classList.contains('clean')){
-      this.refs.form.classList.add('dirty');
-      this.refs.form.classList.remove('clean');
-    }
-
-    for(var i = 0; i < inputLength; i++){
-      let valid = this.validateInput(inputs[i]);
-      if(valid) validLength++;
-    }
-
-    return (inputLength === validLength);
-  }
-
-  blur(e){
-    this.validateInput(e.target);
-  }
-
-  validateInput(input){
-    let valid = false;
-    valid = (input.getAttribute('minlength') < input.value.length);
-    (valid) ? input.classList.remove('invalid') : input.classList.add('invalid');
-    return valid;
-  }
-
   render(){
     return (
       <div className="user-home">
-        <TopBar user={this.state.user} fireBase={this.props.fireBase}/>
+        <TopBar/>
         <div className="table">
           <div className="cell">
             <div className="content">
@@ -194,7 +161,7 @@ class UserHome extends React.Component {
                 onClick={this.createRoom}>Start New Room</button>
               <p>-or-</p>
               <form ref="form" onSubmit={this.handleEnterRoomSubmit} className="create-room-form clean" noValidate>
-                <Input name="roomNumber" type="text" placeholder="Room number" blur={this.blur} maxLength={1} maxLength={6} required={true}/>
+                <Input ref="roomNumberInput" name="roomNumber" type="text" placeholder="Room number" blur={this.blur} minLength={1} maxLength={6} required={true}/>
               </form>
             </div>
           </div>

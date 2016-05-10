@@ -1,5 +1,4 @@
 import React from 'react';
-import logger from '../../utils/logger';
 
 const COMPONENT = 'UserProfile';
 

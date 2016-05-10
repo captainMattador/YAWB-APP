@@ -1,0 +1,83 @@
+
+@import '../mixins';
+@import '../colors';
+
+.comments{
+  position: absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  width: 400px;
+  background-color: $white-color;
+  box-shadow: 0 1px 10px 0 $divider-color;
+  overflow: hidden;
+}
+
+.comments-wrap{
+  float: left;
+  width: 100%;
+  overflow-y: scroll;
+}
+
+.comments-wrap ul{
+  float: left;
+  width:100%;
+  background-color: $white-color;
+}
+
+.comments-wrap li{
+  float: left;
+  width:100%;
+  font-size: 1.4em;
+  padding: 10px 0;
+  border-bottom: 1px solid $divider-color;
+  background-color: $white-color;
+}
+
+.comments-wrap .profile-img{
+    display: table;
+    float: left;
+    width: 40px;
+    height: 40px;
+    margin: 0 10px;
+    text-align: center;
+    background-color: $accent-color-dark;
+    border:3px solid $light-color;
+    @include border-radius();
+}
+
+.comments-wrap .profile-img span{
+    vertical-align: middle;
+    display: table-cell;
+    color:$white-color;
+    font-size: 1.6em;
+}
+
+.comments-wrap .comment{
+  float: left;
+  padding: 0 10px;
+  width: 340px;
+}
+
+.comments-wrap li h2, .comments-wrap li p{
+  font-size: 100%;
+}
+
+.comments-wrap li h2 span{
+  color:$accent-color-dark;
+}
+
+.comments-submit{
+  float: left;
+  height: 70px;
+  width: 100%;
+  padding: 10px;
+  background-color: $black-color;
+}
+
+.comments-submit input{
+    width:100%;
+    height: 50px;
+    resize: none;
+}

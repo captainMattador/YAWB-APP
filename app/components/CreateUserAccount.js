@@ -1,4 +1,5 @@
 import React from 'react';
+import {updateRoute, loading, msg} from '../utils/CustomEvents';
 import Input from './FormComponents/Input';
 import {validateEmail} from '../utils/helpers';
 
@@ -6,39 +7,18 @@ class CreateUserAccount extends React.Component {
 
   constructor(){
     super();
-    this.state = {
-      message: '',
-      formError: false,
-      errorMessage: '',
-      loading: ''
-    };
+    this.formVals = {};
+
     this.handleSubmit = this.handleSubmit.bind(this);
     this.blur = this.blur.bind(this);
     this.createAccountHandler = this.createAccountHandler.bind(this);
-    this.formVals = {};
-
-    // loading events
-    this.loading = new CustomEvent('loading', {detail: {}, bubbles: true,
-        cancelable: true});
-    this.loadingDone = new CustomEvent('loading-done', {detail: {}, bubbles: true,
-            cancelable: true});
-  }
-
-  errorMsg(title, msg, isError){
-    return new CustomEvent('msg', {detail: {
-        title: title,
-        msg: msg,
-        isError: isError
-      },
-        bubbles: true,
-        cancelable: true
-      });
+    this.backHandler = this.backHandler.bind(this);
   }
 
   // account was valid
   createAccountHandler(){
-    window.dispatchEvent(this.loading);
-    this.props.fireBase.createUser({
+    loading(true);
+    YAWB.fbRef.createUser({
       email : this.formVals.email,
       password : this.formVals.password
     }, this.createAccountCallBack.bind(this));
@@ -46,13 +26,13 @@ class CreateUserAccount extends React.Component {
 
   createAccountCallBack(error, userData){
     if (error) {
-      window.dispatchEvent(this.loadingDone);
-      window.dispatchEvent(this.errorMsg('Error', 'This email address is already in use.', true));
+      loading(false);
+      msg('Error', 'This email address is already in use.', true);
       return;
     }
 
     let self = this;
-    let postsUser = this.props.fireBase.child("Users").child(userData.uid);
+    let postsUser = YAWB.fbRef.child("Users").child(userData.uid);
     postsUser.set({
       fname: this.formVals.fname,
       lname: this.formVals.lname,
@@ -66,7 +46,7 @@ class CreateUserAccount extends React.Component {
   }
 
   authWithPasswordCallback(error, data){
-    window.dispatchEvent(this.loadingDone);
+    loading(false);
   }
 
   handleSubmit(e){
@@ -78,7 +58,7 @@ class CreateUserAccount extends React.Component {
       this.formVals = this.getSubmitVals();
       this.createAccountHandler();
     }else{
-      window.dispatchEvent(this.errorMsg('Error', 'Invalid form. Please fix errors.', true));
+      msg('Error', 'Invalid form. Please fix errors.', true);
     }
   }
 
@@ -120,8 +100,8 @@ class CreateUserAccount extends React.Component {
     if(input.type === 'email'){
       valid = validateEmail(input.value);
     }else if(input.hasAttribute('data-match')){
-      let macthName = input.dataset.match;
-      let matchElem = document.querySelector('input[name='+macthName+']');
+      let matchName = input.dataset.match;
+      let matchElem = document.querySelector('input[name='+matchName+']');
       valid = (input.value === matchElem.value);
     }else{
       valid = (input.getAttribute('minlength') < input.value.length);
@@ -132,7 +112,7 @@ class CreateUserAccount extends React.Component {
 
   backHandler(e){
     e.preventDefault();
-    this.props.updateTopLevelRoute(this.props.mainRoutes['LOGIN_USER_ACCOUNT_ROUTE']);
+    updateRoute('LOGIN_USER_ACCOUNT_ROUTE');
   }
 
   render(){
@@ -149,7 +129,7 @@ class CreateUserAccount extends React.Component {
         </form>
         <button
           className="cta-btn"
-          onClick={(e) => this.backHandler(e)}>Back</button>
+          onClick={this.backHandler}>Back</button>
       </div>
     )
   }

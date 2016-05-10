@@ -1,21 +1,19 @@
 import React from 'react';
+import CommentsComponent from '../Comments/CommentsComponent';
 import TopBar from '../UiComponents/TopBar';
 
 class Room extends React.Component {
 
   constructor(){
     super();
-    this.userRef;
-
     this.state = {
-      user: {
-        fname: '',
-        lname: '',
-        email: ''
-      }
-    }
-    this.getUser = this.getUser.bind(this);
-    this.getUserError = this.getUserError.bind(this);
+      isOwner: false
+    };
+    // firebase refs
+    this.roomRef;
+
+    this.addUser = this.addUser.bind(this);
+    this.addUserError = this.addUserError.bind(this);
   }
 
   /**
@@ -25,22 +23,24 @@ class Room extends React.Component {
    * to get the data needed
    */
   componentWillMount(){
-    this.userRef = this.props.fireBase.child("Users").child(this.props.user);
-    this.userRef.once('value', this.getUser, this.getUserError);
+    this.roomRef = YAWB.fbRef.child("Rooms").child(YAWB.user.activeRoom);
+    this.roomRef.once('value', this.addUser, this.addUserError);
   }
 
-  getUser(snapshot){
-    this.setState({
-      user: snapshot.val()
-    });
+  addUser(snapshot){
+    let val = snapshot.val();
+    let roomUsersRef;
+    if(val.owner === YAWB.user.uid){
+      this.setState({
+        isOwner: true
+      });
+    }
+    roomUsersRef = this.roomRef.child('Users').child(YAWB.user.uid);
+    roomUsersRef.update(YAWB.user);
   }
 
-  getUserError(error){
+  addUserError(error){
     console.log(error);
-  }
-
-  strSubset(str, start, end){
-    return str.substring(start, end);
   }
 
   componentDidMount(){
@@ -49,10 +49,8 @@ class Room extends React.Component {
   render(){
     return (
       <div className="room">
-        <TopBar user={this.state.user} fireBase={this.props.fireBase}/>
-        <section className="canvas">
-            <canvas id="canvas"></canvas>
-        </section>
+        <TopBar/>
+        <CommentsComponent isOwner={this.state.isOwner}/>
       </div>
     )
   }

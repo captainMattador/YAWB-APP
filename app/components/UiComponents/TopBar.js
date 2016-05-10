@@ -6,21 +6,21 @@ class TopBar extends React.Component {
     super();
     this.logOut = this.logOut.bind(this);
   }
-  
+
   userProfileImage(){
-      if(!this.props.user.profileImage){
-          return this.props.user.fname.substring(0, 1);
+      if(!YAWB.user.profileImage){
+          return YAWB.user.fname.substring(0, 1);
       }
-      
+
       // return profile image if there is one
       // not yet implemented
-      return this.props.user.fname.substring(0, 1);
+      return YAWB.user.fname.substring(0, 1);
   }
-  
+
   logOut(){
-      this.props.fireBase.unauth();
+      YAWB.fbRef.unauth();
   }
-  
+
   render(){
     return (
       <section className="top-bar">
