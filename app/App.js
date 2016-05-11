@@ -8,7 +8,7 @@ import Main from './components/Main';
 // cut down on server calls
 window.YAWB = {
   user:{},
-  roomId:null,
+  room:{},
   fbRef:null
 };
 

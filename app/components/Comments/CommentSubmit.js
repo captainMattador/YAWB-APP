@@ -7,10 +7,6 @@ class CommentSubmit extends React.Component {
     this.addComment = this.addComment.bind(this);
   }
 
-  componentDidMount(){
-    console.log(YAWB);
-  }
-
   addComment(e){
     e.preventDefault();
     let val = this.refs.comment.value.trim();
@@ -18,9 +14,17 @@ class CommentSubmit extends React.Component {
       return;
     }
     this.refs.comment.value = '';
-    let commentsRef = YAWB.fbRef.child('Rooms').child(YAWB.user.activeRoom).child('PeerComments');
+    let commentsRef = YAWB.fbRef.child('Rooms').child(YAWB.room.id).child(this.props.dbList);
+    let lastPosted = YAWB.fbRef.child('Rooms').child(YAWB.room.id).child("lastPostedCommentBy");
+    let userName = YAWB.user.fname + ' ' + YAWB.user.lname;
+    lastPosted.set({
+      postedBy: {
+          uid: YAWB.user.uid,
+          name: userName
+      }
+    });
     commentsRef.push({
-      postedBy: YAWB.user.fname + ' ' + YAWB.user.lname,
+      postedBy: userName,
       comment: val,
       timeStamp: Firebase.ServerValue.TIMESTAMP
     });

@@ -6,12 +6,8 @@ class Room extends React.Component {
 
   constructor(){
     super();
-    this.state = {
-      isOwner: false
-    };
-    // firebase refs
-    this.roomRef;
 
+    this.roomRef;
     this.addUser = this.addUser.bind(this);
     this.addUserError = this.addUserError.bind(this);
   }
@@ -23,18 +19,14 @@ class Room extends React.Component {
    * to get the data needed
    */
   componentWillMount(){
-    this.roomRef = YAWB.fbRef.child("Rooms").child(YAWB.user.activeRoom);
+    this.roomRef = YAWB.fbRef.child("Rooms").child(YAWB.room.id);
     this.roomRef.once('value', this.addUser, this.addUserError);
   }
 
   addUser(snapshot){
     let val = snapshot.val();
     let roomUsersRef;
-    if(val.owner === YAWB.user.uid){
-      this.setState({
-        isOwner: true
-      });
-    }
+    YAWB.room.isOwner = (val.owner === YAWB.user.uid)? true : false;
     roomUsersRef = this.roomRef.child('Users').child(YAWB.user.uid);
     roomUsersRef.update(YAWB.user);
   }
@@ -49,8 +41,17 @@ class Room extends React.Component {
   render(){
     return (
       <div className="room">
-        <TopBar/>
-        <CommentsComponent isOwner={this.state.isOwner}/>
+        <TopBar></TopBar>
+        <CommentsComponent
+          heading="Chat"
+          icon="fa-comments"
+          commentsClass="peer-comments"
+          dbList="PeerComments"/>
+        <CommentsComponent
+          heading="Ask a question"
+          icon="fa-question-circle"
+          commentsClass="questions"
+          dbList="Questions"/>
       </div>
     )
   }

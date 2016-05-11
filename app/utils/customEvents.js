@@ -6,11 +6,13 @@ export function updateRoute(routeId){
   window.dispatchEvent(event);
 }
 
-export function msg(title, msg, isError){
+export function msg(title, msg, isError, timeOut, showToSelf){
   let event = new CustomEvent('msg', {detail: {
       title: title,
       msg: msg,
-      isError: isError
+      isError: isError,
+      timeOut: timeOut,
+      showToSelf: showToSelf
   }});
   window.dispatchEvent(event);
 }

@@ -2,31 +2,97 @@
 @import '../mixins';
 @import '../colors';
 
-.comments{
+.peer-comments, .questions{
   position: absolute;
   top:0;
-  left:0;
-  width:100%;
+  left:-400px;
   height:100%;
   width: 400px;
-  background-color: $white-color;
-  box-shadow: 0 1px 10px 0 $divider-color;
-  overflow: hidden;
 }
 
-.comments-wrap{
+/*
+generic stylings for all comments
+*/
+.peer-comments .toggle-comments{
+  position: absolute;
+  top:20px;
+  right:-60px;
+  width: 30px;
+  height: 30px;
+  font-size: 3em;
+  cursor: pointer;
+  color:$divider-color;
+}
+
+.questions .toggle-comments{
+  position: absolute;
+  top:20px;
+  right:-110px;
+  width: 30px;
+  height: 30px;
+  font-size: 3em;
+  cursor: pointer;
+  color:$divider-color;
+}
+
+.toggle-comments.active{
+  display: none;
+}
+
+.comments-wrapper{
+  position: relative;;
+  float: left;
+  width: 100%;
+  left: 0;
+  background-color: $white-color;
+  box-shadow: 0 1px 10px 0 $divider-color;
+  -webkit-transition: left 100ms ease-in;
+  -moz-transition: left 100ms ease-in;
+  -ms-transition: left 100ms ease-in;
+  -o-transition: left 100ms ease-in;
+  transition: left 100ms ease-in;
+}
+
+.peer-comments.active .comments-wrapper, .questions.active .comments-wrapper{
+  left:400px;
+}
+
+.comments .header{
+  position: relative;
+  float: left;
+  height: 40px;
+  width: 100%;
+  font-size: 3em;
+  cursor: pointer;
+  color:$divider-color;
+  background-color: $black-color;
+}
+
+.comments .header h2 {
+    font-size: .7em;
+    padding: 8px 0 0 13px;
+    color:$divider-color;
+}
+
+.comments .header .fa-times-circle{
+  position: absolute;
+  top: 5px;
+  right: 10px;
+}
+
+.comments-list{
   float: left;
   width: 100%;
   overflow-y: scroll;
 }
 
-.comments-wrap ul{
+.comments-list ul{
   float: left;
   width:100%;
   background-color: $white-color;
 }
 
-.comments-wrap li{
+.comments-list li{
   float: left;
   width:100%;
   font-size: 1.4em;
@@ -35,7 +101,7 @@
   background-color: $white-color;
 }
 
-.comments-wrap .profile-img{
+.comments-list .profile-img{
     display: table;
     float: left;
     width: 40px;
@@ -47,24 +113,24 @@
     @include border-radius();
 }
 
-.comments-wrap .profile-img span{
+.comments-list .profile-img span{
     vertical-align: middle;
     display: table-cell;
     color:$white-color;
     font-size: 1.6em;
 }
 
-.comments-wrap .comment{
+.comments-list .comment{
   float: left;
   padding: 0 10px;
   width: 340px;
 }
 
-.comments-wrap li h2, .comments-wrap li p{
+.comments-list li h2, .comments-list li p{
   font-size: 100%;
 }
 
-.comments-wrap li h2 span{
+.comments-list li h2 span{
   color:$accent-color-dark;
 }
 

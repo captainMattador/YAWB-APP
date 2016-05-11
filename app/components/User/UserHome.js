@@ -9,7 +9,6 @@ class UserHome extends React.Component {
 
   constructor(){
     super();
-    this.userRef;
     this.roomRef;
     this.roomNumVal;
 
@@ -33,7 +32,6 @@ class UserHome extends React.Component {
    * to get the data needed
    */
   componentWillMount(){
-    this.userRef = YAWB.fbRef.child("Users").child(YAWB.user.uid);
     this.roomRef = YAWB.fbRef.child("Rooms");
   }
 
@@ -62,12 +60,7 @@ class UserHome extends React.Component {
       roomId: roomNum
     });
 
-    YAWB.user.activeRoom = roomNum;
-
-    this.userRef.update({
-      activeRoom: roomNum
-    });
-
+    YAWB.room.id = roomNum;
     loading(false);
     updateRoute('ROOM_ROUTE');
   }
@@ -122,11 +115,7 @@ class UserHome extends React.Component {
       return;
     }
 
-    // room exists so enter the room
-    this.userRef.update({
-      activeRoom: this.roomNumVal
-    });
-    YAWB.user.activeRoom = this.roomNumVal;
+    YAWB.room.id = this.roomNumVal;
     loading(false);
     updateRoute('ROOM_ROUTE');
   }

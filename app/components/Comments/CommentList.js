@@ -1,34 +1,54 @@
 import React from 'react';
+import {msg} from '../../utils/CustomEvents';
 
 class CommentList extends React.Component {
 
   constructor(){
     super();
     this.state = {
-      comments: []
+      comments: [],
+      pageLoaded: false
     };
     this.commentsRef;
+    this.postedByRef;
     this.commentsUpdated = this.commentsUpdated.bind(this);
+    this.alertPosted = this.alertPosted.bind(this);
   }
 
   componentDidMount(){
-    this.commentsRef = YAWB.fbRef.child('Rooms').child(YAWB.user.activeRoom)
-      .child('PeerComments');
+    this.commentsRef = YAWB.fbRef.child('Rooms').child(YAWB.room.id)
+      .child(this.props.dbList);
+    this.postedByRef = YAWB.fbRef.child('Rooms').child(YAWB.room.id)
+      .child("lastPostedCommentBy");
     this.commentsRef.on('value', this.commentsUpdated);
   }
 
   componentWillUnmount(){
-    this.commentsHandler.off('value', this.commentsUpdated);
+    this.commentsRef.off('value', this.commentsUpdated);
   }
 
   componentDidUpdate(){
-    this.refs.commentList.scrollTop = this.refs.commentList.clientHeight;
+    this.refs[this.props.dbList].scrollTop = this.refs[this.props.dbList].clientHeight;
+  }
+
+  alertPosted(snapShot){
+    if(snapShot.val().postedBy.uid !== YAWB.user.uid){
+      var comment = (this.props.dbList === 'PeerComments') ? 'Posted in Chat' : 'Asked a question';
+      msg(snapShot.val().postedBy.name, comment, false);
+    }
   }
 
   commentsUpdated(snapShot){
     let comments = this.flattenComments(snapShot.val());
+
+    // supress calling when the page loads
+    if(this.state.pageLoaded){
+      this.postedByRef.once('value', this.alertPosted);
+    }
+
     this.setState({
-      comments: comments
+      comments: comments,
+      pageLoaded: true
     });
   }
 
@@ -63,7 +83,7 @@ class CommentList extends React.Component {
               </li>);
     });
     return (
-      <div ref="commentList" className="comments-wrap">
+      <div ref={this.props.dbList} className="comments-list">
         <ul>
           {comments}
         </ul>
