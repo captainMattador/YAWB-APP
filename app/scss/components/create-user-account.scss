@@ -7,23 +7,24 @@
 /****************************
 User log in Component
 ****************************/
-.entry{
+
+.ceate-account{
   height: 100%;
 }
 
-.entry .table{
+.ceate-account .table{
   width:100%;
   max-width: 400px;
   height: 100%;
   margin:0 auto;
 }
 
-.entry .cell{
+.ceate-account .cell{
   width:100%;
   margin:0 auto;
 }
 
-.entry .content{
+.ceate-account .content{
   float: left;
   text-align: center;
   width: 100%;
@@ -31,20 +32,20 @@ User log in Component
   border: 1px solid $divider-color;
   background-color: $white-color;
 }
-.entry h2{
+.ceate-account h2{
   font-size: 1.8em;
   text-align: left;
   padding-bottom: 20px;
 }
 
-.entry p{
+.ceate-account p{
   padding: 10px 0;
 }
 
-.entry button{
+.ceate-account button{
   width: 100%;
 }
 
-.entry form div{
+.ceate-account form, .ceate-account form div{
   padding-bottom: 20px;
 }

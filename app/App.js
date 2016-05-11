@@ -2,10 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Main from './components/Main';
 
-// store global info of the
-// logged in user and room
-// used to help keep state and
-// cut down on server calls
+/**
+ * YAWB is a global object that holds important
+ * values for the logged in user and the room the
+ * user is using. Object can be accessed anywhere 
+ * in the app.
+ */
+
 window.YAWB = {
   user:{},
   room:{},

@@ -1,11 +1,14 @@
 
+
+/**
+ * Top level of the entire app. Main will
+ * load all the other views, and also keeps
+ * state for the app. 
+ */
+
 import React from 'react';
 import Firebase from 'firebase';
 
-// main pages for routig.
-// Main is top level UI component
-// and it renders the next level page
-// based on currentPage
 import LoadingRoute from './LoadingRoute';
 import LoginUserAccount from './LoginUserAccount';
 import CreateUserAccount from './CreateUserAccount';
@@ -53,9 +56,7 @@ class Main extends React.Component {
     YAWB.fbRef = new Firebase(this.firebaseBaseUrl);
     YAWB.fbRef.onAuth(this.authDataCallback.bind(this));
 
-    // custom gloabl events. Any child
-    // may call these to show the loading
-    // screen
+    
     window.addEventListener('loading', this.loadScreen, false);
     window.addEventListener('loading-done', this.loadScreen, false);
     window.addEventListener('update-route', this.updateRoute, false);
@@ -67,7 +68,7 @@ class Main extends React.Component {
     window.removeEventListener('loading-done', this.loadScreen, false);
     window.removeEventListener('update-route', this.updateRoute, false);
   }
-
+  
   updateRoute(e){
     this._updateTopLevelRoute(this.routes[e.detail.route]);
   }
@@ -116,11 +117,14 @@ class Main extends React.Component {
     YAWB.user = snapshot.val();
     this._updateTopLevelRoute(this.routes['USER_HOME_ROUTE']);
   }
-
+  
+  /**
+   * no yet implented
+   */
   getUserError(error){
     console.log(error);
   }
-
+  
   _updateTopLevelRoute(pageID){
     this.setState({
       currentRoute: pageID

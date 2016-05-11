@@ -39,7 +39,7 @@ class CreateUserAccount extends React.Component {
       email: this.formVals.email,
       uid: userData.uid
     });
-    this.props.fireBase.authWithPassword({
+    YAWB.fbRef.authWithPassword({
       email: this.formVals.email,
       password : this.formVals.password
     }, this.authWithPasswordCallback.bind(this));
@@ -118,18 +118,24 @@ class CreateUserAccount extends React.Component {
   render(){
     return (
       <div className="ceate-account">
-        <h1>Create an account</h1>
-        <form ref="form" className="create-user-form clean" onSubmit={this.handleSubmit} noValidate>
-          <Input name="fname" type="text" minLength={1} placeholder="First name" blur={this.blur} required={true}/>
-          <Input name="lname" type="text" minLength={1} placeholder="Last name" blur={this.blur} required={true}/>
-          <Input name="email" type="email" placeholder="Email" blur={this.blur} required={true}/>
-          <Input name="password" type="password" minLength={1} placeholder="Password" blur={this.blur} required={true}/>
-          <Input name="passwordmatch" type="password" data-match="password" placeholder="Confirm Password" blur={this.blur} required={true}/>
-          <input className="cta-btn secondary" ref="submit" type="submit" value="Create Account"/>
-        </form>
-        <button
-          className="cta-btn"
-          onClick={this.backHandler}>Back</button>
+        <div className="table">
+          <div className="cell">
+            <div className="content">
+              <h2>Create an account</h2>
+              <form ref="form" className="create-user-form clean" onSubmit={this.handleSubmit} noValidate>
+                <Input name="fname" type="text" minLength={1} placeholder="First name" blur={this.blur} required={true}/>
+                <Input name="lname" type="text" minLength={1} placeholder="Last name" blur={this.blur} required={true}/>
+                <Input name="email" type="email" placeholder="Email" blur={this.blur} required={true}/>
+                <Input name="password" type="password" minLength={1} placeholder="Password" blur={this.blur} required={true}/>
+                <Input name="passwordmatch" type="password" data-match="password" placeholder="Confirm Password" blur={this.blur} required={true}/>
+                <input className="cta-btn secondary" ref="submit" type="submit" value="Create Account"/>
+              </form>
+              <button
+                className="cta-btn"
+                onClick={this.backHandler}>Back</button>
+            </div>
+          </div>
+        </div>
       </div>
     )
   }
