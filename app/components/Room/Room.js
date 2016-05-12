@@ -45,7 +45,7 @@ class Room extends React.Component {
       <div className="room">
         <TopBar></TopBar>
         <RoomUsers/>
-        {/*<WhiteBoard/>*/}
+        <WhiteBoard/>
         <CommentsComponent
           heading="Chat"
           icon="fa-comments"
