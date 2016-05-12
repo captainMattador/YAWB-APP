@@ -5,6 +5,8 @@ node_modules
 .DS_Store
 public/bundle.js
 public/styles/
+yawb-desktop-app.iml
+.idea
 
 
 # Logs #

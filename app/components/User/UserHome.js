@@ -13,15 +13,11 @@ class UserHome extends React.Component {
     this.roomNumVal;
 
     this.createRoom = this.createRoom.bind(this);
-
     this.createNewRoom = this.createNewRoom.bind(this);
     this.createNewRoomError = this.createNewRoomError.bind(this);
-
     this.handleEnterRoomSubmit = this.handleEnterRoomSubmit.bind(this);
-
-    this.enterRoom = this.enterRoom.bind(this);
-    this.enterRoomError = this.enterRoomError.bind(this);
-
+    this.getRoom = this.getRoom.bind(this);
+    this.getRoomError = this.getRoomError.bind(this);
     this.blur = this.blur.bind(this);
   }
 
@@ -54,15 +50,13 @@ class UserHome extends React.Component {
         ifRoomExists = this.checkIfRoomExists(rooms, roomNum);
       }
     }
-
     postsNewRoom.set({
       owner: YAWB.user.uid,
       roomId: roomNum
     });
-
-    YAWB.room.id = roomNum;
+    this.roomNumVal = roomNum;
     loading(false);
-    updateRoute('ROOM_ROUTE');
+    this.enterRoom();
   }
 
   createNewRoomError(error){
@@ -80,7 +74,7 @@ class UserHome extends React.Component {
     if(valid){
       this.roomNumVal = input.value;
       loading(true);
-      this.roomRef.once('value', this.enterRoom, this.enterRoomError);
+      this.roomRef.once('value', this.getRoom, this.getRoomError);
     }else{
       msg('Error', 'You must enter a room number.', true);
     }
@@ -105,7 +99,7 @@ class UserHome extends React.Component {
     return valid;
   }
 
-  enterRoom(snapshot){
+  getRoom(snapshot){
     let rooms = snapshot.val();
     let ifRoomExists = this.checkIfRoomExists(rooms, this.roomNumVal);
 
@@ -114,14 +108,17 @@ class UserHome extends React.Component {
       loading(false);
       return;
     }
-
-    YAWB.room.id = this.roomNumVal;
     loading(false);
-    updateRoute('ROOM_ROUTE');
+    this.enterRoom();
   }
 
-  enterRoomError(){
+  getRoomError(){
     console.log('error entering the room');
+  }
+
+  enterRoom(){
+    YAWB.room.id = this.roomNumVal;
+    updateRoute('ROOM_ROUTE');
   }
 
   checkIfRoomExists(obj, roomNum){
@@ -143,7 +140,7 @@ class UserHome extends React.Component {
         <div className="table">
           <div className="cell">
             <div className="content">
-              <h2>Start a new Room or Enter your Room number.</h2>
+              <h2>Start a new room or enter your room number.</h2>
               <button
                 ref="createRoom"
                 className="cta-btn secondary"

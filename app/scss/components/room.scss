@@ -21,7 +21,7 @@ Top header bar in a room
     cursor: pointer;
 }
 
-.user-profile-image{
+.top-bar .user-profile-image{
     display: table;
     width: 60px;
     height: 60px;
@@ -31,7 +31,7 @@ Top header bar in a room
     @include border-radius();
 }
 
-.user-profile-image span{
+.top-bar .user-profile-image span{
     vertical-align: middle;
     display: table-cell;
     color:$white-color;
@@ -61,12 +61,12 @@ Top header bar in a room
 /*********************************************
 The main canvas where all the magic happens
 *********************************************/
-.canvas{
+.white-board{
     text-align: center;
     padding: 20px;
 }
 
-#canvas{
+canvas{
     width:980px;
     height:551px;
     display: inline-block;
@@ -80,102 +80,78 @@ User list - display for all
 the current users viewing in
 a room
 *********************************************/
-.room-user-list{
-    position: absolute;
-    bottom: -150px;
-    left: 0;
-    float: left;
-    height:150px;
-    background-color: $white-color;
-    border-top: 1px solid $divider-color;
+
+.room-users{
+  position: absolute;
+  bottom: 0;
+  left:0;
+  width: 100%;
+  float: left;
+  background-color: $white-color;
 }
 
-.room-user-list.active{
-    bottom: 0;
+.scroll-wrap{
+  position: relative;
+  width: 100%;
+  float: left;
+  overflow-x: scroll;
 }
 
-.room-user-list .toggle-list {
-    position: absolute;
-    top: -30px;
-    left: 50%;
-    width: 70px;
-    font-size: 1.8em;
-    margin-left: -35px;
-    padding: 5px 0;
-    border: 1px solid $divider-color;
-    border-bottom: 1px solid $white-color;
-    background-color: $white-color;
-    z-index: 100;
-    cursor: pointer;
-    @include border-radius(8px, 8px, 0, 0);
+.room-users-list{
+  margin:0 auto;
 }
 
-.room-user-list .toggle-list .up{
-    display: block;
+.room-users-list li{
+  position: relative;
+  float: left;
+  display: block;
+  width: 120px;
+  height: 110px;
+  text-align: center;
+  cursor: pointer;
 }
 
-.room-user-list .toggle-list .down{
-    display: none;
+.room-users .user{
+  width: 120px;
+  height: 110px;
+  padding: 5px 10px;
 }
 
-.room-user-list.active .toggle-list .up{
-    display: none;
+.room-users .info{
+  position: absolute;
+  opacity: 0;
+  bottom: 10px;
+  left:0;
+  width:100%;
+  text-align: center;
+  color:$mid-color;
+  font-size: .8em;
+  transition: all 250ms ease-in;
 }
 
-.room-user-list.active .toggle-list .down{
-    display: block;
+.room-users-list li:hover .user-profile-image{
+  transform: scale(.8) translateY(-10px);
 }
 
-.scroll-list{
-    position: relative;
-    float: left;
-    width: 100%;
-    height:150px;
-    overflow-x: hidden;
+.room-users-list li:hover .info{
+  opacity: 1;
+  bottom: 0;
 }
 
-.scroll-list-users{
-    position: absolute;
-    top:0;
-    left: 0;
-    float: left;
-    width: 100%;
-    height:150px;
-    cursor: -moz-grab; cursor: -webkit-grab; cursor: grab;
-}
-
-.scroll-list-users.down{
-    cursor: -moz-grabbing; cursor: -webkit-grabbing; cursor: grabbing;
-}
-
-.scroll-list-user{
-    position: relative;
-    float: left;
-    display: block;
-    height:150px;
-    width:150px;
+.room-users-list .user-profile-image{
+    display: table;
+    width: 100px;
+    height: 100px;
     text-align: center;
-    @include border-box();
-}
-
-.scroll-list-user-image{
-    width:150px;
-    height:150px;
-    padding: 10px;
-}
-
-.scroll-list-user-image .table{
-    display:table;
-    width: 100%;
-    height:100%;
+    background-color: $accent-color-dark;
+    border:3px solid $light-color;
     @include border-radius();
-    background-color: $primary-color-light;
-    border: 1px solid $primary-color;
+    transition: all 250ms ease-in;
 }
 
-.scroll-list-user-image .cell{
-    display:table-cell;
+.room-users-list .user-profile-image span{
     vertical-align: middle;
-    font-size: 3.5em;
-    color:$primary-color-dark;
+    display: table-cell;
+    color:$white-color;
+    font-size: 2.8em;
 }

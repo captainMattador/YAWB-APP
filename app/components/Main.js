@@ -3,7 +3,7 @@
 /**
  * Top level of the entire app. Main will
  * load all the other views, and also keeps
- * state for the app. 
+ * state for the app.
  */
 
 import React from 'react';
@@ -56,7 +56,7 @@ class Main extends React.Component {
     YAWB.fbRef = new Firebase(this.firebaseBaseUrl);
     YAWB.fbRef.onAuth(this.authDataCallback.bind(this));
 
-    
+
     window.addEventListener('loading', this.loadScreen, false);
     window.addEventListener('loading-done', this.loadScreen, false);
     window.addEventListener('update-route', this.updateRoute, false);
@@ -68,7 +68,7 @@ class Main extends React.Component {
     window.removeEventListener('loading-done', this.loadScreen, false);
     window.removeEventListener('update-route', this.updateRoute, false);
   }
-  
+
   updateRoute(e){
     this._updateTopLevelRoute(this.routes[e.detail.route]);
   }
@@ -103,9 +103,6 @@ class Main extends React.Component {
       // user is logging out
       if(typeof YAWB.user.uid !== 'undefined'){
         userRef = YAWB.fbRef.child("Users").child(YAWB.user.uid);
-        userRef.update({
-          activeRoom: null
-        });
         YAWB.user = {};
         YAWB.room = {};
       }
@@ -117,14 +114,14 @@ class Main extends React.Component {
     YAWB.user = snapshot.val();
     this._updateTopLevelRoute(this.routes['USER_HOME_ROUTE']);
   }
-  
+
   /**
    * no yet implented
    */
   getUserError(error){
     console.log(error);
   }
-  
+
   _updateTopLevelRoute(pageID){
     this.setState({
       currentRoute: pageID

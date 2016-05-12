@@ -98,7 +98,7 @@ class LoginUserAccount extends React.Component {
         <div className="table">
           <div className="cell">
             <div className="content">
-              <h2>Login or Create an Account</h2>
+              <h2>Login or create an account</h2>
               <form ref="form" className="login-user-form clean" onSubmit={this.handleSubmit} noValidate>
                 <Input name="email" type="email" placeholder="Email" blur={this.blur} required={true}/>
                 <Input name="password" type="password" minLength={1} placeholder="Password" blur={this.blur} required={true}/>
