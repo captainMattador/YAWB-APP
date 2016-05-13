@@ -1,7 +1,9 @@
 
 var webpack = require('webpack');
+var path = require("path");
 var PROD = JSON.parse(process.env.PROD_ENV || '0');
 
+console.log(__dirname);
 module.exports = {
   entry: "./app/App.js",
   output: {
@@ -11,7 +13,9 @@ module.exports = {
     loaders: [
       {
         test: /\.jsx?$/,
-        exclude: /node_modules/,
+        include: [
+            path.resolve(__dirname, 'app')
+        ],
         loader: 'babel',
         query: {
           presets: ['react', 'es2015']

@@ -1,4 +1,6 @@
 import React from 'react';
+import io from 'socket.io-client';
+import {msg} from '../../utils/CustomEvents';
 import UserProfileImg from '../User/UserProfileImg';
 
 class RoomUsers extends React.Component {
@@ -8,19 +10,34 @@ class RoomUsers extends React.Component {
     this.state = {
       Users: []
     };
-
-    this.usersRef;
-    this.updateUsersList = this.updateUsersList.bind(this);
+    this.usersList = [];
+    this.socket;
+    this.socketHost = 'http://159.203.245.200:8080';
+    this.userJoined = this.userJoined.bind(this);
+    this.userLeft = this.userLeft.bind(this);
+    this.toggleUsers = this.toggleUsers.bind(this);
   }
 
   componentDidMount(){
-    this.usersRef = YAWB.fbRef.child('Rooms').child(YAWB.room.id)
-      .child('Users');
-    this.usersRef.on('value', this.updateUsersList);
+    this.socket = io.connect(this.socketHost);
+    
+    this.socket.emit('joining-room', {
+      user: YAWB.user,
+      room: YAWB.room.id
+    });
+    
+    this.socket.on('user-joining', this.userJoined);
+    this.socket.on('user-leaving', this.userLeft);
+    this.socket.on('announce-user', this.announceUser);
+    this.socket.on('announce-leaving', this.announceUserLeft);
   }
 
   componentWillUnmount(){
-    this.usersRef.off('value', this.updateUsersList);
+    this.socket.removeListener('user-joining', this.userJoined);
+    this.socket.removeListener('announce-user', this.announceUser);
+    this.socket.removeListener('user-leaving', this.userLeft);
+    this.socket.removeListener('announce-leaving', this.announceUserLeft);
+    this.socket.disconnect();
   }
 
   componentDidUpdate(){
@@ -30,24 +47,37 @@ class RoomUsers extends React.Component {
   setWidth(){
     var list = this.refs.list,
         users = list.querySelectorAll('li'),
-        userWidth = users[1].clientWidth;
+        userWidth = users[0].clientWidth;
     list.style.width = (users.length * userWidth) + 'px';
   }
-
-  updateUsersList(snapshot){
-    var users = this.flattenUsersList(snapshot.val());
-    this.setState({
-      Users : users
-    });
+  
+  announceUser(userName){
+    msg(userName, 'Joined the room', false);
+  }
+  
+  announceUserLeft(userName){
+    msg(userName, 'Left the room', false);
   }
 
-  flattenUsersList(obj){
-    let arr = [];
-    for(let prop in obj){
-      let key = prop;
-      arr.push(obj[prop]);
+  userJoined(user){
+    this.usersList.push(user);
+    this.setState({
+      Users : this.usersList
+    });
+  }
+  
+  userLeft(user){
+    var index = this.usersList.indexOf(user);
+    if(index > -1){
+      this.usersList.splice(index, 1);
+      this.setState({
+        Users : this.usersList
+      });
     }
-    return arr;
+  }
+  
+  toggleUsers(){
+    this.refs.userList.classList.toggle('active');
   }
 
   render(){
@@ -60,7 +90,8 @@ class RoomUsers extends React.Component {
               </li>);
     });
     return (
-      <section className="room-users">
+      <section ref="userList" className="room-users">
+        <span ref="toggle" className="toggleUsers" onClick={this.toggleUsers}><i className="fa fa-chevron-up" aria-hidden="true"></i></span>
         <div className="scroll-wrap">
           <ul ref="list" className="room-users-list">
             {users}

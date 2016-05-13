@@ -112,6 +112,7 @@ class Main extends React.Component {
 
   getUser(snapshot){
     YAWB.user = snapshot.val();
+    console.log('getUser', snapshot.val())
     this._updateTopLevelRoute(this.routes['USER_HOME_ROUTE']);
   }
 
