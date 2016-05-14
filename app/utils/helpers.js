@@ -23,13 +23,13 @@ export function validateEmail(value) {
 export function clientPosition(e) {
     if (e.targetTouches && (e.targetTouches.length >= 1)) {
         return {
-            clientX: e.targetTouches[0].clientX,
-            clientY: e.targetTouches[0].clientY
+            x: e.targetTouches[0].clientX,
+            y: e.targetTouches[0].clientY
         };
     }
     return {
-        clientX: e.clientX,
-        clientY: e.clientY
+        x: e.clientX,
+        y: e.clientY
     };
 }
 
