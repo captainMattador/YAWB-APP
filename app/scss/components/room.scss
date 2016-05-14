@@ -39,14 +39,30 @@ Top header bar in a room
 }
 
 .settings-pane{
+    position: relative;
     display: none;
     margin-left: -60px;
     margin-top: 10px;
     width: 120px;
-    background: $white-color;
-    border: 1px solid $divider-color;
+    background: $mid-color;
+    border: 1px solid $light-color;
     box-shadow: 0 1px 10px 0 $divider-color;
     @include border-radius(8px, 8px, 8px, 8px);
+}
+
+.settings-pane:after{
+    display: block;
+    position: absolute;
+    top: -7px;
+    left: 82px;
+    width:14px;
+    height:14px;
+    content: '';
+    background-color:$mid-color;
+    border: 1px solid $light-color;
+    border-right: 1px solid $mid-color;
+    border-bottom: 1px solid $mid-color;
+    transform: rotate(45deg);
 }
 
 .user-info:hover .settings-pane{
@@ -56,6 +72,7 @@ Top header bar in a room
 .settings-pane li{
     padding: 10px;
     font-size: 1.1em;
+    color: $light-color;
 }
 
 /*********************************************
@@ -67,8 +84,6 @@ The main canvas where all the magic happens
 }
 
 canvas{
-    width:980px;
-    height:551px;
     display: inline-block;
     background-color: $white-color;
     -webkit-box-shadow: 0 1px 30px 0 $divider-color;
