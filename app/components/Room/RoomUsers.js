@@ -45,10 +45,11 @@ class RoomUsers extends React.Component {
   }
 
   setWidth(){
-    var list = this.refs.list,
-        users = list.querySelectorAll('li'),
-        userWidth = users[0].clientWidth;
-    list.style.width = (users.length * userWidth) + 'px';
+    // var list = this.refs.list,
+    //     users = list.querySelectorAll('li'),
+    //     userWidth = users[0].clientWidth;
+    // console.log('hey hey', users[0].clientWidth);
+    // list.style.width = (users.length * userWidth) + 'px';
   }
   
   announceUser(userName){
