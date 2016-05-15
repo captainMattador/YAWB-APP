@@ -33,7 +33,7 @@ class Main extends React.Component {
       CREATE_USER_ACCOUNT_ROUTE : 2,
       USER_HOME_ROUTE : 3,
       UPDATE_PROFILE_ROUTE : 4,
-      ROOM_ROUTE : 5,
+      ROOM_ROUTE : 5
     };
 
     this.getUser = this.getUser.bind(this);
@@ -112,8 +112,17 @@ class Main extends React.Component {
 
   getUser(snapshot){
     YAWB.user = snapshot.val();
-    console.log('getUser', snapshot.val())
-    this._updateTopLevelRoute(this.routes['USER_HOME_ROUTE']);
+    YAWB.room.id = 318487;
+    
+    /***
+     * 
+     * 
+     * remove once not needed,
+     * sets room automoatically to thetest room
+     * 
+     * 
+     */
+    this._updateTopLevelRoute(this.routes['ROOM_ROUTE']);
   }
 
   /**
