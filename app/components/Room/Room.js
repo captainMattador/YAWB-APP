@@ -10,7 +10,7 @@ class Room extends React.Component {
   constructor(){
     super();
     this.state = {
-      boardView: <VisitorBoardView/>
+      boardView: ''
     }
     
     this.setView = this.setView.bind(this);
@@ -30,6 +30,9 @@ class Room extends React.Component {
       });
     }else{
       YAWB.user.owner = false;
+      this.setState({
+        boardView: <VisitorBoardView/>
+      });
     }
   }
 

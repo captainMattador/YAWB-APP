@@ -128,10 +128,7 @@ class OwnerBoardView extends React.Component {
     this._drawFlag = false;
     // this.history.push(this._points);
     this._points = [];
-    
-    var test = this.getCanvasData();
-    
-    this.boardDatatRef.set(test);
+   
     //console.log(test);
   }
   
@@ -156,6 +153,8 @@ class OwnerBoardView extends React.Component {
     
     this._ctx.stroke();
     this._ctx.closePath();
+    var test = this.getCanvasData();
+    this.boardDatatRef.set(test);
   }
   
   /**
