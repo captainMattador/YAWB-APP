@@ -12,7 +12,7 @@ class RoomUsers extends React.Component {
     };
     this.usersList = [];
     this.socket;
-    this.socketHost = 'http://159.203.245.200:8080';
+    this.socketHost = 'http://159.203.245.200:8080/room-users';
     this.userJoined = this.userJoined.bind(this);
     this.userLeft = this.userLeft.bind(this);
     this.toggleUsers = this.toggleUsers.bind(this);
@@ -45,11 +45,15 @@ class RoomUsers extends React.Component {
   }
 
   setWidth(){
-    // var list = this.refs.list,
-    //     users = list.querySelectorAll('li'),
-    //     userWidth = users[0].clientWidth;
-    // console.log('hey hey', users[0].clientWidth);
-    // list.style.width = (users.length * userWidth) + 'px';
+    var list = this.refs.list,
+        users = list.querySelectorAll('li'),
+        userWidth;
+
+    if(users.length > 0){
+      var users = list.querySelectorAll('li'),
+          userWidth = users[0].clientWidth;
+      list.style.width = (users.length * userWidth) + 'px';
+    }
   }
   
   announceUser(userName){

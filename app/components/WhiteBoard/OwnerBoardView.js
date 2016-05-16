@@ -1,4 +1,5 @@
 import React from 'react';
+import io from 'socket.io-client';
 import {clientPosition, jsVendorPrefix} from '../../utils/helpers';
 import {circle} from './shapes';
 import Stack from '../../datastructures/stack';
@@ -9,22 +10,29 @@ class OwnerBoardView extends React.Component {
   constructor(){
     super();
     
+    console.log('should get called');
+    
+    //sockets
+    this.socket;
+    this.socketHost = 'http://159.203.245.200:8080/board-data';
+    
     // events manager
     this._events = new Events(); 
     
     // history
     this.history = new Stack({max: 20});
+    this._keys = [];
+    
+    // canvas vars
+    this._canvas;
+    this._canvasWidth;
+    this._canvasHeight;
+    this._ctx;
     
     // drawing vars
     this._mode = 'pen';
     this._drawFlag = false;
     this._points = [];   
-    this._keys = []; 
-    this._canvas;
-    this._canvasWidth;
-    this._canvasHeight;
-    this._ctx;
-    this.boardDatatRef;
     
     // binding this
     this.drawMove = this.drawMove.bind(this);
@@ -32,14 +40,19 @@ class OwnerBoardView extends React.Component {
     this.drawOff = this.drawOff.bind(this);
     this.keyPressHandler = this.keyPressHandler.bind(this);
     this.keyReleasedHandler = this.keyReleasedHandler.bind(this);
+    
+    // socket functions
+    this.drawRender = this.drawRender.bind(this);
   }
   
   componentDidMount(){
     this.setBaseAttributes();
     
-    this.boardDatatRef = YAWB.fbRef.child('Rooms').child(YAWB.room.id)
-      .child('BoardData');
-      
+    // socket events 
+    this.socket = io.connect(this.socketHost);
+    this.socket.on('emited-drawing-points', this.drawRender);
+    
+    // dom events
     this._events.addEvent(document.body, 'keydown', this.keyPressHandler);
     this._events.addEvent(document.body, 'keyup', this.keyReleasedHandler);
     this._events.addEvent(this._canvas, 'mousedown', this.drawDown);
@@ -47,14 +60,17 @@ class OwnerBoardView extends React.Component {
     this._events.addEvent(document.body, 'mouseup', this.drawOff);
   }
   
+  componentWillUnmount(){
+    this._events.removeAllEvents();
+    this.socket.removeListener('emited-drawing-points', this.drawRender);
+    this.socket.disconnect();
+  }
+  
   setBaseAttributes(){
     this._canvas = this.refs.whiteBoard;
     this._ctx = this._canvas.getContext("2d");
     this._canvasWidth = this._canvas.width;
     this._canvasHeight = this._canvas.height;
-    
-    // blank image canvas into history, so after first draw you can revert 
-    // this.history.push(this.getCanvasData());
   }
   
   keyPressHandler(e){
@@ -83,18 +99,6 @@ class OwnerBoardView extends React.Component {
     }
   }
   
-  getCanvasData(){
-    var lowQuality = canvas.toDataURL("image/jpeg", 0.1);
-    return lowQuality;
-    //return this._ctx.getImageData(0, 0, this._canvasWidth, this._canvasHeight);
-  }
-  
-  addDataToCanvas(img){
-    var lowQuality = canvas.toDataURL("image/jpeg", 0.1);
-    return lowQuality;
-    //return this._ctx.getImageData(0, 0, this._canvasWidth, this._canvasHeight);
-  }
-  
   addPoint(point){
     var rect = this._canvas.getBoundingClientRect(),
         pos = clientPosition(point);
@@ -112,49 +116,42 @@ class OwnerBoardView extends React.Component {
   drawDown(point){
     this._drawFlag = true;
     this.addPoint(point);
-    // adds two points at start to create a dot
-    // if no movement occurs
     this.addPoint(point);
-    this.drawRender();
+    this.socket.emit('drawing-points', this._points);
   }
   
   drawMove(point){
     if(!this._drawFlag) return;
     this.addPoint(point);
-    this.drawRender();
+    this.socket.emit('drawing-points', this._points);
   }
   
   drawOff(e){
     this._drawFlag = false;
-    // this.history.push(this._points);
     this._points = [];
-   
-    //console.log(test);
   }
   
-  drawRender() {
-    var len = this._points.length;
+  drawRender(points) {
+    var len = points.length;
     this._ctx.lineWidth = 5;
     this._ctx.lineJoin = 'round';
     this._ctx.lineCap = 'round';
     this._ctx.strokeStyle = 'blue';
     
     if(len === 2){
-      this._points[1].x += .5;
-      this._points[1].y += .5;
+      points[1].x += .5;
+      points[1].y += .5;
     }
     
     this._ctx.beginPath();
-    this._ctx.moveTo(this._points[0].x, this._points[0].y);
+    this._ctx.moveTo(points[0].x, points[0].y);
     
     for (var i = 1; i < len; i++) {
-      this._ctx.lineTo(this._points[i].x, this._points[i].y);
+      this._ctx.lineTo(points[i].x, points[i].y);
     }
     
     this._ctx.stroke();
     this._ctx.closePath();
-    var test = this.getCanvasData();
-    this.boardDatatRef.set(test);
   }
   
   /**
