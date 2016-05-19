@@ -2,54 +2,59 @@ import React from 'react';
 import CommentsComponent from '../Comments/CommentsComponent';
 import TopBar from '../UiComponents/TopBar';
 import RoomUsers from './RoomUsers';
-import OwnerBoardView from '../WhiteBoard/OwnerBoardView';
-import VisitorBoardView from '../WhiteBoard/VisitorBoardView';
+import WhiteBoardView from '../WhiteBoard/WhiteBoardView';
 
 class Room extends React.Component {
 
   constructor(){
     super();
     this.state = {
-      boardView: ''
+      userReturned: false
     }
     
-    this.setView = this.setView.bind(this);
+    this.returnedUser = this.returnedUser.bind(this);
   }
 
   componentWillMount(){
     this.ownerRef = YAWB.fbRef.child('Rooms').child(YAWB.room.id)
       .child('owner');
-    this.ownerRef.once('value', this.setView);
+    this.ownerRef.once('value', this.returnedUser);
   }
   
-  setView(snapshot){
-    if(YAWB.user.uid === snapshot.val()){
-      YAWB.user.owner = true;
-      this.setState({
-        boardView: <OwnerBoardView/>
-      });
-    }else{
-      YAWB.user.owner = false;
-      this.setState({
-        boardView: <VisitorBoardView/>
-      });
+  returnedUser(snapshot){
+    YAWB.user.owner = (YAWB.user.uid === snapshot.val()) ? true : false;
+    this.setState({
+      userReturned: true
+    });
+  }
+  
+  boardView(){
+    if(this.state.userReturned){
+      return (
+        <WhiteBoardView/>
+      );
     }
   }
-
-  render(){
- 
-    return (
-      <div className="room">
-        <TopBar></TopBar>
-        <RoomUsers/>
-        <section className="white-board">
-          {this.state.boardView}
-        </section>
+  
+  chatComponent(){
+    if(this.state.userReturned && !YAWB.user.owner){
+      return (
         <CommentsComponent
           heading="Chat"
           icon="fa-comments"
           commentsClass="peer-comments"
           dbList="PeerComments"/>
+      );
+    }
+  }
+
+  render(){
+    return (
+      <div className="room">
+        <TopBar/>
+        <RoomUsers/>
+        {this.boardView()}
+        {this.chatComponent()}
         <CommentsComponent
           heading="Ask a question"
           icon="fa-question-circle"
