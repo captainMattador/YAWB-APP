@@ -11,7 +11,7 @@ class WhiteBoardView extends React.Component {
     
     this.wbUtils;
     this.socket;
-    this.socketHost = 'http://localhost:8080/board-data';
+    this.socketHost = 'http://159.203.245.200:8080/board-data';
     this._history = new Stack({max: 20});
     
     // dom canvas
