@@ -50,8 +50,8 @@ class Room extends React.Component {
 
   render(){
     return (
-      <div className="room">
-        <TopBar/>
+      <div className={"room" + ((this.state.userReturned && YAWB.user.owner) ? " owner" : "")}>
+        <TopBar/> 
         <RoomUsers/>
         {this.boardView()}
         {this.chatComponent()}

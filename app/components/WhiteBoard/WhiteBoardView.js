@@ -44,7 +44,7 @@ class WhiteBoardView extends React.Component {
     this._memCtx = this._memCanvas.getContext("2d");
     this._memCanvas.width = this._canvasWidth;
     this._memCanvas.height = this._canvasHeight;
-    this.snapshotBoard();
+    this.snapshotBoard(); // capture the blank state for history purposes
     
     this.socket = io.connect(this.socketHost);
     
@@ -71,7 +71,7 @@ class WhiteBoardView extends React.Component {
     this.socket.removeListener('emited-finalize-board', this.snapshotBoard);
     this.socket.removeListener('emited-text-added', this.textRender);
     this.socket.removeListener('emited-clear-board', this.clearBoard);
-    this.socket.on('emited-undo-history', this.undoHistory);
+    this.socket.removeListener('emited-undo-history', this.undoHistory);
     this.socket.disconnect();
   }
   
@@ -108,11 +108,12 @@ class WhiteBoardView extends React.Component {
   /**
    * capture steps of the boad
    * as well as put into the history stack
-   * (called after any big update to the board)
+   * (call after any big update to the board)
    */
   snapshotBoard(){
+    var data = this._ctx.getImageData(0, 0, this._canvasWidth, this._canvas.height);
     this._memCtx.clearRect(0, 0, this._canvasWidth, this._canvas.height);
-    this._memCtx.drawImage(this._canvas, 0, 0);
+    this._memCtx.putImageData(data, 0, 0);
     this.addToHostory();
   }
   
@@ -135,9 +136,7 @@ class WhiteBoardView extends React.Component {
   }
   
   addToHostory(){
-    this._history.push(
-      this._memCtx.getImageData(0, 0, this._canvasWidth, this._canvas.height)
-    );
+    this._history.push(this._memCtx.getImageData(0, 0, this._canvasWidth, this._canvas.height));
   }
 
   render(){

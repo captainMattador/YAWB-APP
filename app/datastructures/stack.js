@@ -13,11 +13,14 @@ class Stack{
         arr.push(val);
         
         if(arr.length > max){
+            console.log('am I here for somereason?');
             arr.splice(0, 1);
         }
     }
     
     pop(){
+       if(arr.length < 1) return null;
+       
        var last = arr.length - 1,
            temp = arr[last];
        arr.splice(last, 1);
@@ -25,6 +28,8 @@ class Stack{
     }
     
     peek(){
+        if(arr.length < 1) return null;
+        
         return arr[arr.length - 1];
     }
     
