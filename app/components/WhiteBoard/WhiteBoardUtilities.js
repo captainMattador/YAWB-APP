@@ -28,7 +28,6 @@ class WhiteBoardUtilities{
     // sockets and storages
     this.socket = socket;
     this._events = new Events(); 
-    this._history = new Stack({max: 20});
     this._keys = [];
     
     // canvas vars
@@ -157,23 +156,13 @@ class WhiteBoardUtilities{
     this._drawFlag = true;
     this._addPoint(point);
     this._addPoint(point);
-    this.socket.emit('drawing-points', {
-        penSize: this._penSize,
-        color: (this._mode !== 'eraser') ? this._color : 'rgb(255, 255, 255)',
-        alpha: (this._mode !== 'eraser') ? this._alpha : 1,
-        points: this._points
-    });
+    this._emitDrawingData();
   }
   
   _drawMove(point){
     if(!this._drawFlag) return;
     this._addPoint(point);
-    this.socket.emit('drawing-points', {
-        penSize: this._penSize,
-        color: (this._mode !== 'eraser') ? this._color : 'rgb(255, 255, 255)',
-        alpha: (this._mode !== 'eraser') ? this._alpha : 1,
-        points: this._points
-    });
+    this._emitDrawingData();
   }
   
   _drawOff(e){
@@ -181,6 +170,15 @@ class WhiteBoardUtilities{
     this._drawFlag = false;
     this._points = [];
     this.socket.emit('finalize-board');
+  }
+  
+  _emitDrawingData(){
+    this.socket.emit('drawing-points', {
+        penSize: this._penSize,
+        color: (this._mode !== 'eraser') ? this._color : 'rgb(255, 255, 255)',
+        alpha: (this._mode !== 'eraser') ? this._alpha : 1,
+        points: this._points
+    });
   }
   
   _clearBoard() {

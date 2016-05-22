@@ -90,8 +90,7 @@ class Main extends React.Component {
    */
   authDataCallback(authData) {
     let userRef;
-
-    // a user just logged in
+        // a user just logged in
     if (authData) {
       userRef = YAWB.fbRef.child("Users").child(authData.uid);
       userRef.once('value', this.getUser, this.getUserError);
@@ -111,6 +110,7 @@ class Main extends React.Component {
   }
 
   getUser(snapshot){
+    console.log(snapshot.val());
     YAWB.user = snapshot.val();
     YAWB.room.id = 318487;
     
