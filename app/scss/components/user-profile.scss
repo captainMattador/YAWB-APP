@@ -8,6 +8,11 @@
 User Profile
 ****************************/
 
+.profile-overflow{
+  width:100%;
+  height: 100%;
+  overflow-y: scroll;
+}
 .user-profile{
   margin:0 auto;
   padding-top: 30px;
@@ -63,6 +68,7 @@ User Profile
   width:150px;
   height:150px;
   cursor: pointer;
+  @include border-radius();
   z-index: 1;
 }
 
@@ -81,14 +87,20 @@ User Profile
   height:150px;
   z-index: 3;
   opacity: 0;
+  @include border-radius();
   cursor: pointer;
 }
 
 .user-profile .image-info.image div span.upload-icon{
-  display: none;
+  opacity: 0;
   background-color: rgba(255, 255, 255, .7);
   font-size: 4em;
   z-index: 2;
+  -webkit-transition: opacity 100ms ease-in;
+  -moz-transition: opacity 100ms ease-in;
+  -ms-transition: opacity 100ms ease-in;
+  -o-transition: opacity 100ms ease-in;
+  transition: opacity 100ms ease-in;
 }
 
 .user-profile .image-info.image div span.upload-icon i{
@@ -96,7 +108,7 @@ User Profile
 }
 
 .user-profile .image-info.image div:hover span.upload-icon{
-  display: block;
+  opacity: 1;
 }
 
 .user-profile .image-info.image div span.letter-icon{
@@ -111,6 +123,7 @@ User Profile
 
 .user-profile .image-info.image div span.image-icon img{
   width: 100%;
+  @include border-radius();
 }
 
 .user-profile .image-info p{
@@ -164,4 +177,8 @@ User Profile
   font-size: 1.2em;
   text-decoration: underline;
   color: $primary-color-dark;
+}
+
+.user-profile .form-info.delete div.submit input{
+  color: $accent-color;
 }

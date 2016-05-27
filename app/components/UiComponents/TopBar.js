@@ -1,15 +1,11 @@
 import React from 'react';
-import UserProfileImg from '../User/UserProfileImg';
+import UserProfileImg from './UserProfileImg';
+import SettingsPane from './SettingsPane';
 
 class TopBar extends React.Component {
 
   constructor(){
     super();
-    this.logOut = this.logOut.bind(this);
-  }
-
-  logOut(){
-      YAWB.fbRef.unauth();
   }
 
   render(){
@@ -17,12 +13,9 @@ class TopBar extends React.Component {
       <section className="top-bar">
         <div className="user-info">
             <UserProfileImg user={YAWB.user}/>
-            <div className="settings-pane">
-                <ul>
-                    <li onClick={this.logOut}><i className="fa fa-power-off" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Log Out</li>
-                </ul>
-            </div>
+            <SettingsPane settigsExtended={this.props.extraSettings}/>
         </div>
+        {this.props.children}
       </section>
     )
   }

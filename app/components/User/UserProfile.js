@@ -1,7 +1,7 @@
 import React from 'react';
 import {updateRoute, loading, msg} from '../../utils/CustomEvents';
 import Input from '../FormComponents/Input';
-import {validateEmail} from '../../utils/helpers';
+import formHelper from '../../utils/form-helpers';
 
 var self;
 
@@ -16,7 +16,6 @@ class UserProfile extends React.Component {
       profileImage: YAWB.user.profileImage
     };
     self = this;
-    this.formVals = {};
     
     this.fileAdded = this.fileAdded.bind(this);
     this.updateInfo = this.updateInfo.bind(this);
@@ -25,12 +24,8 @@ class UserProfile extends React.Component {
     this.updatePasswordHandler = this.updatePasswordHandler.bind(this);
     this.cancelHandler = this.cancelHandler.bind(this);
     this.deleteAccount = this.deleteAccount.bind(this);
-    this.blur = this.blur.bind(this);
   }
 
-  componentDidMount(){
-  }
-  
   updateInfo(elem, val){
     if(val === ''){
       val = YAWB.user[elem.name];
@@ -49,17 +44,17 @@ class UserProfile extends React.Component {
   updateEmailHandler(e){
     e.preventDefault();
     let form = this.refs.emailForm;
-    let valid = this.validateForm(form);
+    let valid = formHelper.validateForm(form);
     let vals = {}
     
     if(valid){
       loading(true);
-      vals = this.getSubmitVals(form);
+      vals = formHelper.getSubmitVals(form);
       YAWB.fbRef.changeEmail({
         oldEmail: YAWB.user.email,
         newEmail: vals.email,
         password: vals.currentPassword
-      }, this.updateEmailCallback.bind(this, form, vals.newEmail));
+      }, this.updateEmailCallback.bind(this, form, vals.email));
      
     }else{
       msg('Error', 'Invalid form. Please fix errors.', true);
@@ -82,7 +77,7 @@ class UserProfile extends React.Component {
       let user = YAWB.fbRef.child('Users').child(YAWB.user.uid);
       user.update({ email: email });
       YAWB.user.email = email;
-      this.clearForm(form);
+      formHelper.clearForm(form);
       msg('Success', 'Email updated.', false);
     }
     loading(false);
@@ -97,12 +92,12 @@ class UserProfile extends React.Component {
   updatePasswordHandler(e){
     e.preventDefault();
     let form = this.refs.passwordForm;
-    let valid = this.validateForm(form);
+    let valid = formHelper.validateForm(form);
     let vals = {}
     
     if(valid){
       loading(true);
-      vals = this.getSubmitVals(form);
+      vals = formHelper.getSubmitVals(form);
       YAWB.fbRef.changePassword({
         email: YAWB.user.email,
         oldPassword: vals.currentPassword,
@@ -127,7 +122,7 @@ class UserProfile extends React.Component {
           msg('Error', 'Error changing password.', true);
       }
     }else{
-      this.clearForm(form);
+      formHelper.clearForm(form);
       msg('Success', 'Password updated.', false);
     }
     loading(false);
@@ -141,11 +136,11 @@ class UserProfile extends React.Component {
   deleteAccount(e){
     e.preventDefault();
     let form = this.refs.deleteForm;
-    let valid = this.validateForm(form);
+    let valid = formHelper.validateForm(form);
     let vals = {}
     
     if(valid){
-      vals = this.getSubmitVals(form);
+      vals = formHelper.getSubmitVals(form);
       let deleteConfirmed = confirm('Do you really want to delete your account? This cannot be undone.');
       
       if (deleteConfirmed) {
@@ -155,7 +150,7 @@ class UserProfile extends React.Component {
           password: vals.deletePassword
         }, this.deleteCallback.bind(this));
       }else{
-        this.clearForm(form);
+        formHelper.clearForm(form);
       }
      
     }else{
@@ -193,13 +188,13 @@ class UserProfile extends React.Component {
   userInfoHandler(e){
     e.preventDefault();
     let form = this.refs.userInfoForm;
-    let valid = this.validateForm(form);
+    let valid = formHelper.validateForm(form);
     let vals = {};
     let size;
     
     if(valid){
       loading(true);
-      vals = this.getSubmitVals(form);
+      vals = formHelper.getSubmitVals(form);
       size = Object.keys(vals).length;
       if(size > 0){
         let userRef = YAWB.fbRef.child('Users').child(YAWB.user.uid);
@@ -224,82 +219,12 @@ class UserProfile extends React.Component {
     if(error){
       msg('Error', 'Error updating user.', true);
     }else{
-      this.clearForm(form);
+      formHelper.clearForm(form);
       msg('Success', 'User updated.', false);
     }
     loading(false);
   }
-  
-  /**
-   * 
-   * global form helpers
-   * 
-   */
-  
-  clearForm(form){
-    let inputs = form.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]');
-    for(var i = 0; i < inputs.length; i++){
-      inputs[i].value = '';
-    }
-  }
-  
-  getSubmitVals(form){
-    var inputs = form.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]'),
-        vals = {};
-    for(var i = 0; i < inputs.length; i++ ){
-      let trimVal = inputs[i].value.trim();
-      if(trimVal !== ''){
-        vals[inputs[i].name] = trimVal;
-      }
-    }
-    return vals;
-  }
-  
-  validateForm(form){
 
-    let inputs = form.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]');
-    let inputLength = inputs.length;
-    let validLength = 0;
-
-    if(form.classList.contains('clean')){
-      form.classList.add('dirty');
-      form.classList.remove('clean');
-    }
-
-    for(var i = 0; i < inputLength; i++){
-      let valid = this.validateInput(inputs[i]);
-      if(valid) validLength++;
-    }
-
-    return (inputLength === validLength);
-  }
-  
-  blur(e){
-    this.validateInput(e.target);
-  }
-  
-  validateInput(input){
-    let valid = false;
-    let val = input.value.trim();
-    
-    if(!input.required && val === ''){
-      return true;
-    }
-    
-    if(input.type === 'email' && !input.hasAttribute('data-match')){
-      valid = validateEmail(input.value);
-    }else if(input.hasAttribute('data-match')){
-      let matchName = input.dataset.match;
-      let matchElem = document.querySelector('input[name='+matchName+']');
-      valid = (input.value === matchElem.value);
-    }else{
-      valid = (input.getAttribute('minlength') <= input.value.length);
-    }
-    (valid) ? input.classList.remove('invalid') : input.classList.add('invalid');
-    return valid;
-  }
-  
-  
   cancelHandler(e){
     e.preventDefault();
     updateRoute('USER_HOME_ROUTE');
@@ -317,55 +242,34 @@ class UserProfile extends React.Component {
     if(typeof file === 'undefined') return;
     
     // not an image
-    if(!this.validExt(file.name)){
+    if(!formHelper.validImageExt(file.name)){
       msg('Error', 'In correct file format.', true);
-      this.clearFile(e.target);
+      formHelper.clearFile(e.target);
       return;
     }
     
     // file size is too large
-    if(!this.validSize(file.size)){
+    if(!formHelper.validSize(file.size, 10000)){
       msg('Error', 'File size is too large.', true);
-      this.clearFile(e.target);
+      formHelper.clearFile(e.target);
       return;
     }
     
-    this.saveImage(file);
-    this.displayImage(file.path);    
+    this.saveImage(file);  
   }
-  
-  clearFile(elem){
-    elem.value = '';
-    elem.files[0]= null;
-  }
-  
-  validExt(filename){
-    return /\.(jpe?g|png|gif|bmp)$/i.test(filename);
-  }
-  
-  validSize(size){
-    return size > 10000;
-  }
-  
+
   saveImage(file){
     var reader = new FileReader();
     reader.onload = function (e) {
         let data = this.result;
         let userRef = YAWB.fbRef.child('Users').child(YAWB.user.uid);
+        self.setState({profileImage: data});
         userRef.update({
           profileImage: data
         });
         YAWB.user.profileImage = data;
     }
     reader.readAsDataURL( file );
-  }
-  
-  displayImage(src){
-    var img = new Image();
-    img.onload = function(){
-      self.setState({profileImage: this.src});
-    }
-    img.src = src;
   }
 
   render(){
@@ -377,7 +281,8 @@ class UserProfile extends React.Component {
       imageView = <span className="image-icon"><img src={this.state.profileImage} alt={this.state.fname}/></span>;
     }
     
-    return (        
+    return (
+        <div className="profile-overflow">     
         <div className="user-profile">
           
            <div className="content">
@@ -405,8 +310,8 @@ class UserProfile extends React.Component {
                     <div className="form-info user-info">
                       <h3>Update Name:</h3>
                       <form ref="userInfoForm" className="update-user-form clean" onSubmit={this.userInfoHandler} noValidate>
-                          <Input name="fname" type="text" minLength={1} maxLength={20} placeholder="First Name" valueChange={this.updateInfo} blur={this.blur}/>
-                          <Input name="lname" type="text" minLength={1} maxLength={20} placeholder="Last Name" valueChange={this.updateInfo} blur={this.blur}/>      
+                          <Input name="fname" type="text" minLength={1} maxLength={20} placeholder="First Name" valueChange={this.updateInfo} blur={formHelper.blur}/>
+                          <Input name="lname" type="text" minLength={1} maxLength={20} placeholder="Last Name" valueChange={this.updateInfo} blur={formHelper.blur}/>      
                           <div className="submit"><input className="cta-btn" ref="updateNameSubmit" type="submit" value="Update"/></div>
                       </form>
                     </div>
@@ -414,8 +319,8 @@ class UserProfile extends React.Component {
                     <div className="form-info email">
                         <h3>Update Email:</h3>
                         <form ref="emailForm" className="update-user-email clean" onSubmit={this.updateEmailHandler} noValidate>
-                          <Input name="email" type="email" placeholder="New Email" blur={this.blur} valueChange={this.updateInfo} required={true}/>
-                          <Input name="currentPassword" type="password" minLength={1} placeholder="Current Password" blur={this.blur} required={true}/>
+                          <Input name="email" type="email" placeholder="New Email" blur={formHelper.blur} valueChange={this.updateInfo} required={true}/>
+                          <Input name="currentPassword" type="password" minLength={1} placeholder="Current Password" blur={formHelper.blur} required={true}/>
                           <div className="submit"><input className="cta-btn" ref="updateEmailSubmit" type="submit" value="Update"/></div>
                         </form>
                     </div>
@@ -423,8 +328,8 @@ class UserProfile extends React.Component {
                     <div className="form-info password">
                         <h3>Update Password:</h3>
                         <form ref="passwordForm" className="update-user-password clean" onSubmit={this.updatePasswordHandler} noValidate>
-                          <Input name="newPassword" type="password" minLength={1} placeholder="New Password" blur={this.blur} required={true}/>
-                          <Input name="currentPassword" type="password" minLength={1} placeholder="Current Password" blur={this.blur} required={true}/>
+                          <Input name="newPassword" type="password" minLength={1} placeholder="New Password" blur={formHelper.blur} required={true}/>
+                          <Input name="currentPassword" type="password" minLength={1} placeholder="Current Password" blur={formHelper.blur} required={true}/>
                           <div className="submit"><input className="cta-btn" ref="updatePasswordSubmit" type="submit" value="Update"/></div>
                         </form>
                     </div>
@@ -432,13 +337,14 @@ class UserProfile extends React.Component {
                     <div className="form-info delete">
                         <h3>Delete Account:</h3>
                         <form ref="deleteForm" className="delete-user clean" onSubmit={this.deleteAccount} noValidate>
-                          <Input name="deleteEmail" type="email" placeholder="Current Email" blur={this.blur} required={true}/>
-                          <Input name="deletePassword" type="password" minLength={1} placeholder="Current Password" blur={this.blur} required={true}/>
+                          <Input name="deleteEmail" type="email" placeholder="Current Email" blur={formHelper.blur} required={true}/>
+                          <Input name="deletePassword" type="password" minLength={1} placeholder="Current Password" blur={formHelper.blur} required={true}/>
                           <div className="submit"><input className="cta-btn" ref="deleteSubmit" type="submit" value="Delete"/></div>
                         </form>
                     </div>
                  </div>
           </div>  
+        </div>
         </div>
     )
   }

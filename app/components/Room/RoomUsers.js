@@ -1,7 +1,7 @@
 import React from 'react';
 import io from 'socket.io-client';
 import {msg} from '../../utils/CustomEvents';
-import UserProfileImg from '../User/UserProfileImg';
+import UserProfileImg from '../UiComponents/UserProfileImg';
 
 class RoomUsers extends React.Component {
 

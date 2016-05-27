@@ -1,0 +1,105 @@
+
+
+.top-bar{
+    position: relative;
+    height: 70px;
+    background-color: $white-color;
+    border-bottom: 1px solid $divider-color;
+}
+
+.user-info{
+    position: absolute;
+    top: 5px;
+    right: 30px;
+    width: 60px;
+    height:auto;
+    cursor: pointer;
+}
+
+.top-bar .user-profile-image{
+    display: block;
+    width: 60px;
+    height: 60px;
+    text-align: center;
+    background-color: $accent-color-dark;
+    border:3px solid $light-color;
+    @include border-radius();
+    overflow: hidden;
+}
+
+.top-bar .user-profile-image span{
+    display: block;
+    color:$white-color;
+    font-size: 3em;
+}
+
+.top-bar .user-profile-image span img{
+    width: 100%;
+}
+
+.top-bar .user-profile-image span.letter{
+    padding-top: 12px;
+}
+
+.settings-pane{
+    position: relative;
+    display: none;
+    margin-left: -60px;
+    margin-top: 10px;
+    width: 120px;
+    background: $mid-color;
+    border: 1px solid $light-color;
+    box-shadow: 0 1px 10px 0 $divider-color;
+    @include border-radius(8px, 8px, 8px, 8px);
+}
+
+.settings-pane:after{
+    display: block;
+    position: absolute;
+    top: -7px;
+    left: 82px;
+    width:14px;
+    height:14px;
+    content: '';
+    background-color:$mid-color;
+    border: 1px solid $light-color;
+    border-right: 1px solid $mid-color;
+    border-bottom: 1px solid $mid-color;
+    transform: rotate(45deg);
+}
+
+.user-info:hover .settings-pane{
+    display: block;
+}
+
+.settings-pane li{
+    padding: 10px;
+    font-size: 1.1em;
+    color: $light-color;
+    border-bottom:1px solid #828181;
+}
+
+.settings-pane li:last-child{
+    border-bottom:none;
+}
+
+
+/*
+chat nav
+*/
+
+.chat-nav{
+    position: absolute;
+    top: 10px;
+    left: 20px;
+}
+
+.chat-nav li{
+    float: left;
+    width: 30px;
+    height: 30px;
+    padding: 0 20px;
+    font-size: 3em;
+    cursor: pointer;
+    color:$divider-color;
+}

@@ -132,11 +132,24 @@ class UserHome extends React.Component {
   generateRoomNum(){
     return Math.floor((Math.random() * MAX_ROOM_NUM) + MIN_ROOM_NUM);
   }
+  
+  extendSetting(){
+    
+  }
+  
+  goToProfile(){
+    updateRoute('UPDATE_PROFILE_ROUTE');
+  }
 
   render(){
+    
+    var extendSettings = [
+      {name: 'Profile', icon: 'fa-user', callBack: this.goToProfile}
+    ];
+    
     return (
       <div className="user-home">
-        <TopBar/>
+        <TopBar extraSettings={extendSettings}/>
         <div className="table">
           <div className="cell">
             <div className="content">

@@ -13,31 +13,6 @@
 /*
 generic stylings for all comments
 */
-.peer-comments .toggle-comments{
-  position: absolute;
-  top:20px;
-  right:-60px;
-  width: 30px;
-  height: 30px;
-  font-size: 3em;
-  cursor: pointer;
-  color:$divider-color;
-}
-
-.questions .toggle-comments{
-  position: absolute;
-  top:20px;
-  right:-110px;
-  width: 30px;
-  height: 30px;
-  font-size: 3em;
-  cursor: pointer;
-  color:$divider-color;
-}
-
-.toggle-comments.active{
-  display: none;
-}
 
 .comments-wrapper{
   position: relative;;
@@ -48,6 +23,7 @@ generic stylings for all comments
   background-color: $white-color;
   box-shadow: 0 1px 10px 0 $divider-color;
   transition: all 250ms ease-in;
+  z-index: 10;
 }
 
 .peer-comments.active .comments-wrapper, .questions.active .comments-wrapper{

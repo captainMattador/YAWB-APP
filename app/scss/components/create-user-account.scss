@@ -8,44 +8,138 @@
 User log in Component
 ****************************/
 
+.ceate-account-overflow{
+  width:100%;
+  height: 100%;
+  overflow-y: scroll;
+}
+
 .ceate-account{
-  height: 100%;
-}
-
-.ceate-account .table{
-  width:100%;
-  max-width: 400px;
-  height: 100%;
   margin:0 auto;
-}
-
-.ceate-account .cell{
-  width:100%;
-  margin:0 auto;
+  padding-top: 30px;
+  width:890px;
 }
 
 .ceate-account .content{
   float: left;
-  text-align: center;
-  width: 100%;
-  padding: 30px;
+  width:100%;
+  margin-bottom: 30px;
   border: 1px solid $divider-color;
   background-color: $white-color;
 }
-.ceate-account h2{
-  font-size: 1.8em;
-  text-align: left;
-  padding-bottom: 20px;
+
+.ceate-account form {
+  float: left;
+  width:100%;
+  padding: 10px;
 }
 
-.ceate-account p{
-  padding: 10px 0;
+.ceate-account form div{
+  float: left;
+  padding: 10px;
+  width:50%;
 }
 
-.ceate-account button{
+.ceate-account form button{
+  width:100%;
+}
+
+
+/*
+  profile image
+*/
+.ceate-account .image-wrap{
+  float: left;
+  width:100%;
+  padding: 30px 0;
+  text-align: center;
+  background-color: $primary-color;
+}
+
+.ceate-account.image-info{
+  float: left;
   width: 100%;
+  text-align: center;
 }
 
-.ceate-account form, .ceate-account form div{
-  padding-bottom: 20px;
+.ceate-account .image-info.image{
+  padding-bottom: 10px;
+}
+
+.ceate-account .image-info.image div{
+  position: relative;
+  margin: 0 auto;
+  width:150px;
+  height:150px;
+  background: $divider-color;
+  @include border-radius();
+  overflow: hidden;
+}
+
+.ceate-account .image-info.image div span{
+  position: absolute;
+  top:0;
+  left: 0;
+  display: block;
+  width:150px;
+  height:150px;
+  cursor: pointer;
+  @include border-radius();
+  z-index: 1;
+}
+
+.ceate-account .image-info.image p{
+  padding-top: 5px;
+  font-size: 1em;
+  font-style: italic;
+}
+
+.ceate-account .image-info.image input[name="fileUpload"]{
+  position: absolute;
+  top:0;
+  left: 0;
+  display: block;
+  width:150px;
+  height:150px;
+  z-index: 3;
+  opacity: 0;
+  @include border-radius();
+  cursor: pointer;
+}
+
+.ceate-account span.upload-icon{
+  opacity: 0;
+  background-color: rgba(255, 255, 255, .7);
+  font-size: 4em;
+  z-index: 2;
+  -webkit-transition: opacity 100ms ease-in;
+  -moz-transition: opacity 100ms ease-in;
+  -ms-transition: opacity 100ms ease-in;
+  -o-transition: opacity 100ms ease-in;
+  transition: opacity 100ms ease-in;
+}
+
+.ceate-account span.upload-icon.no-image{
+  opacity: 1;
+}
+
+.ceate-account .image-info.image div:hover span.upload-icon{
+  opacity: 1;
+}
+
+.ceate-account span.upload-icon i{
+  padding-top: 52px;
+}
+
+.ceate-account span.image-icon{
+  z-index: 1;
+}
+
+.ceate-account span.image-icon img{
+  width: 100%;
+  @include border-radius();
+}
+
+.ceate-account .image-info p{
+  color: $white-color;
 }

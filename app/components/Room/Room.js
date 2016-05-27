@@ -1,4 +1,5 @@
 import React from 'react';
+import {updateRoute, loading, msg} from '../../utils/CustomEvents';
 import CommentsComponent from '../Comments/CommentsComponent';
 import TopBar from '../UiComponents/TopBar';
 import RoomUsers from './RoomUsers';
@@ -28,6 +29,15 @@ class Room extends React.Component {
     });
   }
   
+  toggleChatBox(e){
+    e.preventDefault();
+    var chatBox = e.currentTarget.dataset.chatBox;
+    var event = new CustomEvent('toggle-comments', {detail: {
+      chatBox: chatBox
+    }});
+    window.dispatchEvent(event);
+  }
+  
   boardView(){
     if(this.state.userReturned){
       return (
@@ -37,27 +47,46 @@ class Room extends React.Component {
   }
   
   chatComponent(){
-    if(this.state.userReturned && !YAWB.user.owner){
+    if(this.state.userReturned && YAWB.user.owner){
       return (
         <CommentsComponent
           heading="Chat"
-          icon="fa-comments"
           commentsClass="peer-comments"
           dbList="PeerComments"/>
       );
     }
   }
+  
+  chatNav(){
+    if(this.state.userReturned && YAWB.user.owner){
+      return <li ref="chatIcon" data-chat-box="peer-comments" onClick={this.toggleChatBox}><i className="fa fa-comments" aria-hidden="true"></i></li>;
+    }
+  }
+  
+  leaveRoom(){
+    YAWB.room = {};
+    updateRoute('USER_HOME_ROUTE');
+  }
 
   render(){
+
+    var extendSettings = [
+      {name: 'Leave Room', icon: 'fa-sign-out', callBack: this.leaveRoom}
+    ];
+    
     return (
       <div className={"room" + ((this.state.userReturned && YAWB.user.owner) ? " owner" : "")}>
-        <TopBar/> 
+        <TopBar extraSettings={extendSettings}>
+          <ul className="chat-nav">
+            {this.chatNav()}
+            <li ref="questionIcon" data-chat-box="questions" onClick={this.toggleChatBox}><i className="fa fa-question-circle" aria-hidden="true"></i></li>
+          </ul>
+        </TopBar> 
         <RoomUsers/>
         {this.boardView()}
         {this.chatComponent()}
         <CommentsComponent
           heading="Ask a question"
-          icon="fa-question-circle"
           commentsClass="questions"
           dbList="Questions"/>
       </div>

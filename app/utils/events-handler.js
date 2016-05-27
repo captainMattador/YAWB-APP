@@ -6,6 +6,8 @@ class Events{
     }
     
     addEvent(element, names, callback) {
+        if(typeof element === 'undefined') return;
+        
 		names = names.split(' ');
 	    for(var i = 0; i < names.length; i++) {
 			element.addEventListener(names[i], callback, false);

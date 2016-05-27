@@ -10,15 +10,18 @@ class CommentsComponent extends React.Component {
     this.win = window;
     this.updateListHeight = this.updateListHeight.bind(this);
     this.toggleComments = this.toggleComments.bind(this);
+    this.cancelComments = this.cancelComments.bind(this);
   }
 
   componentDidMount(){
     this.updateListHeight()
     this.win.addEventListener('resize', this.updateListHeight);
+    this.win.addEventListener('toggle-comments', this.toggleComments, false);
   }
 
   componentWillUnmount(){
     this.win.removeEventListener('resize', this.updateListHeight);
+    this.win.removeEventListener('toggle-comments', this.toggleComments, false);
   }
 
   updateListHeight(){
@@ -30,25 +33,25 @@ class CommentsComponent extends React.Component {
         (this.win.innerHeight - commentSubmit.clientHeight - commentHeader.clientHeight) + 'px';
   }
 
-  toggleComments(){
-    var toggleBtn = document.querySelectorAll('.toggle-comments');
-    // hack to hide all the toggle buttons
-    for(var i = 0; i < toggleBtn.length; i++){
-      toggleBtn[i].classList.toggle('active');
+  toggleComments(e){ 
+    e.preventDefault();
+    if(this.refs.comments.classList.contains(e.detail.chatBox)){
+      this.refs.comments.classList.toggle('active');
     }
-    this.refs.comments.classList.toggle('active');
+  }
+  
+  cancelComments(e){ 
+    e.preventDefault();
+    this.refs.comments.classList.remove('active');
   }
 
   render(){
     return (
       <section ref="comments" className={"comments " + this.props.commentsClass}>
-        <div className="toggle-comments">
-          <i className={"fa " + this.props.icon} aria-hidden="true" onClick={this.toggleComments}></i>
-        </div>
         <div className="comments-wrapper">
           <div ref="commentHeader" className="header">
             <h2>{this.props.heading}</h2>
-            <i className="fa fa-times-circle" aria-hidden="true" onClick={this.toggleComments}></i>
+            <i className="fa fa-times-circle" aria-hidden="true" onClick={this.cancelComments}></i>
           </div>
           <CommentList ref="commentList" dbList={this.props.dbList}/>
           <CommentSubmit ref="commentSubmit" dbList={this.props.dbList}/>
