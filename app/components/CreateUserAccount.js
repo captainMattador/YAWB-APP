@@ -32,11 +32,12 @@ class CreateUserAccount extends React.Component {
     }
 
     let self = this;
-    let postsUser = YAWB.fbRef.child("Users").child(userData.uid);
+    let postsUser = YAWB.fbRef.child('Users').child(userData.uid);
     postsUser.set({
       fname: this.formVals.fname,
       lname: this.formVals.lname,
       email: this.formVals.email,
+      profileImage: null,
       uid: userData.uid
     });
     YAWB.fbRef.authWithPassword({
@@ -45,7 +46,7 @@ class CreateUserAccount extends React.Component {
     }, this.authWithPasswordCallback.bind(this));
   }
 
-  authWithPasswordCallback(error, data){
+  authWithPasswordCallback(error){
     loading(false);
   }
 

@@ -5,42 +5,163 @@
 @import '../mixins';
 
 /****************************
-User log in Component
+User Profile
 ****************************/
-.entry{
-  height: 100%;
-}
 
-.entry .table{
-  width:100%;
-  max-width: 400px;
-  height: 100%;
+.user-profile{
   margin:0 auto;
+  padding-top: 30px;
+  width:890px;
 }
 
-.entry .cell{
-  width:100%;
-  margin:0 auto;
-}
-
-.entry .content{
+.user-profile .content{
   float: left;
-  text-align: center;
-  width: 100%;
-  padding: 30px;
+  width:100%;
+  margin-bottom: 30px;
   border: 1px solid $divider-color;
   background-color: $white-color;
 }
-.entry h2{
-  font-size: 1.8em;
-  text-align: left;
-  padding-bottom: 20px;
+
+.user-profile .image-wrap{
+  float: left;
+  width:100%;
+  padding: 30px 0;
+  background-color: $primary-color;
 }
 
-.entry p{
-  padding: 10px 0;
+.user-profile .info-wrap{
+  float: left;
+  width:100%;
+  padding: 20px 0;
 }
 
-.entry button{
+.user-profile .image-info{
+  float: left;
   width: 100%;
+  text-align: center;
+}
+
+.user-profile .image-info.image{
+  padding-bottom: 10px;
+}
+
+.user-profile .image-info.image div{
+  position: relative;
+  margin: 0 auto;
+  width:150px;
+  height:150px;
+  background: $divider-color;
+  @include border-radius();
+  overflow: hidden;
+}
+
+.user-profile .image-info.image div span{
+  position: absolute;
+  top:0;
+  left: 0;
+  display: block;
+  width:150px;
+  height:150px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.user-profile .image-info.image p{
+  padding-top: 5px;
+  font-size: 1em;
+  font-style: italic;
+}
+
+.user-profile .image-info.image input[name="fileUpload"]{
+  position: absolute;
+  top:0;
+  left: 0;
+  display: block;
+  width:150px;
+  height:150px;
+  z-index: 3;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.user-profile .image-info.image div span.upload-icon{
+  display: none;
+  background-color: rgba(255, 255, 255, .7);
+  font-size: 4em;
+  z-index: 2;
+}
+
+.user-profile .image-info.image div span.upload-icon i{
+  padding-top: 52px;
+}
+
+.user-profile .image-info.image div:hover span.upload-icon{
+  display: block;
+}
+
+.user-profile .image-info.image div span.letter-icon{
+  font-size: 5em;
+  padding-top: 50px;
+  z-index: 1;
+}
+
+.user-profile .image-info.image div span.image-icon{
+  z-index: 1;
+}
+
+.user-profile .image-info.image div span.image-icon img{
+  width: 100%;
+}
+
+.user-profile .image-info p{
+  color: $white-color;
+}
+
+.user-profile .image-info.cancel button{
+  color: $white-color;
+  cursor: pointer;
+  text-decoration: underline;
+}
+/*
+  form stylings
+*/
+
+.user-profile .form-info{
+  position: relative;
+  top: auto;
+  right: auto;
+  float: left;
+  width:100%;
+  padding: 0 10px;
+}
+
+.user-profile .form-info h3{
+  padding-left: 10px;
+  padding-top: 10px;
+  font-size: 1.6em;
+  padding-bottom: 5px;
+}
+
+.user-profile .form-info div{
+  float: left;
+  padding:10px;
+  width: 398px;
+}
+
+.user-profile .form-info div input{
+  padding: 10px 10px;
+}
+
+.user-profile .form-info div.submit{
+  width: 70px;
+  padding-top: 24px;
+}
+
+.user-profile .form-info div.submit input{
+  padding:0;
+  border:0;
+  background: none;
+  font-size: 1.2em;
+  text-decoration: underline;
+  color: $primary-color-dark;
 }

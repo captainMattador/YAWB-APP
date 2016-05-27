@@ -22,20 +22,28 @@ Top header bar in a room
 }
 
 .top-bar .user-profile-image{
-    display: table;
+    display: block;
     width: 60px;
     height: 60px;
     text-align: center;
     background-color: $accent-color-dark;
     border:3px solid $light-color;
     @include border-radius();
+    overflow: hidden;
 }
 
 .top-bar .user-profile-image span{
-    vertical-align: middle;
-    display: table-cell;
+    display: block;
     color:$white-color;
     font-size: 3em;
+}
+
+.top-bar .user-profile-image span img{
+    width: 100%;
+}
+
+.top-bar .user-profile-image span.letter{
+    padding-top: 12px;
 }
 
 .settings-pane{
@@ -220,11 +228,40 @@ input[type="range"] {
     padding: 20px;
 }
 
+
+/*********************************************
+Cavas and tool stylings
+*********************************************/
+
+/* text mode input */
+.text-mode-input{
+  display: none;
+  position: absolute;
+  width:300px;
+}
+
+.text-mode-input input{
+  font-family: 'Roboto';
+  font-size: 15px;
+  padding: 0;
+  resize: none;
+  border:none;
+  background: none;
+}
+
+.text-mode-input.active{
+    display: block;
+}
+
 canvas{
     display: inline-block;
     background-color: $white-color;
     -webkit-box-shadow: 0 1px 30px 0 $divider-color;
     box-shadow: 0 1px 100px 0 $divider-color;
+}
+
+canvas.text{
+    cursor: text;
 }
 
 /*********************************************

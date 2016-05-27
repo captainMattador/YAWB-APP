@@ -13,7 +13,6 @@ class Stack{
         arr.push(val);
         
         if(arr.length > max){
-            console.log('am I here for somereason?');
             arr.splice(0, 1);
         }
     }

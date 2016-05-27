@@ -12,7 +12,7 @@ class RoomUsers extends React.Component {
     };
     this.usersList = [];
     this.socket;
-    this.socketHost = 'http://159.203.245.200:8080/room-users';
+    this.socketHost = 'http://localhost:8080/room-users';
     this.userJoined = this.userJoined.bind(this);
     this.userLeft = this.userLeft.bind(this);
     this.toggleUsers = this.toggleUsers.bind(this);
@@ -64,8 +64,8 @@ class RoomUsers extends React.Component {
     msg(userName, 'Left the room', false);
   }
 
-  userJoined(user){
-    this.usersList.push(user);
+  userJoined(users){
+    this.usersList = users;
     this.setState({
       Users : this.usersList
     });
@@ -94,6 +94,7 @@ class RoomUsers extends React.Component {
                 </div>
               </li>);
     });
+    
     return (
       <section ref="userList" className="room-users">
         <span ref="toggle" className="toggleUsers" onClick={this.toggleUsers}><i className="fa fa-chevron-up" aria-hidden="true"></i></span>

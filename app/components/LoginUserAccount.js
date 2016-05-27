@@ -23,11 +23,11 @@ class LoginUserAccount extends React.Component {
     }, this.authWithPasswordCallback.bind(this));
   }
 
-  authWithPasswordCallback(error, data){
-    loading(false);
+  authWithPasswordCallback(error){
     if (error) {
       msg('Error', 'Invalid username/password', true);
     }
+    loading(false);
   }
 
   handleSubmit(e){

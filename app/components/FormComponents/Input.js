@@ -39,6 +39,10 @@ class Input extends React.Component {
       this.refs.input.classList.remove('clean');
       this.refs.input.classList.add('dirty');
     }
+
+    if(typeof this.props.valueChange === 'function'){
+      this.props.valueChange(e.target, targetVal);
+    }
   }
 
   render() {

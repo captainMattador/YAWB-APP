@@ -7,21 +7,17 @@ class UserProfileImg extends React.Component {
   }
 
   userProfileImage(user){
-      if(!user.profileImage){
-          return user.fname.substring(0, 1);
+      if(typeof user.profileImage !== 'undefined'){
+          return <span><img src={user.profileImage} /></span>;
+      }else{
+          return <span className="letter">{user.fname.substring(0, 1)}</span>;
       }
-
-      // return profile image if there is one
-      // not yet implemented
-      return user.fname.substring(0, 1);
   }
 
-  componentDidMount(){
-  }
   render(){
     return (
       <div className="user-profile-image">
-          <span>{this.userProfileImage(this.props.user)}</span>
+          {this.userProfileImage(this.props.user)}
       </div>
     )
   }

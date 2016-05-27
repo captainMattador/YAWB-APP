@@ -11,7 +11,7 @@ class WhiteBoardView extends React.Component {
     
     this.wbUtils;
     this.socket;
-    this.socketHost = 'http://159.203.245.200:8080/board-data';
+    this.socketHost = 'http://localhost:8080/board-data';
     this._history = new Stack({max: 20});
     
     // dom canvas
@@ -117,8 +117,17 @@ class WhiteBoardView extends React.Component {
     this.addToHostory();
   }
   
-  textRender(){
-    console.log('render the text to the board');
+  textRender(data){
+    this._ctx.save();
+    
+    this._ctx.font = data.font;
+    this._ctx.fillStyle = data.color;
+    this._ctx.globalAlpha = data.alpha;
+    this._ctx.textBaseline = 'top'; 
+    this._ctx.fillText(data.text, data.pos.x, data.pos.y);
+    
+    this._ctx.restore();
+    this.snapshotBoard();
   }
   
   clearBoard(){

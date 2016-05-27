@@ -38,7 +38,6 @@ class Main extends React.Component {
 
     this.getUser = this.getUser.bind(this);
     this.getUserError = this.getUserError.bind(this);
-    this.authDataCallback = this.authDataCallback.bind(this);
     this._updateTopLevelRoute = this._updateTopLevelRoute.bind(this);
     this.loadScreen = this.loadScreen.bind(this);
     this.updateRoute = this.updateRoute.bind(this);
@@ -92,19 +91,12 @@ class Main extends React.Component {
     let userRef;
         // a user just logged in
     if (authData) {
-      userRef = YAWB.fbRef.child("Users").child(authData.uid);
+      userRef = YAWB.fbRef.child('Users').child(authData.uid);
       userRef.once('value', this.getUser, this.getUserError);
     }
 
-    // a user is either logging out,
-    // or they are just coming into the app.
+    // user is not logged in. Send them to the login screen
     else {
-      // user is logging out
-      if(typeof YAWB.user.uid !== 'undefined'){
-        userRef = YAWB.fbRef.child("Users").child(YAWB.user.uid);
-        YAWB.user = {};
-        YAWB.room = {};
-      }
       this._updateTopLevelRoute(this.routes['LOGIN_USER_ACCOUNT_ROUTE']);
     }
   }
@@ -112,17 +104,28 @@ class Main extends React.Component {
   getUser(snapshot){
     console.log(snapshot.val());
     YAWB.user = snapshot.val();
-    YAWB.room.id = 318487;
+    this._updateTopLevelRoute(this.routes['USER_HOME_ROUTE']);
     
     /***
      * 
      * 
      * remove once not needed,
-     * sets room automoatically to thetest room
+     * goes straight to user profile
      * 
      * 
      */
-    this._updateTopLevelRoute(this.routes['ROOM_ROUTE']);
+    //this._updateTopLevelRoute(this.routes['UPDATE_PROFILE_ROUTE']);
+    
+    /***
+     * 
+     * 
+     * remove once not needed,
+     * sets room automoatically to the test room
+     * 
+     * 
+     */
+    // YAWB.room.id = 318487;
+    // this._updateTopLevelRoute(this.routes['ROOM_ROUTE']);
   }
 
   /**
