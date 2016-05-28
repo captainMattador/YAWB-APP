@@ -104,7 +104,7 @@ class Main extends React.Component {
   getUser(snapshot){
     console.log(snapshot.val());
     YAWB.user = snapshot.val();
-    this._updateTopLevelRoute(this.routes['USER_HOME_ROUTE']);
+   // this._updateTopLevelRoute(this.routes['USER_HOME_ROUTE']);
     
     /***
      * 
@@ -124,8 +124,8 @@ class Main extends React.Component {
      * 
      * 
      */
-    // YAWB.room.id = 573334;
-    // this._updateTopLevelRoute(this.routes['ROOM_ROUTE']);
+     YAWB.room.id = 950268;
+     this._updateTopLevelRoute(this.routes['ROOM_ROUTE']);
   }
 
   /**

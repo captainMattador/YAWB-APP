@@ -9,7 +9,8 @@
     "sass:w": "nodemon -e scss -x \"npm run sass\"",
     "build": "npm run sass:w & npm run webpack-dev",
     "webpack-dev": "webpack -w",
-    "webpack-prod": "PROD_ENV=1 webpack --json | webpack-bundle-size-analyzer"
+    "webpack-prod": "PROD_ENV=1 webpack --json | webpack-bundle-size-analyzer",
+    "webpack-J": "npm run sass && node node_modules/webpack/bin/webpack.js -w "
   },
   "keywords": [],
   "author": "Matt Bozelka, Robert Contreras, Julia Diliberto",

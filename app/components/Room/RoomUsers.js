@@ -12,7 +12,8 @@ class RoomUsers extends React.Component {
     };
     this.usersList = [];
     this.socket;
-    this.socketHost = 'http://159.203.245.200:8080/room-users';
+    this.socketHost = 'http://localhost:8080/room-users'; //local testing
+    //this.socketHost = 'http://159.203.245.200:8080/room-users'; //remote server
     this.userJoined = this.userJoined.bind(this);
     this.userLeft = this.userLeft.bind(this);
     this.toggleUsers = this.toggleUsers.bind(this);

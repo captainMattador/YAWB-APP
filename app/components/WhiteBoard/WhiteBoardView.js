@@ -3,6 +3,7 @@ import io from 'socket.io-client';
 import WhiteBoardControls from './WhiteBoardControls';
 import WhiteBoardUtilities from './WhiteBoardUtilities';
 import Stack from '../../datastructures/stack';
+import {updateRoute, loading, msg} from '../../utils/CustomEvents';
 
 class WhiteBoardView extends React.Component {
   
@@ -11,7 +12,8 @@ class WhiteBoardView extends React.Component {
     
     this.wbUtils;
     this.socket;
-    this.socketHost = 'http://159.203.245.200:8080/board-data';
+    this.socketHost = 'http://localhost:8080/board-data'; //local testing
+    //this.socketHost = 'http://159.203.245.200:8080/board-data'; //remote server
     this._history = new Stack({max: 20});
     
     // dom canvas
@@ -32,14 +34,21 @@ class WhiteBoardView extends React.Component {
     this.textRender = this.textRender.bind(this);
     this.clearBoard = this.clearBoard.bind(this);
     this.undoHistory = this.undoHistory.bind(this);
+    this.updatePage = this.updatePage.bind(this);
+    
+    //page manager
+    this.pages = [];   //creates method in WhiteboardView, everything Whiteboard view has access
+    this.maxBoards = 10;
+    this.pageIndex = 0;
   }
   
   componentDidMount(){
+    //canvas in DOM
     this._canvas = this.refs.whiteBoard;
     this._ctx = this._canvas.getContext("2d");
     this._canvasWidth = this._canvas.width;
     this._canvasHeight = this._canvas.height;
-    
+    //canvas in memory
     this._memCanvas = document.createElement('canvas');
     this._memCtx = this._memCanvas.getContext("2d");
     this._memCanvas.width = this._canvasWidth;
@@ -61,6 +70,7 @@ class WhiteBoardView extends React.Component {
     this.socket.on('emited-text-added', this.textRender);
     this.socket.on('emited-clear-board', this.clearBoard);
     this.socket.on('emited-undo-history', this.undoHistory);
+    this.socket.on('emited-update-page', this.updatePage);
   }
   
   componentWillUnmount(){
@@ -72,6 +82,7 @@ class WhiteBoardView extends React.Component {
     this.socket.removeListener('emited-text-added', this.textRender);
     this.socket.removeListener('emited-clear-board', this.clearBoard);
     this.socket.removeListener('emited-undo-history', this.undoHistory);
+    this.socket.removeListener('emited-update-page', this.updatePage);
     this.socket.disconnect();
   }
   
@@ -114,8 +125,10 @@ class WhiteBoardView extends React.Component {
     var data = this._ctx.getImageData(0, 0, this._canvasWidth, this._canvas.height);
     this._memCtx.clearRect(0, 0, this._canvasWidth, this._canvas.height);
     this._memCtx.putImageData(data, 0, 0);
-    this.addToHostory();
+    this.addToHistory();
+    return (data);
   }
+ 
   
   textRender(data){
     this._ctx.save();
@@ -143,8 +156,58 @@ class WhiteBoardView extends React.Component {
       this._memCtx.putImageData(this._history.peek(), 0, 0);
     }
   }
+
+  /**
+ * 
+ *portion to handle pagination
+ * 
+ */
+  announcePageError(message){
+    msg('Error', message, true);
+  }  
   
-  addToHostory(){
+  updatePage(data){
+    
+    var direction = data.direction;
+    if (this.pageIndex === 0 && direction === "previous"){
+      this.announcePageError("No previous page");
+      return;
+    }
+    else if (this.pageIndex === this.maxBoards-1 && direction ==="next"){
+      this.announcePageError("Maximum pages is reached");
+      return;
+    }
+    this.pageIndex++;
+    console.log(data);
+  }
+  
+  // save current Page (points, ctx, ) to pages, decrement pageIndex, display  
+  // previousPage(pageIndex){
+  //   var imgData;
+  //   if (pageIndex===0){
+  //     announcePageError('No previous page');
+  //     return; 
+  //   }
+  //   imgData = this._ctx.getImageData(0, 0, this._canvasWidth, this._canvasHeight);
+  //   pages[pageIndex]=imgData;
+  //   pageIndex--;
+  //   this._ctx.clearRect(0, 0, this._canvasWidth, this._canvasHeight);
+  //   this._ctx.putImageData(0,0,pages[this.pageIndex]);
+  //   //display new pageIndex?
+  // } 
+  
+  // save current Page (points, ctx, ) to pages, increment pageIndex, restore context and draw board
+  // nextPage(pageIndex){
+  //   var imgData;
+  //   imgData = this._ctx.getImageData(0, 0, this._canvasWidth, this._canvasHeight);
+  //   pages[pageIndex]=imgData;
+  //   this.pageIndex++;
+  //   this._ctx.clearRect(0, 0, this._canvasWidth, this._canvasHeight);
+  //   //display new Page Index?
+    
+  // }*/
+  
+  addToHistory(){
     this._history.push(this._memCtx.getImageData(0, 0, this._canvasWidth, this._canvas.height));
   }
 

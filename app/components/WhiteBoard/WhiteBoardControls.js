@@ -72,6 +72,23 @@ class WhiteBoardControls extends React.Component {
               </ul>
           </div>
         </div>
+        {
+          /**
+           * 
+
+           */
+        }
+        <div className="pager control">
+                    <h3>Board Pager</h3>
+          <div className="pager-controls">
+              <div className="prevBoard">
+                  <i className="fa fa-chevron-left" aria-hidden="true"></i>
+              </div>
+              <div className="nextBoard">
+                  <i className="fa fa-chevron-right" aria-hidden="true"></i>
+              </div>
+          </div>
+        </div>
         
     </div>
     )
