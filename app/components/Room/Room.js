@@ -13,6 +13,14 @@ class Room extends React.Component {
       userReturned: false
     }
     
+    window.navigator.getUserMedia = navigator.webkitGetUserMedia;
+    
+    // if(navigator.getUserMedia){
+    //   console.log('good news you have it!');
+    // }else{
+    //   console.log('uh oh');
+    // }
+    
     this.returnedUser = this.returnedUser.bind(this);
   }
 
@@ -20,6 +28,17 @@ class Room extends React.Component {
     this.ownerRef = YAWB.fbRef.child('Rooms').child(YAWB.room.id)
       .child('owner');
     this.ownerRef.once('value', this.returnedUser);
+  }
+  
+  componentDidMount(){
+      // var errorCallback = function(e) {
+      //   console.log('Reeeejected!', e);
+      // };
+
+      // navigator.getUserMedia({video: false, audio: true}, 
+      // function(localMediaStream) {
+      //   console.log(localMediaStream);
+      // }, errorCallback);
   }
   
   returnedUser(snapshot){
@@ -47,7 +66,7 @@ class Room extends React.Component {
   }
   
   chatComponent(){
-    if(this.state.userReturned && YAWB.user.owner){
+    if(this.state.userReturned && !YAWB.user.owner){
       return (
         <CommentsComponent
           heading="Chat"
@@ -58,7 +77,7 @@ class Room extends React.Component {
   }
   
   chatNav(){
-    if(this.state.userReturned && YAWB.user.owner){
+    if(this.state.userReturned && !YAWB.user.owner){
       return <li ref="chatIcon" data-chat-box="peer-comments" onClick={this.toggleChatBox}><i className="fa fa-comments" aria-hidden="true"></i></li>;
     }
   }
