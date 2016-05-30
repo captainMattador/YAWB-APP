@@ -5,6 +5,11 @@ import Events from '../../utils/events-handler';
 
 var self;
 
+ /**
+ * 
+ *class sends UI interactions to server
+ * 
+ */ 
 class WhiteBoardUtilities{
   
   constructor(canvas, controls, socket){
@@ -57,7 +62,7 @@ class WhiteBoardUtilities{
     this.textSize = 16;
     this.createTextForm();
     
-    // set initail drawing tool values
+    // set initial drawing tool values
     this.initVals();
     
     // initialize all the board events and socket events

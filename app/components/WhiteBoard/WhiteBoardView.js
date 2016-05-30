@@ -5,6 +5,11 @@ import WhiteBoardUtilities from './WhiteBoardUtilities';
 import Stack from '../../datastructures/stack';
 import {updateRoute, loading, msg} from '../../utils/CustomEvents';
 
+ /**
+ * 
+ *class receives commands from server to update interface
+ * 
+ */ 
 class WhiteBoardView extends React.Component {
   
   constructor(){
@@ -37,7 +42,7 @@ class WhiteBoardView extends React.Component {
     this.updatePage = this.updatePage.bind(this);
     
     //page manager
-    this.pages = [];   //creates method in WhiteboardView, everything Whiteboard view has access
+    this.pages = [];
     this.maxBoards = 10;
     this.pageIndex = 0;
   }
@@ -64,7 +69,7 @@ class WhiteBoardView extends React.Component {
         this.socket);
     }
     
-    // add events
+    // add event listeners
     this.socket.on('emited-drawing-points', this.drawRender);
     this.socket.on('emited-finalize-board', this.snapshotBoard);
     this.socket.on('emited-text-added', this.textRender);
@@ -76,7 +81,9 @@ class WhiteBoardView extends React.Component {
   componentWillUnmount(){
     if(YAWB.user.owner){
       this.wbUtils.destroy();
-    }
+    } 
+
+    // close event listeners
     this.socket.removeListener('emited-drawing-points', this.drawRender);
     this.socket.removeListener('emited-finalize-board', this.snapshotBoard);
     this.socket.removeListener('emited-text-added', this.textRender);
@@ -86,6 +93,11 @@ class WhiteBoardView extends React.Component {
     this.socket.disconnect();
   }
   
+  /**
+ * 
+ * Draws images on whiteboard with data from server
+ * 
+ */   
   drawRender(data) {
     var len = data.points.length;
     this._ctx.clearRect(0, 0, this._canvasWidth, this._canvas.height);
@@ -117,7 +129,7 @@ class WhiteBoardView extends React.Component {
   }
   
   /**
-   * capture steps of the boad
+   * capture steps of the board
    * as well as put into the history stack
    * (call after any big update to the board)
    */
@@ -130,7 +142,12 @@ class WhiteBoardView extends React.Component {
   }
  
   
-  textRender(data){
+   /**
+ * 
+ * renders text on whiteboard using data from server
+ * 
+ */ 
+textRender(data){
     this._ctx.save();
     
     this._ctx.font = data.font;
@@ -142,7 +159,12 @@ class WhiteBoardView extends React.Component {
     this._ctx.restore();
     this.snapshotBoard();
   }
-  
+
+ /**
+ * 
+ * responds to clearBoard command received from server
+ * 
+ */   
   clearBoard(){
 
 console.log("inside clearBoard") ;
@@ -151,6 +173,11 @@ console.log("inside clearBoard") ;
     this.snapshotBoard();
   }
   
+  /**
+ * 
+ *responds to undo History received from server
+ * 
+ */ 
   undoHistory(){
     if(this._history.size() > 1){
       this._history.pop();
@@ -161,7 +188,7 @@ console.log("inside clearBoard") ;
 
   /**
  * 
- *portion to handle pagination
+ *responds to previous/next page received from server
  * 
  */
   announcePageError(message){
@@ -204,16 +231,19 @@ console.log("inside clearBoard") ;
   }  
   
   copy(){
-   var imgData=this._ctx.getImageData(10,10,50,50);
-   
+   var imgData=this._ctx.getImageData(10,10,50,50);  
    this._ctx.putImageData(imgData,10,70);
-
   }
   
   addToHistory(){
     this._history.push(this._memCtx.getImageData(0, 0, this._canvasWidth, this._canvas.height));
   }
 
+ /**
+ * 
+ *paints screen
+ * 
+ */ 
   render(){
     
     var boardControls;
@@ -230,11 +260,9 @@ console.log("inside clearBoard") ;
               width="980"
               height="551"></canvas>
         <img id="whiteBoardPic"></img>
-      </section>
-      
+      </section>     
     )
   }
-
 }
 
 export default WhiteBoardView;

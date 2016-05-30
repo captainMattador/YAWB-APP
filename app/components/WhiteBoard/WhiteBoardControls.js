@@ -1,5 +1,11 @@
 import React from 'react';
 
+ /**
+ * 
+ * HTML for controls
+ * CSS stying in room.scss
+ * 
+ */ 
 class WhiteBoardControls extends React.Component {
   
   render(){
@@ -73,10 +79,7 @@ class WhiteBoardControls extends React.Component {
           </div>
         </div>
         {
-          /**
-           * 
 
-           */
         }
         <div className="previous control">  
           <h3>Previous</h3>     
@@ -87,15 +90,9 @@ class WhiteBoardControls extends React.Component {
           <h3>Next</h3>     
           <div className="nextBoard control-icon"><i className="fa fa-chevron-right" aria-hidden="true"></i></div> 
         </div>
-        
-       
-        
-        
-           
       </div>
     )
   }
-
 }
 
 export default WhiteBoardControls;
