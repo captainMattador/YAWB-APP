@@ -19,6 +19,7 @@ export function validateEmail(value) {
 
 /**
  * helper function to get the client x and y position 
+ * for touch screen or mouse
  */
 export function clientPosition(e) {
     if (e.targetTouches && (e.targetTouches.length >= 1)) {

@@ -26,6 +26,8 @@ class WhiteBoardUtilities{
     this.modList = controls.querySelector('#mod-list');
     this.modeList = controls.querySelectorAll('.mode.control li');
     this.commandsList = controls.querySelectorAll('.commands.control li');
+    this.prevBoard = controls.querySelector('.prevBoard');
+    this.nextBoard = controls.querySelector('.nextBoard');
     
     // sockets and storages
     this.socket = socket;
@@ -101,7 +103,25 @@ class WhiteBoardUtilities{
     this.events.addEvent(this.canvas, 'mousedown', this.drawDown.bind(this));
     this.events.addEvent(this.canvas, 'mousemove', this.drawMove.bind(this));
     this.events.addEvent(document.body, 'mouseup', this.drawOff.bind(this));
+    this.events.addEvent(this.prevBoard, 'click', this.prevCanvas.bind(this));
+    this.events.addEvent(this.nextBoard, 'click', this.nextCanvas.bind(this));
   }
+
+  prevCanvas (e){
+    e.preventDefault();
+  //  console.log("go to Previous Board");
+    this.socket.emit('update-page', {
+      direction: 'previous'
+    });
+  }
+  
+  nextCanvas (e){
+    e.preventDefault();
+  //  console.log("go to Next Board");
+    this.socket.emit('update-page', {
+      direction: 'next'
+    });
+  }  
   
   keyPressHandler(e){
     this.keys[e.keyCode] = true;
