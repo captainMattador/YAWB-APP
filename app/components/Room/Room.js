@@ -1,4 +1,5 @@
 import React from 'react';
+import io from 'socket.io-client';
 import {updateRoute, loading, msg} from '../../utils/CustomEvents';
 import CommentsComponent from '../Comments/CommentsComponent';
 import TopBar from '../UiComponents/TopBar';
@@ -13,7 +14,12 @@ class Room extends React.Component {
       userReturned: false
     }
     
-    window.navigator.getUserMedia = navigator.webkitGetUserMedia;
+    // connect to the server
+    //this.socketHost = 'http://localhost:8080/room-users';
+    this.socketHost = 'https://159.203.245.200:8080/room-users';
+    this.socket = io.connect(this.socketHost);
+    
+    // window.navigator.getUserMedia = navigator.webkitGetUserMedia;
     
     // if(navigator.getUserMedia){
     //   console.log('good news you have it!');
@@ -60,7 +66,7 @@ class Room extends React.Component {
   boardView(){
     if(this.state.userReturned){
       return (
-        <WhiteBoardView/>
+        <WhiteBoardView socket={this.socket}/>
       );
     }
   }
@@ -101,13 +107,15 @@ class Room extends React.Component {
             <li ref="questionIcon" data-chat-box="questions" onClick={this.toggleChatBox}><i className="fa fa-question-circle" aria-hidden="true"></i></li>
           </ul>
         </TopBar> 
-        <RoomUsers/>
+        <RoomUsers socket={this.socket}/>
         {this.boardView()}
         {this.chatComponent()}
         <CommentsComponent
           heading="Ask a question"
           commentsClass="questions"
           dbList="Questions"/>
+          
+          <video id="camera" autoplay></video>
       </div>
     )
   }

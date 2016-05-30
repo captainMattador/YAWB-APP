@@ -5,21 +5,20 @@ import UserProfileImg from '../UiComponents/UserProfileImg';
 
 class RoomUsers extends React.Component {
 
-  constructor(){
+  constructor(socket){
     super();
     this.state = {
       Users: []
     };
     this.usersList = [];
     this.socket;
-    this.socketHost = 'http://159.203.245.200:8080/room-users';
     this.userJoined = this.userJoined.bind(this);
     this.userLeft = this.userLeft.bind(this);
     this.toggleUsers = this.toggleUsers.bind(this);
   }
 
   componentDidMount(){
-    this.socket = io.connect(this.socketHost);
+    this.socket = this.props.socket;
     
     this.socket.emit('joining-room', {
       user: YAWB.user,

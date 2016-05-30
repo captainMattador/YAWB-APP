@@ -6,6 +6,22 @@
 The main canvas where all the magic happens
 *********************************************/
 
+
+/*********************************************
+Video/Audio
+*********************************************/
+video{
+    position: absolute;
+    top:0;
+    left: 50%;
+    margin-left: -200px;
+    width:100%;
+    max-width: 400px;
+    z-index: 1000;
+    background: black;
+}
+
+
 /*controlls*/
 .board-controls{
     position: absolute;

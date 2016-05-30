@@ -11,8 +11,11 @@ class WhiteBoardView extends React.Component {
     
     this.wbUtils;
     this.socket;
-    this.socketHost = 'http://159.203.245.200:8080/board-data';
     this._history = new Stack({max: 20});
+    
+    if(navigator.getUserMedia){
+      console.log('good news you have getUserMedia!');
+    }
     
     // dom canvas
     this._canvas;
@@ -46,7 +49,8 @@ class WhiteBoardView extends React.Component {
     this._memCanvas.height = this._canvasHeight;
     this.snapshotBoard(); // capture the blank state for history purposes
     
-    this.socket = io.connect(this.socketHost);
+    // connect grab the socket connect from the Room view.
+    this.socket = this.props.socket;
     
     if(YAWB.user.owner){
       this.wbUtils = new WhiteBoardUtilities(
