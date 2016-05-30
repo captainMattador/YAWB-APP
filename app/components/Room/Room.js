@@ -16,7 +16,7 @@ class Room extends React.Component {
     
     // connect to the server
     //this.socketHost = 'http://localhost:8080/room-users';
-    this.socketHost = 'https://159.203.245.200:8080/room-users';
+    this.socketHost = 'http://159.203.245.200:8080/room-users';
     this.socket = io.connect(this.socketHost);
     
     // window.navigator.getUserMedia = navigator.webkitGetUserMedia;
