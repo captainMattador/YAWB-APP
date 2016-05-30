@@ -144,7 +144,9 @@ class WhiteBoardView extends React.Component {
   }
   
   clearBoard(){
-    this._memCtx.clearRect(0, 0, this._canvasWidth, this._canvas.height);
+
+console.log("inside clearBoard") ;
+   this._memCtx.clearRect(0, 0, this._canvasWidth, this._canvas.height);
     this._ctx.clearRect(0, 0, this._canvasWidth, this._canvas.height);
     this.snapshotBoard();
   }
@@ -169,43 +171,44 @@ class WhiteBoardView extends React.Component {
   updatePage(data){
     
     var direction = data.direction;
-    if (this.pageIndex === 0 && direction === "previous"){
-      this.announcePageError("No previous page");
-      return;
-    }
-    else if (this.pageIndex === this.maxBoards-1 && direction ==="next"){
-      this.announcePageError("Maximum pages is reached");
-      return;
-    }
-    this.pageIndex++;
-    console.log(data);
-  }
-  
-  // save current Page (points, ctx, ) to pages, decrement pageIndex, display  
-  // previousPage(pageIndex){
-  //   var imgData;
-  //   if (pageIndex===0){
-  //     announcePageError('No previous page');
-  //     return; 
-  //   }
-  //   imgData = this._ctx.getImageData(0, 0, this._canvasWidth, this._canvasHeight);
-  //   pages[pageIndex]=imgData;
-  //   pageIndex--;
-  //   this._ctx.clearRect(0, 0, this._canvasWidth, this._canvasHeight);
-  //   this._ctx.putImageData(0,0,pages[this.pageIndex]);
-  //   //display new pageIndex?
-  // } 
-  
-  // save current Page (points, ctx, ) to pages, increment pageIndex, restore context and draw board
-  // nextPage(pageIndex){
-  //   var imgData;
-  //   imgData = this._ctx.getImageData(0, 0, this._canvasWidth, this._canvasHeight);
-  //   pages[pageIndex]=imgData;
-  //   this.pageIndex++;
-  //   this._ctx.clearRect(0, 0, this._canvasWidth, this._canvasHeight);
-  //   //display new Page Index?
     
-  // }*/
+    if (direction === 'previous'){
+      if (this.pageIndex=== 0){
+        this.announcePageError("No previous page");
+        return;
+      }
+      var imgData = this._ctx.getImageData(0, 0, this._canvasWidth, this._canvasHeight);
+      this.pages[this.pageIndex] =  imgData;
+      
+      this.pageIndex--;
+      this._ctx.putImageData(this.pages[this.pageIndex],0,0);
+      this._history.clear;
+    }
+
+    else{
+      if (this.pageIndex === this.maxBoards-1){
+        this.announcePageError("No more pages available");
+        return;
+      }  
+      var imgData = this._ctx.getImageData(0, 0, this._canvasWidth, this._canvasHeight);
+      this.pages[this.pageIndex]=imgData; 
+      this.pageIndex++;  
+      if (this.pageIndex===this.pages.length){
+        this.clearBoard();
+        }
+      else{
+      this._history.clear;
+      console.log(this._history);
+      }
+    }
+  }  
+  
+  copy(){
+   var imgData=this._ctx.getImageData(10,10,50,50);
+   
+   this._ctx.putImageData(imgData,10,70);
+
+  }
   
   addToHistory(){
     this._history.push(this._memCtx.getImageData(0, 0, this._canvasWidth, this._canvas.height));
@@ -226,7 +229,9 @@ class WhiteBoardView extends React.Component {
               id="canvas"
               width="980"
               height="551"></canvas>
+        <img id="whiteBoardPic"></img>
       </section>
+      
     )
   }
 

@@ -12,7 +12,7 @@ The main canvas where all the magic happens
     top: 0;
     left: 50%;
     height: 70px;
-    width: 400px;
+    width: 600px;
     margin-left: -150px;
 }
 
@@ -109,6 +109,7 @@ input[type="range"] {
     @include border-radius();
 }
 
+
 .pen-size-visual span{
     position: absolute;
     display: block;
@@ -147,6 +148,10 @@ input[type="range"] {
     padding: 20px;
 }
 
+.whiteBoardPic{
+    height: 551px;
+    width: 980px; 
+}
 
 /*********************************************
 Cavas and tool stylings
