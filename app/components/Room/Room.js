@@ -13,20 +13,20 @@ class Room extends React.Component {
     this.state = {
       userReturned: false
     }
-    
+
     // connect to the server
     //this.socketHost = 'http://localhost:8080/room-users';
-    this.socketHost = 'http://159.203.245.200:8080/room-users';
+    this.socketHost = 'https://yawbapp.com/room-users';
     this.socket = io.connect(this.socketHost);
-    
+
     // window.navigator.getUserMedia = navigator.webkitGetUserMedia;
-    
+
     // if(navigator.getUserMedia){
     //   console.log('good news you have it!');
     // }else{
     //   console.log('uh oh');
     // }
-    
+
     this.returnedUser = this.returnedUser.bind(this);
   }
 
@@ -35,25 +35,47 @@ class Room extends React.Component {
       .child('owner');
     this.ownerRef.once('value', this.returnedUser);
   }
-  
+
   componentDidMount(){
+     this.connectVideo();
+
       // var errorCallback = function(e) {
       //   console.log('Reeeejected!', e);
       // };
 
-      // navigator.getUserMedia({video: false, audio: true}, 
+      // navigator.getUserMedia({video: false, audio: true},
       // function(localMediaStream) {
       //   console.log(localMediaStream);
       // }, errorCallback);
   }
-  
+
+  connectVideo() {
+     window.navigator.getUserMedia = navigator.webkitGetUserMedia;
+
+     navigator.getUserMedia({ audio: true, video: true }, this.successCallback.bind(this),
+     this.errorCallback);
+ }
+
+ successCallback( stream ) {
+    if (window.URL) {
+       this.refs.video.src = window.URL.createObjectURL(stream);
+    }
+    else {
+       this.refs.video.src = stream;
+    }
+ }
+
+ errorCallback() {
+    console.log("Error loading AV Stream");
+ }
+
   returnedUser(snapshot){
     YAWB.user.owner = (YAWB.user.uid === snapshot.val()) ? true : false;
     this.setState({
       userReturned: true
     });
   }
-  
+
   toggleChatBox(e){
     e.preventDefault();
     var chatBox = e.currentTarget.dataset.chatBox;
@@ -62,7 +84,7 @@ class Room extends React.Component {
     }});
     window.dispatchEvent(event);
   }
-  
+
   boardView(){
     if(this.state.userReturned){
       return (
@@ -70,7 +92,7 @@ class Room extends React.Component {
       );
     }
   }
-  
+
   chatComponent(){
     if(this.state.userReturned && !YAWB.user.owner){
       return (
@@ -81,13 +103,13 @@ class Room extends React.Component {
       );
     }
   }
-  
+
   chatNav(){
     if(this.state.userReturned && !YAWB.user.owner){
       return <li ref="chatIcon" data-chat-box="peer-comments" onClick={this.toggleChatBox}><i className="fa fa-comments" aria-hidden="true"></i></li>;
     }
   }
-  
+
   leaveRoom(){
     YAWB.room = {};
     updateRoute('USER_HOME_ROUTE');
@@ -98,7 +120,7 @@ class Room extends React.Component {
     var extendSettings = [
       {name: 'Leave Room', icon: 'fa-sign-out', callBack: this.leaveRoom}
     ];
-    
+
     return (
       <div className={"room" + ((this.state.userReturned && YAWB.user.owner) ? " owner" : "")}>
         <TopBar extraSettings={extendSettings}>
@@ -106,7 +128,7 @@ class Room extends React.Component {
             {this.chatNav()}
             <li ref="questionIcon" data-chat-box="questions" onClick={this.toggleChatBox}><i className="fa fa-question-circle" aria-hidden="true"></i></li>
           </ul>
-        </TopBar> 
+        </TopBar>
         <RoomUsers socket={this.socket}/>
         {this.boardView()}
         {this.chatComponent()}
@@ -114,8 +136,8 @@ class Room extends React.Component {
           heading="Ask a question"
           commentsClass="questions"
           dbList="Questions"/>
-          
-          <video id="camera" autoplay></video>
+
+          <video ref="video" autoplay></video>
       </div>
     )
   }
