@@ -105,26 +105,26 @@ class Main extends React.Component {
     console.log(snapshot.val());
     YAWB.user = snapshot.val();
     //this._updateTopLevelRoute(this.routes['USER_HOME_ROUTE']);
-    
+
     /***
-     * 
-     * 
+     *
+     *
      * remove once not needed,
      * goes straight to user profile
-     * 
-     * 
+     *
+     *
      */
     //this._updateTopLevelRoute(this.routes['UPDATE_PROFILE_ROUTE']);
-    
+
     /***
-     * 
-     * 
+     *
+     *
      * remove once not needed,
      * sets room automoatically to the test room
-     * 
-     * 
+     *
+     *
      */
-     YAWB.room.id = 950268;
+     YAWB.room.id = 99223;
      this._updateTopLevelRoute(this.routes['ROOM_ROUTE']);
   }
 
