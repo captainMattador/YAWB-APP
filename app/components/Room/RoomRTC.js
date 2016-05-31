@@ -80,15 +80,15 @@ class RoomRTC{
 
   }
   
-  newDescriptionCreated(description) {
-    console.log(description);
+  newDescriptionCreated(toUser, description) {
     self.peerConnection
         .setLocalDescription(description)
         .then(function() {
             self.sendMessage({
-                type:"new_description",
+                type: 'new_description',
                 from: YAWB.user.uid,
-                sdp:description 
+                to: toUser,
+                sdp: description 
             });
         }).catch(self.errorHandler);
   }
@@ -137,14 +137,10 @@ class RoomRTC{
             self.peerConnection
                 .setRemoteDescription(new RTCSessionDescription(msg.sdp))
                 .then(function() {
-                    if (self.peerConnection.remoteDescription.type === 'answer') {
-                        console.log('doing some custom answer work');
-                    }else if (self.peerConnection.remoteDescription.type === 'offer') {
-                        self.peerConnection.createAnswer(self.newDescriptionCreated.bind(msg), self.errorHandler);
+                    if (self.peerConnection.remoteDescription.type === 'offer') {
+                        self.peerConnection.createAnswer(self.newDescriptionCreated.bind(this, msg.from), self.errorHandler);
                     }
                 }).catch(self.errorHandler);
-        }else{
-            console.log(msg);
         }
         
       });
@@ -181,7 +177,6 @@ class RoomRTC{
   
   startPeerConnection(isOwner, msg){
     
-    console.log('starting', msg);
     self.peerConnection = new RTCPeerConnection(self.iceConfig);
     self.peerConnection.onicecandidate = function(ice_event){
         if (ice_event.candidate) {
@@ -199,7 +194,7 @@ class RoomRTC{
     
     // create the offer
     if(isOwner){
-        self.peerConnection.createOffer(self.newDescriptionCreated, self.errorHandler);   
+        self.peerConnection.createOffer(self.newDescriptionCreated.bind(this, msg.from), self.errorHandler);   
     }
     
   }
