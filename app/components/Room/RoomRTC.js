@@ -123,6 +123,11 @@ class RoomRTC{
 
         else if (msg.type === 'new_ice_candidate') {
             console.log('new_ice_candidate', msg);
+            
+            if(!YAWB.user.owner){
+                self.startPeerConnection(false, msg);
+            }
+            
             self.peerConnection.addIceCandidate(
                 new RTCIceCandidate(msg.candidate)
             );
