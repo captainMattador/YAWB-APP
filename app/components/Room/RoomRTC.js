@@ -62,7 +62,7 @@ class RoomRTC{
         this.callerHandlers();
         this.sendMessage({
             type: "joining",
-            uid: YAWB.user.uid,
+            from: YAWB.user.uid,
         });
     }
     // callee
@@ -70,11 +70,11 @@ class RoomRTC{
         this.calleeHandlers();
         this.sendMessage({
             type: "joining",
-            uid: YAWB.user.uid,
+            from: YAWB.user.uid,
         });
         this.sendMessage({
             type: "callee_arrived",
-            uid: YAWB.user.uid,
+            from: YAWB.user.uid,
         });
     }
 
@@ -87,7 +87,7 @@ class RoomRTC{
         .then(function() {
             self.sendMessage({
                 type:"new_description",
-                uid: YAWB.user.uid,
+                from: YAWB.user.uid,
                 sdp:description 
             });
         }).catch(self.errorHandler);
@@ -98,7 +98,7 @@ class RoomRTC{
     if (ice_event.candidate) {
         var message = {
             type: "new_ice_candidate",
-            uid: YAWB.user.uid,
+            from: YAWB.user.uid,
             candidate: ice_event.candidate
         }
         self.sendMessage(message);
@@ -113,24 +113,27 @@ class RoomRTC{
   // setup caller handlers
   callerHandlers(){
       this.socket.on('message', function(msg) {
-        console.log(msg);
-        if (msg.type === "callee_arrived") {
+          
+        if(msg.from === YAWB.user.uid) return;
+        
+        if (msg.type === 'callee_arrived') {
+            console.log('callee_arrived', msg);
             self.peerConnection.createOffer(self.newDescriptionCreated, self.errorHandler);
         }
 
-        else if (msg.type === "new_ice_candidate") {
-            console.log('new ice');
+        else if (msg.type === 'new_ice_candidate') {
+            console.log('new_ice_candidate', msg);
             self.peerConnection.addIceCandidate(
                 new RTCIceCandidate(msg.candidate)
             );
         }
         
-        else if (msg.type === "new_description") {
-            
+        else if (msg.type === 'new_description') {
+            console.log('new_description', msg);
             self.peerConnection
                 .setRemoteDescription(new RTCSessionDescription(msg.sdp))
                 .then(function() {
-                    if (self.peerConnection.remoteDescription.type === "answer") {
+                    if (self.peerConnection.remoteDescription.type === 'answer') {
                         console.log('doing some custom answer work');
                     }
                 }).catch(self.errorHandler);
@@ -142,19 +145,24 @@ class RoomRTC{
   }
   
    calleeHandlers(){
+       
       this.socket.on('message', function(msg) {
-        console.log(msg);
-        if (msg.type === "new_ice_candidate") {
+          
+        if(msg.from === YAWB.user.uid) return;
+        
+        if (msg.type === 'new_ice_candidate') {
+            console.log('new_ice_candidate', msg);
             self.peerConnection.addIceCandidate(
                 new RTCIceCandidate(msg.candidate)
             );
         }
         
-        else if (msg.type === "new_description") {
+        else if (msg.type === 'new_description') {
+            console.log('new_description', msg);
             self.peerConnection
                 .setRemoteDescription(new RTCSessionDescription(msg.sdp))
                 .then(function() {
-                    if (self.peerConnection.remoteDescription.type === "offer") {
+                    if (self.peerConnection.remoteDescription.type === 'offer') {
                         self.peerConnection.createAnswer(self.newDescriptionCreated, self.errorHandler);
                     }
                 }).catch(self.errorHandler);
