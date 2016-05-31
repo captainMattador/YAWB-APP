@@ -188,7 +188,7 @@ class RoomRTC{
         }
     };
     self.peerConnection.onaddstream = self.onaddstream;
-    self.peerConnection.addStream(stream);
+    self.peerConnection.addStream(self.stream);
     
     // create the offer
     if(isOwner){
