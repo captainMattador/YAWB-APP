@@ -124,10 +124,6 @@ class RoomRTC{
         else if (msg.type === 'new_ice_candidate') {
             console.log('new_ice_candidate', msg);
             
-            if(!YAWB.user.owner){
-                self.startPeerConnection(false, msg);
-            }
-            
             self.peerConnection.addIceCandidate(
                 new RTCIceCandidate(msg.candidate)
             );
@@ -135,6 +131,9 @@ class RoomRTC{
         
         else if (msg.type === 'new_description') {
             console.log('new_description', msg);
+            if(!YAWB.user.owner){
+                self.startPeerConnection(false, msg);
+            }
             self.peerConnection
                 .setRemoteDescription(new RTCSessionDescription(msg.sdp))
                 .then(function() {
