@@ -95,13 +95,13 @@ class RoomRTC{
             type: "new_ice_candidate",
             candidate: ice_event.candidate
         }
-        sendMessage(message);
+        self.sendMessage(message);
     }
   }
   
   onaddstream(event){
     console.log('Adding the remote sream :)');
-    this.remoteVideo.src = window.URL.createObjectURL(event.stream);
+    self.remoteVideo.src = window.URL.createObjectURL(event.stream);
   }
   
   // setup caller handlers
