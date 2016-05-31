@@ -13,6 +13,7 @@ class RoomRTC{
     this.remoteVideo = remoteVideo;
     this.peerConnection;
     this.stream;
+    this.peersList = [];
     
     this.constraints = {
         video: true,
@@ -60,39 +61,44 @@ class RoomRTC{
     if(YAWB.user.owner){
         this.callerHandlers();
         this.sendMessage({
-            type: "joining"
+            type: "joining",
+            uid: YAWB.user.uid,
         });
     }
     // callee
     else{
         this.calleeHandlers();
         this.sendMessage({
-            type: "joining"
+            type: "joining",
+            uid: YAWB.user.uid,
         });
         this.sendMessage({
-            type: "callee_arrived"
+            type: "callee_arrived",
+            uid: YAWB.user.uid,
         });
     }
 
   }
   
   newDescriptionCreated(description) {
-    console.log('New Description Created');
+    console.log(description);
     self.peerConnection
         .setLocalDescription(description)
         .then(function() {
             self.sendMessage({
                 type:"new_description",
+                uid: YAWB.user.uid,
                 sdp:description 
             });
         }).catch(self.errorHandler);
   }
   
   onicecandidate(ice_event){
-    console.log('New Ice Connection');
+    console.log(ice_event);
     if (ice_event.candidate) {
         var message = {
             type: "new_ice_candidate",
+            uid: YAWB.user.uid,
             candidate: ice_event.candidate
         }
         self.sendMessage(message);
@@ -100,13 +106,14 @@ class RoomRTC{
   }
   
   onaddstream(event){
-    console.log('Adding the remote sream :)');
+    console.log(event);
     self.remoteVideo.src = window.URL.createObjectURL(event.stream);
   }
   
   // setup caller handlers
   callerHandlers(){
       this.socket.on('message', function(msg) {
+        console.log(msg);
         if (msg.type === "callee_arrived") {
             self.peerConnection.createOffer(self.newDescriptionCreated, self.errorHandler);
         }
@@ -135,6 +142,7 @@ class RoomRTC{
   
    calleeHandlers(){
       this.socket.on('message', function(msg) {
+        console.log(msg);
         if (msg.type === "new_ice_candidate") {
             self.peerConnection.addIceCandidate(
                 new RTCIceCandidate(msg.candidate)
@@ -178,7 +186,6 @@ class RoomRTC{
    * the server
    */
   sendMessage(message) {
-    console.log('Client sending message: ', message);
     self.socket.emit('message', message);
   }
   
@@ -198,6 +205,9 @@ class RoomRTC{
   destroy() {
     var tracks = self.stream.getTracks();
     
+    // sendMessage({
+    //     'leaving-room',
+    // });
     tracks.map(track => {
         track.stop();
     });
