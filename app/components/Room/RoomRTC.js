@@ -118,7 +118,7 @@ class RoomRTC{
         
         if (msg.type === 'callee_arrived') {
             console.log('callee_arrived', msg);
-            //self.startPeerConnection(msg);
+            self.startPeerConnection(true, msg);
         }
 
         else if (msg.type === 'new_ice_candidate') {
@@ -159,6 +159,7 @@ class RoomRTC{
         
         else if (msg.type === 'new_description') {
             console.log('new_description', msg);
+            self.startPeerConnection(false, msg)
             self.peerConnection
                 .setRemoteDescription(new RTCSessionDescription(msg.sdp))
                 .then(function() {
@@ -172,8 +173,9 @@ class RoomRTC{
       });
   }
   
-  startPeerConnection(){
+  startPeerConnection(isOwner, msg){
     
+    console.log('starting', msg);
     self.peerConnection = new RTCPeerConnection(self.iceConfig);
     self.peerConnection.onicecandidate = function(ice_event){
         if (ice_event.candidate) {
@@ -189,7 +191,9 @@ class RoomRTC{
     self.peerConnection.addStream(stream);
     
     // create the offer
-    self.peerConnection.createOffer(self.newDescriptionCreated, self.errorHandler);
+    if(isOwner){
+        self.peerConnection.createOffer(self.newDescriptionCreated, self.errorHandler);   
+    }
     
   }
   
