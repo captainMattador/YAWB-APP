@@ -118,7 +118,7 @@ class RoomRTC{
         
         if (msg.type === 'callee_arrived') {
             console.log('callee_arrived', msg);
-            self.peerConnection.createOffer(self.newDescriptionCreated, self.errorHandler);
+            self.startPeerConnection(msg);
         }
 
         else if (msg.type === 'new_ice_candidate') {
@@ -174,9 +174,12 @@ class RoomRTC{
   
   startPeerConnection(){
     self.peerConnection = new RTCPeerConnection(self.iceConfig);
-    self.peerConnection.onicecandidate = this.onicecandidate.bind(YAWB.user);
-    self.peerConnection.onaddstream = this.onaddstream;
+    self.peerConnection.onicecandidate = self.onicecandidate.bind(YAWB.user);
+    self.peerConnection.onaddstream = self.onaddstream;
     self.peerConnection.addStream(stream);
+    
+    // create the offer
+    self.peerConnection.createOffer(self.newDescriptionCreated, self.errorHandler);
   }
   
   
