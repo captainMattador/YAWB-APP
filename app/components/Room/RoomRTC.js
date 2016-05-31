@@ -108,19 +108,19 @@ class RoomRTC{
   callerHandlers(){
       this.socket.on('message', function(msg) {
         if (msg.type === "callee_arrived") {
-            this.peerConnection.createOffer(self.newDescriptionCreated, self.errorHandler);
+            self.peerConnection.createOffer(self.newDescriptionCreated, self.errorHandler);
         }
 
         else if (msg.type === "new_ice_candidate") {
             console.log('new ice');
-            this.peerConnection.addIceCandidate(
+            self.peerConnection.addIceCandidate(
                 new RTCIceCandidate(msg.candidate)
             );
         }
         
         else if (msg.type === "new_description") {
             
-            this.peerConnection
+            self.peerConnection
                 .setRemoteDescription(new RTCSessionDescription(msg.sdp))
                 .then(function() {
                     if (self.peerConnection.remoteDescription.type === "answer") {
