@@ -45,10 +45,10 @@ class RoomRTC{
      * to begin speaking with a peer.
      * This is the same for caller and callee
      */
-    this.peerConnection = new RTCPeerConnection(this.iceConfig);
-    this.peerConnection.onicecandidate = this.onicecandidate.bind(YAWB.user.uid);
-    this.peerConnection.onaddstream = this.onaddstream;
-    this.setupLocalMedia();
+    // this.peerConnection = new RTCPeerConnection(this.iceConfig);
+    // this.peerConnection.onicecandidate = this.onicecandidate.bind(YAWB.user);
+    // this.peerConnection.onaddstream = this.onaddstream;
+    // this.setupLocalMedia();
     
     /**
      * begin differentiating between
@@ -56,27 +56,27 @@ class RoomRTC{
      * the owner of the room should be 
      * the callee
      */
-    
+    this.setupLocalMedia();
     // caller
-    if(YAWB.user.owner){
-        this.callerHandlers();
-        this.sendMessage({
-            type: "joining",
-            from: YAWB.user.uid,
-        });
-    }
-    // callee
-    else{
-        this.calleeHandlers();
-        this.sendMessage({
-            type: "joining",
-            from: YAWB.user.uid,
-        });
-        this.sendMessage({
-            type: "callee_arrived",
-            from: YAWB.user.uid,
-        });
-    }
+    // if(YAWB.user.owner){
+    //     this.callerHandlers();
+    //     this.sendMessage({
+    //         type: "joining",
+    //         from: YAWB.user.uid,
+    //     });
+    // }
+    // // callee
+    // else{
+    //     this.calleeHandlers();
+    //     this.sendMessage({
+    //         type: "joining",
+    //         from: YAWB.user.uid,
+    //     });
+    //     this.sendMessage({
+    //         type: "callee_arrived",
+    //         from: YAWB.user.uid,
+    //     });
+    // }
 
   }
   
@@ -93,8 +93,7 @@ class RoomRTC{
         }).catch(self.errorHandler);
   }
   
-  onicecandidate(uid, ice_event){
-    console.log(uid);
+  onicecandidate(ice_event){
     console.log(ice_event);
     if (ice_event.candidate) {
         var message = {
@@ -173,6 +172,13 @@ class RoomRTC{
       });
   }
   
+  startPeerConnection(){
+    self.peerConnection = new RTCPeerConnection(self.iceConfig);
+    self.peerConnection.onicecandidate = this.onicecandidate.bind(YAWB.user);
+    self.peerConnection.onaddstream = this.onaddstream;
+    self.peerConnection.addStream(stream);
+  }
+  
   
  /**
   * get the local user media sream.
@@ -187,7 +193,26 @@ class RoomRTC{
   getUserMediaSuccess(stream){
       self.localVideo.src = window.URL.createObjectURL(stream);
       self.stream = stream;
-      self.peerConnection.addStream(stream);
+      if(YAWB.user.owner){
+            this.callerHandlers();
+            this.sendMessage({
+                type: "joining",
+                from: YAWB.user.uid,
+            });
+        }
+        // callee
+        else{
+            this.calleeHandlers();
+            this.sendMessage({
+                type: "joining",
+                from: YAWB.user.uid,
+            });
+            this.sendMessage({
+                type: "callee_arrived",
+                from: YAWB.user.uid,
+            });
+        }
+      //self.peerConnection.addStream(stream);
   }
   
   /**
