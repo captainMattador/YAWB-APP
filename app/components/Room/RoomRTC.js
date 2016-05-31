@@ -136,13 +136,13 @@ class RoomRTC{
    calleeHandlers(){
       this.socket.on('message', function(msg) {
         if (msg.type === "new_ice_candidate") {
-            this.peerConnection.addIceCandidate(
+            self.peerConnection.addIceCandidate(
                 new RTCIceCandidate(msg.candidate)
             );
         }
         
         else if (msg.type === "new_description") {
-            this.peerConnection
+            self.peerConnection
                 .setRemoteDescription(new RTCSessionDescription(msg.sdp))
                 .then(function() {
                     if (self.peerConnection.remoteDescription.type === "offer") {
