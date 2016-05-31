@@ -1,23 +1,18 @@
 
-window.RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection;
-window.RTCIceCandidate = window.RTCIceCandidate || window.webkitRTCIceCandidate;
-window.RTCSessionDescription = window.RTCSessionDescription || window.webkitRTCSessionDescription;
-window.URL = window.URL || window.webkitURL;
-window.navigator.getUserMedia = window.navigator.getUserMedia || window.navigator.webkitGetUserMedia;
+
+import adapter from 'webrtc-adapter';
 
 var self;
 
 class RoomRTC{
   
   constructor(socket, localVideo, remoteVideo){
-    
     self = this;
     this.socket = socket;
-    this.localStream;
     this.localVideo = localVideo;
     this.remoteVideo = remoteVideo;
     this.peerConnection;
-    this.uuid;
+    this.stream;
     
     this.constraints = {
         video: true,
@@ -43,92 +38,171 @@ class RoomRTC{
   
   // initialize the connection
   initConnection(){
+     
+    /**
+     * start the local connection process
+     * to begin speaking with a peer.
+     * This is the same for caller and callee
+     */
+    this.peerConnection = new RTCPeerConnection(this.iceConfig);
+    this.peerConnection.onicecandidate = this.onicecandidate;
+    this.peerConnection.onaddstream = this.onaddstream;
+    this.setupLocalMedia();
     
-    this.socket.on('message', function(signal) {
-        
-        if(!self.peerConnection) self.start(false);
-        
-        console.log('Client received message:', signal);
-        
-        // message is our own.
-        //if(message.user.uid === YAWB.user.uid) return;
-        
-        if (signal.type === 'got user media') {
-            console.log('message back from server got user media');
-        } 
-        
-        else if(signal.sdp) {
-            self.peerConnection
-                .setRemoteDescription(new RTCSessionDescription(signal.sdp))
-                .then(function() {
-                    // Only create answers in response to offers
-                    if(signal.sdp.type == 'offer') {
-                        self.peerConnection.createAnswer()
-                            .then(self.createdDescription)
-                            .catch(self.errorHandler);
-                    }
-            }).catch(self.errorHandler);
+    /**
+     * begin differentiating between
+     * caller and callee. In our instance
+     * the owner of the room should be 
+     * the callee
+     */
+    
+    // caller
+    if(YAWB.user.owner){
+        this.callerHandlers();
+        this.sendMessage({
+            type: "joining"
+        });
+    }
+    // callee
+    else{
+        this.calleeHandlers();
+        this.sendMessage({
+            type: "joining"
+        });
+        this.sendMessage({
+            type: "callee_arrived"
+        });
+    }
+
+  }
+  
+  newDescriptionCreated(description) {
+    console.log('New Description Created');
+    self.peerConnection
+        .setLocalDescription(description)
+        .then(function() {
+            self.sendMessage({
+                type:"new_description",
+                sdp:description 
+            });
+        }).catch(self.errorHandler);
+  }
+  
+  onicecandidate(ice_event){
+    console.log('New Ice Connection');
+    if (ice_event.candidate) {
+        var message = {
+            type: "new_ice_candidate",
+            candidate: ice_event.candidate
+        }
+        sendMessage(message);
+    }
+  }
+  
+  onaddstream(event){
+    console.log('Adding the remote sream :)');
+    this.remoteVideo.src = window.URL.createObjectURL(event.stream);
+  }
+  
+  // setup caller handlers
+  callerHandlers(){
+      this.socket.on('message', function(msg) {
+        if (msg.type === "callee_arrived") {
+            this.peerConnection.createOffer(self.newDescriptionCreated, self.errorHandler);
+        }
+
+        else if (msg.type === "new_ice_candidate") {
+            console.log('new ice');
+            this.peerConnection.addIceCandidate(
+                new RTCIceCandidate(msg.candidate)
+            );
         }
         
-        else if (signal.ice) {
-            self.peerConnection
-                .addIceCandidate(new RTCIceCandidate(signal.ice))
-                .catch(self.errorHandler);
-        } 
+        else if (msg.type === "new_description") {
+            
+            this.peerConnection
+                .setRemoteDescription(new RTCSessionDescription(msg.sdp))
+                .then(function() {
+                    if (self.peerConnection.remoteDescription.type === "answer") {
+                        console.log('doing some custom answer work');
+                    }
+                }).catch(self.errorHandler);
+        }else{
+            console.log(msg);
+        }
+      });
+  }
+  
+   calleeHandlers(){
+      this.socket.on('message', function(msg) {
+        if (msg.type === "new_ice_candidate") {
+            this.peerConnection.addIceCandidate(
+                new RTCIceCandidate(msg.candidate)
+            );
+        }
         
-    });
-    
-    navigator.getUserMedia(self.constraints, self.getUserMediaSuccess, self.errorHandler);
-    this.socket.emit('message', {'uid': YAWB.user.uid});
+        else if (msg.type === "new_description") {
+            this.peerConnection
+                .setRemoteDescription(new RTCSessionDescription(msg.sdp))
+                .then(function() {
+                    if (self.peerConnection.remoteDescription.type === "offer") {
+                        self.peerConnection.createAnswer(self.newDescriptionCreated, self.errorHandler);
+                    }
+                }).catch(self.errorHandler);
+        } else{
+            console.log(msg);
+        }
+      });
   }
   
-  start(isCaller) {
-    console.log('should be here', isCaller);
-    self.peerConnection = new RTCPeerConnection(self.iceConfig);
-    self.peerConnection.onicecandidate = self.gotIceCandidate;
-    self.peerConnection.onaddstream = self.gotRemoteStream;
-    self.peerConnection.addStream(self.localStream);
-    
-    console.log(self.peerConnection);
-
-    if(isCaller) {
-        self.peerConnection.createOffer().then(self.createdDescription).catch(self.errorHandler);
-    }
+  
+ /**
+  * get the local user media sream.
+  * can be video or audo. 
+  */
+  setupLocalMedia(){
+    navigator.mediaDevices.getUserMedia(self.constraints)
+    .then( self.getUserMediaSuccess)
+    .catch(self.errorHandler);
   }
   
-  gotIceCandidate(event) {
-    if(event.candidate != null) {
-        self.socket.emit('message', {'ice': event.candidate, 'uid': YAWB.user.uid});
-    }
+  getUserMediaSuccess(stream){
+      self.localVideo.src = window.URL.createObjectURL(stream);
+      self.stream = stream;
+      self.peerConnection.addStream(stream);
   }
   
-  createdDescription(description) {
-    console.log('got description');
-
-    self.peerConnection.setLocalDescription(description).then(function() {
-        self.socket.emit('message', {'sdp': self.peerConnection.localDescription, 'uid': YAWB.user.uid});
-    }).catch(self.errorHandler);
-  }
-  
-  gotRemoteStream(event) {
-    console.log('got remote stream');
-    self.remoteVideo.src = window.URL.createObjectURL(event.stream);
-  }
-
-  
-  getUserMediaSuccess(stream) {
-    self.localStream = stream;
-    self.localVideo.src = window.URL.createObjectURL(stream);
-  }
-    
-  // send message helper function
+  /**
+   * generic sender function
+   * handles the signiling to 
+   * the server
+   */
   sendMessage(message) {
     console.log('Client sending message: ', message);
     self.socket.emit('message', message);
   }
   
+  /**
+   * generic error handler
+   * for each of the WebRTC calls
+   */
   errorHandler(error) {
     console.log(error);
+  }
+  
+  /**
+   * when a user leaves the room or disconnects
+   * Kill the auido/video stream and end the 
+   * peer connection
+  */
+  destroy() {
+    var tracks = self.stream.getTracks();
+    
+    tracks.map(track => {
+        track.stop();
+    });
+    self.peerConnection.close();
+    self.peerConnection = null;
   }
 
 }

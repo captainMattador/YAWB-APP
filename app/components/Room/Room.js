@@ -29,9 +29,9 @@ class Room extends React.Component {
       .child('owner');
     this.ownerRef.once('value', this.returnedUser);
   }
-
-  componentDidMount(){
-    this.rtcConnect = new RoomRTC(this.socket, this.refs.video, this.refs.remotevideo);
+  
+  componentWillUnmount(){
+    this.rtcConnect.destroy();
   }
 
   returnedUser(snapshot){
@@ -39,6 +39,7 @@ class Room extends React.Component {
     this.setState({
       userReturned: true
     });
+    this.rtcConnect = new RoomRTC(this.socket, this.refs.video, this.refs.remotevideo);
   }
 
   toggleChatBox(e){
