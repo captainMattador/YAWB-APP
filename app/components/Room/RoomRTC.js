@@ -46,7 +46,7 @@ class RoomRTC{
      * This is the same for caller and callee
      */
     this.peerConnection = new RTCPeerConnection(this.iceConfig);
-    this.peerConnection.onicecandidate = this.onicecandidate;
+    this.peerConnection.onicecandidate = this.onicecandidate.bind(YAWB.user.uid);
     this.peerConnection.onaddstream = this.onaddstream;
     this.setupLocalMedia();
     
@@ -93,7 +93,8 @@ class RoomRTC{
         }).catch(self.errorHandler);
   }
   
-  onicecandidate(ice_event){
+  onicecandidate(uid, ice_event){
+    console.log(uid);
     console.log(ice_event);
     if (ice_event.candidate) {
         var message = {
