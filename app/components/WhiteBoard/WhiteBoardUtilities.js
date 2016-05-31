@@ -1,4 +1,3 @@
-import io from 'socket.io-client';
 import {clientPosition} from '../../utils/helpers';
 import Stack from '../../datastructures/stack';
 import Events from '../../utils/events-handler';

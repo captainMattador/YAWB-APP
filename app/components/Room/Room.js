@@ -4,6 +4,7 @@ import {updateRoute, loading, msg} from '../../utils/CustomEvents';
 import CommentsComponent from '../Comments/CommentsComponent';
 import TopBar from '../UiComponents/TopBar';
 import RoomUsers from './RoomUsers';
+import RoomRTC from './RoomRTC';
 import WhiteBoardView from '../WhiteBoard/WhiteBoardView';
 
 class Room extends React.Component {
@@ -18,15 +19,8 @@ class Room extends React.Component {
     //this.socketHost = 'http://localhost:8080/room-users';
     this.socketHost = 'https://yawbapp.com/room-users';
     this.socket = io.connect(this.socketHost);
-
-    // window.navigator.getUserMedia = navigator.webkitGetUserMedia;
-
-    // if(navigator.getUserMedia){
-    //   console.log('good news you have it!');
-    // }else{
-    //   console.log('uh oh');
-    // }
-
+    
+    this.rtcConnect;
     this.returnedUser = this.returnedUser.bind(this);
   }
 
@@ -37,37 +31,8 @@ class Room extends React.Component {
   }
 
   componentDidMount(){
-     this.connectVideo();
-
-      // var errorCallback = function(e) {
-      //   console.log('Reeeejected!', e);
-      // };
-
-      // navigator.getUserMedia({video: false, audio: true},
-      // function(localMediaStream) {
-      //   console.log(localMediaStream);
-      // }, errorCallback);
+    this.rtcConnect = new RoomRTC(this.socket, this.refs.video, this.refs.remotevideo);
   }
-
-  connectVideo() {
-     window.navigator.getUserMedia = navigator.webkitGetUserMedia;
-
-     navigator.getUserMedia({ audio: true, video: true }, this.successCallback.bind(this),
-     this.errorCallback);
- }
-
- successCallback( stream ) {
-    if (window.URL) {
-       this.refs.video.src = window.URL.createObjectURL(stream);
-    }
-    else {
-       this.refs.video.src = stream;
-    }
- }
-
- errorCallback() {
-    console.log("Error loading AV Stream");
- }
 
   returnedUser(snapshot){
     YAWB.user.owner = (YAWB.user.uid === snapshot.val()) ? true : false;
@@ -138,6 +103,8 @@ class Room extends React.Component {
           dbList="Questions"/>
 
           <video ref="video" autoplay></video>
+          
+          <video ref="remotevideo" autoplay></video>
       </div>
     )
   }

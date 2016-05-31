@@ -13,11 +13,7 @@ class WhiteBoardView extends React.Component {
     this.wbUtils;
     this.socket;
     this._history = new Stack({max: 20});
-    
-    if(navigator.getUserMedia){
-      console.log('good news you have getUserMedia!');
-    }
-    
+   
     // dom canvas
     this._canvas;
     this._ctx;
