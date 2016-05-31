@@ -93,7 +93,8 @@ class RoomRTC{
         }).catch(self.errorHandler);
   }
   
-  onicecandidate(ice_event){
+  onicecandidate(uid, ice_event){
+    console.log(uid);
     console.log(ice_event);
     if (ice_event.candidate) {
         var message = {
@@ -122,7 +123,7 @@ class RoomRTC{
             console.log('new ice');
             self.peerConnection.addIceCandidate(
                 new RTCIceCandidate(msg.candidate)
-            );
+            ).bind(YAWB.user.uid);
         }
         
         else if (msg.type === "new_description") {
@@ -146,7 +147,7 @@ class RoomRTC{
         if (msg.type === "new_ice_candidate") {
             self.peerConnection.addIceCandidate(
                 new RTCIceCandidate(msg.candidate)
-            );
+            ).bind(YAWB.user.uid);
         }
         
         else if (msg.type === "new_description") {
