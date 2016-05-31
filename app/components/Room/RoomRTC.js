@@ -93,17 +93,17 @@ class RoomRTC{
         }).catch(self.errorHandler);
   }
   
-  onicecandidate(ice_event){
-    console.log(ice_event);
-    if (ice_event.candidate) {
-        var message = {
-            type: "new_ice_candidate",
-            from: YAWB.user.uid,
-            candidate: ice_event.candidate
-        }
-        self.sendMessage(message);
-    }
-  }
+//   onicecandidate(ice_event){
+//     console.log(ice_event);
+//     if (ice_event.candidate) {
+//         var message = {
+//             type: "new_ice_candidate",
+//             from: YAWB.user.uid,
+//             candidate: ice_event.candidate
+//         }
+//         self.sendMessage(message);
+//     }
+//   }
   
   onaddstream(event){
     console.log(event);
@@ -135,6 +135,8 @@ class RoomRTC{
                 .then(function() {
                     if (self.peerConnection.remoteDescription.type === 'answer') {
                         console.log('doing some custom answer work');
+                    }else if (self.peerConnection.remoteDescription.type === 'offer') {
+                        self.peerConnection.createAnswer(self.newDescriptionCreated.bind(msg), self.errorHandler);
                     }
                 }).catch(self.errorHandler);
         }else{
@@ -144,34 +146,34 @@ class RoomRTC{
       });
   }
   
-   calleeHandlers(){
+//    calleeHandlers(){
        
-      this.socket.on('message', function(msg) {
+//       this.socket.on('message', function(msg) {
           
-        if(msg.from === YAWB.user.uid) return;
+//         if(msg.from === YAWB.user.uid) return;
         
-        if (msg.type === 'new_ice_candidate') {
-            console.log('new_ice_candidate', msg);
-            self.peerConnection.addIceCandidate(
-                new RTCIceCandidate(msg.candidate)
-            );
-        }
+//         if (msg.type === 'new_ice_candidate') {
+//             console.log('new_ice_candidate', msg);
+//             self.peerConnection.addIceCandidate(
+//                 new RTCIceCandidate(msg.candidate)
+//             );
+//         }
         
-        else if (msg.type === 'new_description') {
-            console.log('new_description', msg);
-            self.startPeerConnection(false, msg)
-            self.peerConnection
-                .setRemoteDescription(new RTCSessionDescription(msg.sdp))
-                .then(function() {
-                    if (self.peerConnection.remoteDescription.type === 'offer') {
-                        self.peerConnection.createAnswer(self.newDescriptionCreated, self.errorHandler);
-                    }
-                }).catch(self.errorHandler);
-        } else{
-            console.log(msg);
-        }
-      });
-  }
+//         else if (msg.type === 'new_description') {
+//             console.log('new_description', msg);
+//             self.startPeerConnection(false, msg)
+//             self.peerConnection
+//                 .setRemoteDescription(new RTCSessionDescription(msg.sdp))
+//                 .then(function() {
+//                     if (self.peerConnection.remoteDescription.type === 'offer') {
+//                         self.peerConnection.createAnswer(self.newDescriptionCreated, self.errorHandler);
+//                     }
+//                 }).catch(self.errorHandler);
+//         } else{
+//             console.log(msg);
+//         }
+//       });
+//   }
   
   startPeerConnection(isOwner, msg){
     
@@ -182,6 +184,7 @@ class RoomRTC{
             var message = {
                 type: "new_ice_candidate",
                 from: YAWB.user.uid,
+                to: msg.from,
                 candidate: ice_event.candidate
             }
             self.sendMessage(message);
@@ -211,25 +214,32 @@ class RoomRTC{
   getUserMediaSuccess(stream){
       self.localVideo.src = window.URL.createObjectURL(stream);
       self.stream = stream;
-      if(YAWB.user.owner){
-            self.callerHandlers();
-            self.sendMessage({
-                type: "joining",
-                from: YAWB.user.uid,
-            });
-        }
-        // callee
-        else{
-            self.calleeHandlers();
-            self.sendMessage({
-                type: "joining",
-                from: YAWB.user.uid,
-            });
-            self.sendMessage({
+      
+      self.callerHandlers();
+       
+      if(!YAWB.user.owner){
+          self.sendMessage({
                 type: "callee_arrived",
                 from: YAWB.user.uid,
             });
+            // //self.callerHandlers();
+            // self.sendMessage({
+            //     type: "joining",
+            //     from: YAWB.user.uid,
+            // });
         }
+        // callee
+        // else{
+        //     //self.calleeHandlers();
+        //     self.sendMessage({
+        //         type: "joining",
+        //         from: YAWB.user.uid,
+        //     });
+        //     self.sendMessage({
+        //         type: "callee_arrived",
+        //         from: YAWB.user.uid,
+        //     });
+        // }
       //self.peerConnection.addStream(stream);
   }
   
