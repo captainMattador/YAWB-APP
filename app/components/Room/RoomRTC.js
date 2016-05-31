@@ -118,7 +118,7 @@ class RoomRTC{
         
         if (msg.type === 'callee_arrived') {
             console.log('callee_arrived', msg);
-            self.startPeerConnection(msg);
+            //self.startPeerConnection(msg);
         }
 
         else if (msg.type === 'new_ice_candidate') {
@@ -173,13 +173,24 @@ class RoomRTC{
   }
   
   startPeerConnection(){
+    
     self.peerConnection = new RTCPeerConnection(self.iceConfig);
-    self.peerConnection.onicecandidate = self.onicecandidate.bind(YAWB.user);
+    self.peerConnection.onicecandidate = function(ice_event){
+        if (ice_event.candidate) {
+            var message = {
+                type: "new_ice_candidate",
+                from: YAWB.user.uid,
+                candidate: ice_event.candidate
+            }
+            self.sendMessage(message);
+        }
+    };
     self.peerConnection.onaddstream = self.onaddstream;
     self.peerConnection.addStream(stream);
     
     // create the offer
     self.peerConnection.createOffer(self.newDescriptionCreated, self.errorHandler);
+    
   }
   
   
@@ -197,20 +208,20 @@ class RoomRTC{
       self.localVideo.src = window.URL.createObjectURL(stream);
       self.stream = stream;
       if(YAWB.user.owner){
-            this.callerHandlers();
-            this.sendMessage({
+            self.callerHandlers();
+            self.sendMessage({
                 type: "joining",
                 from: YAWB.user.uid,
             });
         }
         // callee
         else{
-            this.calleeHandlers();
-            this.sendMessage({
+            self.calleeHandlers();
+            self.sendMessage({
                 type: "joining",
                 from: YAWB.user.uid,
             });
-            this.sendMessage({
+            self.sendMessage({
                 type: "callee_arrived",
                 from: YAWB.user.uid,
             });
