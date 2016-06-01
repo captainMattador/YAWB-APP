@@ -39,6 +39,7 @@ class Room extends React.Component {
     this.setState({
       userReturned: true
     });
+    // kick off peer RTC connections
     this.rtcConnect = new RoomRTC(this.socket, this.refs.video);
   }
 

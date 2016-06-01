@@ -11,7 +11,7 @@ class RoomRTC{
     this.socket = socket;
     this.localVideo = localVideo;
     this.stream;
-    this.peersConnections = {};
+    this.peerConnections = {};
     
     this.constraints = {
         video: true,
@@ -61,12 +61,12 @@ class RoomRTC{
    */
   getPeerConnection(connectionWith){
     
-    if (typeof self.peersConnections[connectionWith] !== 'undefined') {
-        return self.peersConnections[connectionWith];
+    if (typeof self.peerConnections[connectionWith] !== 'undefined') {
+        return self.peerConnections[connectionWith];
     }
     
     var peerConnection = new RTCPeerConnection(self.iceConfig);
-    self.peersConnections[connectionWith] = peerConnection;
+    self.peerConnections[connectionWith] = peerConnection;
     peerConnection.onicecandidate = function(ice_event){
         if (ice_event.candidate) {
             var message = {
@@ -155,6 +155,12 @@ class RoomRTC{
                 console.log('We got an answer');
             });
         }
+        
+        else if (msg.type ==='leaving_room'){
+            console.log('someone is leaving the room');
+            self.removeConnection(msg.from);
+        }
+        
       });
   }
  
@@ -191,26 +197,39 @@ class RoomRTC{
     console.log(error);
   }
   
+  
+  /**
+   * generic helper function for 
+   * closing down a connection.
+   */
+  removeConnection(connection){
+      self.peerConnections[connection].close();
+      self.peerConnections[connection] = null;
+  }
+  
   /**
    * when a user leaves the room or disconnects
    * Kill the auido/video stream and end the 
    * peer connection
   */
   destroy() {
-    var tracks = self.stream.getTracks();
     
-    // sendMessage({
-    //     'leaving-room',
-    // });
-    tracks.map(track => {
-        track.stop();
-    });
-    
+    if(self.stream){
+        var tracks = self.stream.getTracks();
+        tracks.map(track => {
+            track.stop();
+        });
+    }
+
     // close out each peer connection
     // befor we leave
-    for(prop in self.peersConnections){
-        self.peersConnections[prop].close();
-        self.peersConnections[prop] = null;
+    for(connection in self.peerConnections){
+        self.sendMessage({
+            type: 'leaving_room',
+            from: YAWB.user.uid,
+            to: prop
+        });
+        self.removeConnection(connection);
     }
   }
 
