@@ -126,7 +126,11 @@ class RoomRTC{
                 }
             }, 250);
         }
-
+        
+        /**
+         * handle when an ice candidate
+         * comes in
+         */
         else if (msg.type === 'new_ice_candidate') {
             console.log('new_ice_candidate', msg);
             
@@ -135,6 +139,9 @@ class RoomRTC{
             );
         }
         
+        /**
+         * offer recieved. add it to local description
+         */
         else if (msg.type === 'sdp_offer') {
             pc.setRemoteDescription(new RTCSessionDescription(msg.sdp), function () {
                 console.log('Setting remote description by offer');
@@ -150,12 +157,19 @@ class RoomRTC{
             });
         }
         
+        /**
+         * answer recieved. add it to local description
+         */
         else if (msg.type === 'sdp_answer') {
             pc.setRemoteDescription(new RTCSessionDescription(msg.sdp), function () {
                 console.log('We got an answer');
             });
         }
         
+        /**
+         * user left the room, so remove them from
+         * the peer list
+         */
         else if (msg.type ==='leaving_room'){
             console.log('someone is leaving the room');
             self.removeConnection(msg.from);
@@ -223,7 +237,7 @@ class RoomRTC{
 
     // close out each peer connection
     // befor we leave
-    for(connection in self.peerConnections){
+    for(var connection in self.peerConnections){
         self.sendMessage({
             type: 'leaving_room',
             from: YAWB.user.uid,
