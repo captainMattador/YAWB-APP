@@ -174,10 +174,10 @@ class RoomRTC{
                 pc.createAnswer(function(sdp){
                     pc.setLocalDescription(sdp);
                     self.sendMessage({
-                        type: type,
+                        type: 'sdp_answer',
                         from: YAWB.user.uid,
                         to: msg.from,
-                        sdp: 'sdp_answer'
+                        sdp: sdp
                     });
                 }, self.errorHandler);
             });
