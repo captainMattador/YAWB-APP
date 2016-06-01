@@ -101,7 +101,7 @@ class RoomRTC{
             to: offerTo,
             sdp: sdp
           });
-      }, self.errorHandler);
+      }, self.errorHandler, self.sdpConstraints);
   }
  
   // setup caller handlers
@@ -191,6 +191,7 @@ class RoomRTC{
   getUserMediaSuccess(stream){
       self.localVideo.src = window.URL.createObjectURL(stream);
       self.stream = stream;
+      window.stream = stream;
   }
   
   
