@@ -3,6 +3,7 @@ import io from 'socket.io-client';
 import {updateRoute, loading, msg} from '../../utils/CustomEvents';
 import CommentsComponent from '../Comments/CommentsComponent';
 import TopBar from '../UiComponents/TopBar';
+import WhiteBoardControls from '../WhiteBoard/WhiteBoardControls';
 import RoomUsers from './RoomUsers';
 import RoomRTC from './RoomRTC';
 import WhiteBoardView from '../WhiteBoard/WhiteBoardView';
@@ -76,6 +77,12 @@ class Room extends React.Component {
       return <li ref="chatIcon" data-chat-box="peer-comments" onClick={this.toggleChatBox}><i className="fa fa-comments" aria-hidden="true"></i></li>;
     }
   }
+  
+  boardControls(){
+    if(YAWB.user.owner){
+      return <WhiteBoardControls/>
+    }
+  }
 
   leaveRoom(){
     YAWB.room = {};
@@ -91,21 +98,22 @@ class Room extends React.Component {
     return (
       <div className={"room" + ((this.state.userReturned && YAWB.user.owner) ? " owner" : "")}>
         <TopBar extraSettings={extendSettings}>
+          {this.boardControls()}
           <ul className="chat-nav">
             {this.chatNav()}
             <li ref="questionIcon" data-chat-box="questions" onClick={this.toggleChatBox}><i className="fa fa-question-circle" aria-hidden="true"></i></li>
           </ul>
         </TopBar>
-        <RoomUsers socket={this.socket}/>
+        <section className="white-board">
         {this.boardView()}
+        <video ref="video" autoplay></video>
+        </section>
+        <RoomUsers socket={this.socket}/>
         {this.chatComponent()}
         <CommentsComponent
           heading="Ask a question"
           commentsClass="questions"
           dbList="Questions"/>
-
-          <video ref="video" autoplay></video>
-
       </div>
     )
   }

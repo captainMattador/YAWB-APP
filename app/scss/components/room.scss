@@ -8,19 +8,38 @@ The main canvas where all the magic happens
 
 
 /*********************************************
-Video/Audio
+Video/Audio/ and white board
 *********************************************/
+
 video{
     position: absolute;
-    top:0;
+    top:90px;
     left: 50%;
-    margin-left: -200px;
-    width:100%;
-    max-width: 400px;
-    z-index: 1000;
-    background: black;
+    margin-left: -490px;
+    width: 980px;
+    height:551px;
+    background-color: $black-color;
+    z-index: 3;
 }
 
+canvas{
+    position: absolute;
+    top:90px;
+    left: 50%;
+    margin-left: -490px;
+    background-color: $white-color;
+    -webkit-box-shadow: 0 1px 30px 0 $divider-color;
+    box-shadow: 0 1px 100px 0 $divider-color;
+    z-index: 2;
+}
+
+.white-board.active .video{
+    z-index: 3;
+}
+
+.white-board.active canvas{
+    z-index: 2;
+}
 
 
 /*controls*/
@@ -31,6 +50,7 @@ video{
     height: 70px;
     width: 400px;
     margin-left: -150px;
+    z-index: 4;
 }
 
 .board-controls h3{
@@ -159,11 +179,6 @@ input[type="range"] {
     padding-top: 10px;
 }
 
-.white-board{
-    text-align: center;
-    padding: 20px;
-}
-
 
 /*********************************************
 Cavas and tool stylings
@@ -189,13 +204,6 @@ Cavas and tool stylings
     display: block;
 }
 
-canvas{
-    display: inline-block;
-    background-color: $white-color;
-    -webkit-box-shadow: 0 1px 30px 0 $divider-color;
-    box-shadow: 0 1px 100px 0 $divider-color;
-}
-
 canvas.text{
     cursor: text;
 }
@@ -216,6 +224,7 @@ a room
   border-top:1px solid $mid-color;
   background-color: $white-color;
   transition: height 250ms ease-in;
+  z-index: 4;
 }
 
 .room-users.active{

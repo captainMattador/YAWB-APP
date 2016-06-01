@@ -1,6 +1,5 @@
 import React from 'react';
 import io from 'socket.io-client';
-import WhiteBoardControls from './WhiteBoardControls';
 import WhiteBoardUtilities from './WhiteBoardUtilities';
 import Stack from '../../datastructures/stack';
 import {updateRoute, loading, msg} from '../../utils/CustomEvents';
@@ -212,20 +211,12 @@ class WhiteBoardView extends React.Component {
 
   render(){
     
-    var boardControls;
-    if(YAWB.user.owner){
-      boardControls = <WhiteBoardControls/>
-    }
-    
     return (
-      <section className="white-board">
-        {boardControls}
-        <canvas 
-              ref="whiteBoard" 
-              id="canvas"
-              width="980"
-              height="551"></canvas>
-      </section>
+      <canvas 
+        ref="whiteBoard" 
+        id="canvas"
+        width="980"
+        height="551"></canvas>
     )
   }
 
