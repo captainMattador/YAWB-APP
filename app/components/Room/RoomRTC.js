@@ -84,7 +84,7 @@ class RoomRTC{
         peerConnection.onaddstream = function(event){
             console.log('adding remote stream of the owner');
             self.videoPlayer.src = window.URL.createObjectURL(event.stream);
-            self.audioPlayer.srcObject = stream;
+            self.audioPlayer.srcObject = self.stream;
             self.audioPlayer.play();
         };
     }else{
