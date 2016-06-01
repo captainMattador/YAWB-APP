@@ -99,9 +99,15 @@ class RoomRTC{
   
   makeOffer(offerTo){
       var pc = self.getPeerConnection(offerTo);
-      pc.createOffer(pc.setLocalDescription(sdp))
-                .then(self.setLocalDescriptionCallBack(sdp, offerTo, 'sdp_offer'))
-                .catch(self.errorHandler); 
+      pc.createOffer(function(sdp){
+          pc.setLocalDescription(sdp);
+          self.sendMessage({
+            type: type,
+            from: YAWB.user.uid,
+            to: offerTo,
+            sdp: 'sdp_offer'
+          });
+      }, self.errorHandler);
   }
   
   setLocalDescriptionCallBack(sdp, toUser, type){
@@ -162,10 +168,18 @@ class RoomRTC{
         }
         
         else if (msg.type === 'sdp_offer') {
-            pc.setRemoteDescription(new RTCSessionDescription(msg.sdp))
-                .then(function(){
-                    pc.createAnswer(self.setLocalDescriptionCallBack(sdp, toUser, 'sdp_answer'), self.errorHandler);
-                }).catch(self.errorHandler);
+            pc.setRemoteDescription(new RTCSessionDescription(msg.sdp), function () {
+                console.log('Setting remote description by offer');
+                pc.createAnswer(function(sdp){
+                    pc.setLocalDescription(sdp);
+                    self.sendMessage({
+                        type: type,
+                        from: YAWB.user.uid,
+                        to: msg.from,
+                        sdp: 'sdp_answer'
+                    });
+                }, self.errorHandler);
+            });
             // console.log('new_description', msg);
             // if(!YAWB.user.owner){
             //     self.startPeerConnection(false, msg);
@@ -180,11 +194,9 @@ class RoomRTC{
         }
         
         else if (msg.type === 'sdp_answer') {
-            
-            pc.setRemoteDescription(new RTCSessionDescription(msg.sdp))
-                .then(function(){
-                    console.log('we got an asnwer back!');
-                }).catch(self.errorHandler);
+            pc.setRemoteDescription(new RTCSessionDescription(msg.sdp), function () {
+                console.log('We got an answer');
+            });
             // console.log('new_description', msg);
             // if(!YAWB.user.owner){
             //     self.startPeerConnection(false, msg);
