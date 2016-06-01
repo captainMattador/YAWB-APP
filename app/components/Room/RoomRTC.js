@@ -69,7 +69,6 @@ class RoomRTC{
     
     var peerConnection = new RTCPeerConnection(self.iceConfig);
     self.peersConnections[connectionWith] = peerConnection;
-    peerConnection.addStream(self.stream);
     peerConnection.onicecandidate = function(ice_event){
         if (ice_event.candidate) {
             var message = {
@@ -83,6 +82,7 @@ class RoomRTC{
     };
     
     if(!YAWB.user.owner){
+        peerConnection.addStream(self.stream);
         peerConnection.onaddstream = function(event){
             console.log('adding remote stream of the owner');
             self.localVideo.src = window.URL.createObjectURL(event.stream); 
@@ -102,10 +102,10 @@ class RoomRTC{
       pc.createOffer(function(sdp){
           pc.setLocalDescription(sdp);
           self.sendMessage({
-            type: type,
+            type: 'sdp_offer',
             from: YAWB.user.uid,
             to: offerTo,
-            sdp: 'sdp_offer'
+            sdp: sdp
           });
       }, self.errorHandler);
   }
