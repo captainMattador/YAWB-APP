@@ -10,8 +10,6 @@ class RoomRTC{
     self = this;
     this.socket = socket;
     this.localVideo = localVideo;
-    //this.remoteVideo = remoteVideo;
-    //this.peerConnection;
     this.stream;
     this.peersConnections = {};
     
@@ -90,12 +88,7 @@ class RoomRTC{
         peerConnection.addStream(self.stream);
     }
     
-    return peerConnection;
-    // create the offer
-    // if(isOwner){
-    //     self.peerConnection.createOffer(self.newDescriptionCreated.bind(this, msg.from), self.errorHandler);   
-    // }
-    
+    return peerConnection;    
   }
   
   makeOffer(offerTo){
@@ -110,28 +103,6 @@ class RoomRTC{
           });
       }, self.errorHandler);
   }
-  
-  setLocalDescriptionCallBack(sdp, toUser, type){
-      self.sendMessage({
-            type: type,
-            from: YAWB.user.uid,
-            to: toUser,
-            sdp: sdp 
-        });
-  }
-   
-//   newDescriptionCreated(toUser, description) {
-//     self.peerConnection
-//         .setLocalDescription(description)
-//         .then(function() {
-//             self.sendMessage({
-//                 type: 'new_description',
-//                 from: YAWB.user.uid,
-//                 to: toUser,
-//                 sdp: description 
-//             });
-//         }).catch(self.errorHandler);
-//   }
  
   // setup caller handlers
   signalHandlers(){
@@ -154,10 +125,6 @@ class RoomRTC{
                     self.makeOffer(msg.from);
                 }
             }, 250);
-            //self.startPeerConnection(msg.from);
-            
-            //self.makeOffer(msg.from);
-            //self.startPeerConnection(true, msg.from);
         }
 
         else if (msg.type === 'new_ice_candidate') {
@@ -181,50 +148,13 @@ class RoomRTC{
                     });
                 }, self.errorHandler);
             });
-            // console.log('new_description', msg);
-            // if(!YAWB.user.owner){
-            //     self.startPeerConnection(false, msg);
-            // }
-            // self.peerConnection
-            //     .setRemoteDescription(new RTCSessionDescription(msg.sdp))
-            //     .then(function() {
-            //         if (self.peerConnection.remoteDescription.type === 'offer') {
-            //             self.peerConnection.createAnswer(self.newDescriptionCreated.bind(this, msg.from), self.errorHandler);
-            //         }
-            //     }).catch(self.errorHandler);
         }
         
         else if (msg.type === 'sdp_answer') {
             pc.setRemoteDescription(new RTCSessionDescription(msg.sdp), function () {
                 console.log('We got an answer');
             });
-            // console.log('new_description', msg);
-            // if(!YAWB.user.owner){
-            //     self.startPeerConnection(false, msg);
-            // }
-            // self.peerConnection
-            //     .setRemoteDescription(new RTCSessionDescription(msg.sdp))
-            //     .then(function() {
-            //         if (self.peerConnection.remoteDescription.type === 'offer') {
-            //             self.peerConnection.createAnswer(self.newDescriptionCreated.bind(this, msg.from), self.errorHandler);
-            //         }
-            //     }).catch(self.errorHandler);
         }
-        
-        // else if (msg.type === 'new_description') {
-        //     console.log('new_description', msg);
-        //     if(!YAWB.user.owner){
-        //         self.startPeerConnection(false, msg);
-        //     }
-        //     self.peerConnection
-        //         .setRemoteDescription(new RTCSessionDescription(msg.sdp))
-        //         .then(function() {
-        //             if (self.peerConnection.remoteDescription.type === 'offer') {
-        //                 self.peerConnection.createAnswer(self.newDescriptionCreated.bind(this, msg.from), self.errorHandler);
-        //             }
-        //         }).catch(self.errorHandler);
-        // }
-        
       });
   }
  
@@ -241,40 +171,7 @@ class RoomRTC{
   getUserMediaSuccess(stream){
       self.localVideo.src = window.URL.createObjectURL(stream);
       self.stream = stream;
-    //   self.callerHandlers();
-       
-    //   if(!YAWB.user.owner){
-    //       self.sendMessage({
-    //             type: "callee_arrived",
-    //             from: YAWB.user.uid,
-    //         });
-    //         // //self.callerHandlers();
-    //         // self.sendMessage({
-    //         //     type: "joining",
-    //         //     from: YAWB.user.uid,
-    //         // });
-    //     }
-        // callee
-        // else{
-        //     //self.calleeHandlers();
-        //     self.sendMessage({
-        //         type: "joining",
-        //         from: YAWB.user.uid,
-        //     });
-        //     self.sendMessage({
-        //         type: "callee_arrived",
-        //         from: YAWB.user.uid,
-        //     });
-        // }
-      //self.peerConnection.addStream(stream);
   }
-  
-  
-  
-  
-  
-  
-  
   
   
   /**
