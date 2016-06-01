@@ -14,7 +14,6 @@ class WhiteBoardUtilities{
     this.textForm;
     this.textInput;
     this.controls = controls;
-    this.boardWrap = document.querySelector('.white-board');
     this.vidControl = controls.querySelector('.video-visual');
     this.control = controls.querySelectorAll('.control-icon');
     this.penSizeVisual = controls.querySelector('.pen-size-visual span');
@@ -112,8 +111,8 @@ class WhiteBoardUtilities{
   
   toggleVideo(e){
     e.preventDefault();
-    this.boardWrap.classList.toggle('video');
     e.currentTarget.classList.toggle('videoActive');
+    self.socket.emit('toggle-board');
   }
   
   prevCanvas (e){
