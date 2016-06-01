@@ -175,8 +175,8 @@ class RoomRTC{
                 from: YAWB.user.uid,
             });
         }else{
-            self.videoPlayer.src = window.URL.createObjectURL(stream);
-            self.videoPlayer.muted = 'muted';
+            //self.videoPlayer.src = window.URL.createObjectURL(stream);
+            //self.videoPlayer.muted = 'muted';
             self.stream = stream;
         }
         
