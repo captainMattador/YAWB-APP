@@ -241,7 +241,7 @@ class RoomRTC{
         self.sendMessage({
             type: 'leaving_room',
             from: YAWB.user.uid,
-            to: prop
+            to: connection
         });
         self.removeConnection(connection);
     }
