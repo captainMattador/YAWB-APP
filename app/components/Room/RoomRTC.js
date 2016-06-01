@@ -10,8 +10,8 @@ class RoomRTC{
     self = this;
     this.socket = socket;
     this.localVideo = localVideo;
-    this.remoteVideo = remoteVideo;
-    this.peerConnection;
+    //this.remoteVideo = remoteVideo;
+    //this.peerConnection;
     this.stream;
     this.peersConnections = {};
     
