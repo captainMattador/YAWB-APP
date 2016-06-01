@@ -63,8 +63,8 @@ class RoomRTC{
    */
   getPeerConnection(connectionWith){
     
-    if (self.peerConnections[id]) {
-        return self.peerConnections[id];
+    if (self.peerConnections[connectionWith]) {
+        return self.peerConnections[connectionWith];
     }
     
     var peerConnection = new RTCPeerConnection(self.iceConfig);
