@@ -176,7 +176,8 @@ class RoomRTC{
             });
         }else{
             self.videoPlayer.src = window.URL.createObjectURL(stream);
-            self.stream = stream; 
+            self.videoPlayer.muted = 'muted';
+            self.stream = stream;
         }
         
     })
