@@ -33,6 +33,7 @@ class WhiteBoardUtilities{
     this.commandsList = controls.querySelectorAll('.commands.control li');
     this.prevBoard = controls.querySelector('.prevBoard');
     this.nextBoard = controls.querySelector('.nextBoard');
+    this.snapshot = controls.querySelector('.snapshot');
     
     // sockets and storages
     this.socket = socket;
@@ -110,6 +111,7 @@ class WhiteBoardUtilities{
     this.events.addEvent(document.body, 'mouseup', this.drawOff.bind(this));
     this.events.addEvent(this.prevBoard, 'click', this.prevCanvas.bind(this));
     this.events.addEvent(this.nextBoard, 'click', this.nextCanvas.bind(this));
+ //   this.events.addEvent(this.snapshot, 'click', this.snapshot.bind(this));
   }
 
   prevCanvas (e){
@@ -126,6 +128,12 @@ class WhiteBoardUtilities{
     this.socket.emit('update-page', {
       direction: 'next'
     });
+  }  
+  
+  snapshot (e){
+    e.preventDefault();
+    console.log("go to snapshot");
+  //  this.socket.emit('take-snapshot');
   }  
   
   keyPressHandler(e){

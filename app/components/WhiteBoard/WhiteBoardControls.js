@@ -73,7 +73,7 @@ class WhiteBoardControls extends React.Component {
                   undo
                 </li>
                 <li data-command="save">
-                  save to file
+                  snapshot
                 </li>
               </ul>
           </div>
