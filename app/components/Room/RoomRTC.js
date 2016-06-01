@@ -6,10 +6,11 @@ var self;
 
 class RoomRTC{
   
-  constructor(socket, localVideo){
+  constructor(socket, videoPlayer, audioPlayer){
     self = this;
     this.socket = socket;
-    this.localVideo = localVideo;
+    this.videoPlayer = videoPlayer;
+    this.audioPlayer = audioPlayer;
     this.stream;
     this.peerConnections = {};
     
@@ -82,7 +83,9 @@ class RoomRTC{
     if(!YAWB.user.owner){
         peerConnection.onaddstream = function(event){
             console.log('adding remote stream of the owner');
-            self.localVideo.src = window.URL.createObjectURL(event.stream); 
+            self.videoPlayer.src = window.URL.createObjectURL(event.stream);
+            self.audioPlayer.srcObject = stream;
+            self.audioPlayer.play();
         };
     }else{
         peerConnection.addStream(self.stream);
@@ -184,17 +187,14 @@ class RoomRTC{
   */
   setupLocalMedia(){
     navigator.mediaDevices.getUserMedia(self.constraints)
-    .then(self.getUserMediaSuccess)
+    .then(function(stream){
+        self.videoPlayer.src = window.URL.createObjectURL(stream);
+        self.stream = stream;
+        window.stream = stream;
+    })
     .catch(self.errorHandler);
   }
-  
-  getUserMediaSuccess(stream){
-      self.localVideo.src = window.URL.createObjectURL(stream);
-      self.stream = stream;
-      window.stream = stream;
-  }
-  
-  
+   
   /**
    * generic sender function
    * handles the signiling to 
@@ -219,7 +219,6 @@ class RoomRTC{
    */
   removeConnection(connection){
       self.peerConnections[connection].close();
-      //self.peerConnections[connection] = null;
       delete self.peerConnections[connection];
   }
   

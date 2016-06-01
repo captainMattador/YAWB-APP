@@ -7,10 +7,7 @@ class UserProfileImg extends React.Component {
   }
 
   userProfileImage(user){
-      if(user.profileImage === null){
-        return;
-      }
-      else if(typeof user.profileImage !== 'undefined'){
+      if(typeof user.profileImage !== 'undefined'){
           return <span><img src={user.profileImage} /></span>;
       }else{
           return <span className="letter">{user.fname.substring(0, 1)}</span>;

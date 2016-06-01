@@ -40,8 +40,6 @@ class Room extends React.Component {
     this.setState({
       userReturned: true
     });
-    // kick off peer RTC connections
-    this.rtcConnect = new RoomRTC(this.socket, this.refs.video);
   }
 
   toggleChatBox(e){
@@ -78,6 +76,25 @@ class Room extends React.Component {
     }
   }
   
+  rtcComponents(){
+    
+    if(this.state.userReturned){
+      this.rtcConnect = new RoomRTC(this.socket, this.refs.video, this.refs.audio);
+    }
+    
+    var audio;
+    if(!YAWB.user.owner){
+      audio = (<audio ref="audio" autoplay></audio>);
+    }
+ 
+    return (
+      <div className="rtcComponents">
+        {audio}
+        <video ref="video" autoplay></video>
+      </div>
+    );
+  }
+  
   boardControls(){
     if(YAWB.user.owner){
       return <WhiteBoardControls/>
@@ -105,8 +122,8 @@ class Room extends React.Component {
           </ul>
         </TopBar>
         <section className="white-board">
-        {this.boardView()}
-        <video ref="video" autoplay></video>
+          {this.boardView()}
+          {this.rtcComponents()}
         </section>
         <RoomUsers socket={this.socket}/>
         {this.chatComponent()}

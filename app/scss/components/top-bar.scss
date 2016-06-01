@@ -5,6 +5,7 @@
     height: 70px;
     background-color: $white-color;
     border-bottom: 1px solid $divider-color;
+    z-index: 3;
 }
 
 .user-info{
@@ -49,7 +50,6 @@
     width: 120px;
     background: $mid-color;
     border: 1px solid $light-color;
-    box-shadow: 0 1px 10px 0 $divider-color;
     @include border-radius(8px, 8px, 8px, 8px);
 }
 

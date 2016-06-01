@@ -2,6 +2,7 @@ import React from 'react';
 import {updateRoute, loading, msg} from '../../utils/CustomEvents';
 import Input from '../FormComponents/Input';
 import TopBar from '../UiComponents/TopBar';
+import Modal from '../UiComponents/Modal';
 
 const MIN_ROOM_NUM = 1;
 const MAX_ROOM_NUM = 999999;
@@ -9,9 +10,14 @@ class UserHome extends React.Component {
 
   constructor(){
     super();
+    this.state = {
+      roomNum: null,
+      modalActive: false
+    }
     this.roomRef;
     this.roomNumVal;
-
+    
+    this.launchEmail = this.launchEmail.bind(this);
     this.createRoom = this.createRoom.bind(this);
     this.createNewRoom = this.createNewRoom.bind(this);
     this.createNewRoomError = this.createNewRoomError.bind(this);
@@ -56,7 +62,8 @@ class UserHome extends React.Component {
     });
     this.roomNumVal = roomNum;
     loading(false);
-    this.enterRoom();
+    YAWB.room.id = this.roomNumVal;
+    this.setState({ roomNum: this.roomNumVal, modalActive: true });
   }
 
   createNewRoomError(error){
@@ -109,15 +116,23 @@ class UserHome extends React.Component {
       return;
     }
     loading(false);
+    YAWB.room.id = this.roomNumVal;
     this.enterRoom();
   }
 
   getRoomError(){
     console.log('error entering the room');
   }
+  
+  launchEmail(e){
+    e.preventDefault();
+    window.location.href = "mailto:?subject=You%20are%20Invited%20to%20a%20YAWB%20App%20Session&body=Use%20room%20number%20" + this.state.roomNum;
+  }
 
-  enterRoom(){
-    YAWB.room.id = this.roomNumVal;
+  enterRoom(e){
+    if(e){
+      e.preventDefault();
+    }
     updateRoute('ROOM_ROUTE');
   }
 
@@ -131,10 +146,6 @@ class UserHome extends React.Component {
 
   generateRoomNum(){
     return Math.floor((Math.random() * MAX_ROOM_NUM) + MIN_ROOM_NUM);
-  }
-  
-  extendSetting(){
-    
   }
   
   goToProfile(){
@@ -165,6 +176,11 @@ class UserHome extends React.Component {
             </div>
           </div>
         </div>
+        <Modal modalActive={this.state.modalActive}>
+          <h3>Your room number is: {this.state.roomNum}</h3>
+          <button className="cta-btn secondary" onClick={this.launchEmail}>Email Room Number</button>
+          <button className="cta-btn" onClick={this.enterRoom}>Enter room</button>
+        </Modal>
       </div>
     )
   }

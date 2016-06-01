@@ -45,3 +45,15 @@ User log in Component
 .user-home button{
   width: 100%;
 }
+
+/*
+modal overrides
+*/
+.modal .cell h3{
+    font-size: 2.4em;
+    padding-bottom: 25px;
+}
+
+.modal .cell button{
+    margin: 5px 0;
+}

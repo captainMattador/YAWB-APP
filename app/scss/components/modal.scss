@@ -1,0 +1,48 @@
+
+// site wide colors
+@import '../colors';
+
+// mixins
+@import '../mixins';
+
+.modal-wrap{
+    display: none;
+    position: fixed;
+    top:0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(255, 255, 255, .8);
+    z-index: 100;
+}
+
+.modal{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 450px;
+    height: 300px;
+    margin-left: -225px;
+    margin-top: -150px;
+    border: 1px solid $divider-color;
+    background-color: $white-color;
+}
+
+.modal .table{
+    display: table;
+    height: 100%;
+    width: 100%;
+    max-width:100;
+    padding: 20px;
+}
+
+.modal .cell{
+    display: table-cell;
+    width: 100%;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.modal-wrap.true{
+    display: block;
+}
