@@ -77,22 +77,10 @@ class Room extends React.Component {
   }
   
   rtcComponents(){
-    
     if(this.state.userReturned){
-      this.rtcConnect = new RoomRTC(this.socket, this.refs.video, this.refs.audio);
+      this.rtcConnect = new RoomRTC(this.socket, this.refs.video);
     }
-    
-    var audio;
-    if(!YAWB.user.owner){
-      audio = (<audio ref="audio" autoplay></audio>);
-    }
- 
-    return (
-      <div className="rtcComponents">
-        {audio}
-        <video ref="video" autoplay></video>
-      </div>
-    );
+    return (<video ref="video" autoplay muted={(YAWB.user.owner) ? true : false}></video>);
   }
   
   boardControls(){

@@ -6,11 +6,10 @@ var self;
 
 class RoomRTC{
   
-  constructor(socket, videoPlayer, audioPlayer){
+  constructor(socket, videoPlayer){
     self = this;
     this.socket = socket;
     this.videoPlayer = videoPlayer;
-    this.audioPlayer = audioPlayer;
     this.stream;
     this.peerConnections = {};
     
@@ -40,20 +39,8 @@ class RoomRTC{
     // to the server
     this.signalHandlers();
 
-    // if owner set up local media
-    // to be shared with the rest
-    if(YAWB.user.owner){
-        this.setupLocalMedia();
-    }
-
-    // not the owner so announce
-    // that you are ready to connect
-    else{
-        self.sendMessage({
-            type: "callee_arrived",
-            from: YAWB.user.uid,
-        });
-    }
+    // grab the local media
+    this.setupLocalMedia();
   }
   
   /**
@@ -85,8 +72,6 @@ class RoomRTC{
             console.log('adding remote stream of the owner');
             self.videoPlayer.src = window.URL.createObjectURL(event.stream);
             self.videoPlayer.play();
-            // self.audioPlayer.srcObject = event.stream;
-            // self.audioPlayer.play();
         };
     }else{
         peerConnection.addStream(self.stream);
@@ -122,13 +107,7 @@ class RoomRTC{
         
         if (msg.type === 'callee_arrived') {
             console.log('callee_arrived', msg);
-            var intervalID = window.setInterval(function(){
-                if(self.stream){
-                    console.log('stream is ready');
-                    clearInterval(intervalID);
-                    self.makeOffer(msg.from);
-                }
-            }, 250);
+            self.makeOffer(msg.from);
         }
         
         /**
@@ -189,9 +168,17 @@ class RoomRTC{
   setupLocalMedia(){
     navigator.mediaDevices.getUserMedia(self.constraints)
     .then(function(stream){
-        self.videoPlayer.src = window.URL.createObjectURL(stream);
-        self.stream = stream;
-        window.stream = stream;
+        
+        if(!YAWB.user.owner){
+            self.sendMessage({
+                type: "callee_arrived",
+                from: YAWB.user.uid,
+            });
+        }else{
+            self.videoPlayer.src = window.URL.createObjectURL(stream);
+            self.stream = stream; 
+        }
+        
     })
     .catch(self.errorHandler);
   }
