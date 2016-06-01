@@ -63,8 +63,8 @@ class RoomRTC{
    */
   getPeerConnection(connectionWith){
     
-    if (typeof self.peerConnections[connectionWith] !== 'undefined') {
-        return self.peerConnections[connectionWith];
+    if (typeof self.peersConnections[connectionWith] !== 'undefined') {
+        return self.peersConnections[connectionWith];
     }
     
     var peerConnection = new RTCPeerConnection(self.iceConfig);
@@ -140,8 +140,16 @@ class RoomRTC{
         
         if (msg.type === 'callee_arrived') {
             console.log('callee_arrived', msg);
+            var intervalID = window.setInterval(function(){
+                if(self.stream){
+                    console.log('stream is ready');
+                    clearInterval(intervalID);
+                    self.makeOffer(msg.from);
+                }
+            }, 250);
             //self.startPeerConnection(msg.from);
-            self.makeOffer(msg.from);
+            
+            //self.makeOffer(msg.from);
             //self.startPeerConnection(true, msg.from);
         }
 
@@ -213,14 +221,13 @@ class RoomRTC{
   */
   setupLocalMedia(){
     navigator.mediaDevices.getUserMedia(self.constraints)
-    .then( self.getUserMediaSuccess)
+    .then(self.getUserMediaSuccess)
     .catch(self.errorHandler);
   }
   
   getUserMediaSuccess(stream){
       self.localVideo.src = window.URL.createObjectURL(stream);
       self.stream = stream;
-      
     //   self.callerHandlers();
        
     //   if(!YAWB.user.owner){
