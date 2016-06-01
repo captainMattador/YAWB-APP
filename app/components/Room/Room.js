@@ -39,7 +39,7 @@ class Room extends React.Component {
     this.setState({
       userReturned: true
     });
-    this.rtcConnect = new RoomRTC(this.socket, this.refs.video, this.refs.remotevideo);
+    this.rtcConnect = new RoomRTC(this.socket, this.refs.video);
   }
 
   toggleChatBox(e){
@@ -104,8 +104,7 @@ class Room extends React.Component {
           dbList="Questions"/>
 
           <video ref="video" autoplay></video>
-          
-          <video ref="remotevideo" autoplay></video>
+
       </div>
     )
   }
