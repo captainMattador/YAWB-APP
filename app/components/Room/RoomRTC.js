@@ -12,6 +12,7 @@ class RoomRTC{
     this.videoPlayer = videoPlayer;
     this.stream;
     this.peerConnections = {};
+    this.waitingPeers = [];
     
     this.constraints = {
         video: true,
@@ -39,8 +40,17 @@ class RoomRTC{
     // to the server
     this.signalHandlers();
 
-    // grab the local media
-    this.setupLocalMedia();
+    // grab the local media of the owner
+    // or let the owner know you have entered
+    // the room
+    if(!YAWB.user.owner){
+        self.sendMessage({
+            type: "callee_arrived",
+            from: YAWB.user.uid,
+        });
+    }else{
+        this.setupLocalMedia();
+    }
   }
   
   /**
@@ -52,7 +62,7 @@ class RoomRTC{
     if (typeof self.peerConnections[connectionWith] !== 'undefined') {
         return self.peerConnections[connectionWith];
     }
-    
+        
     var peerConnection = new RTCPeerConnection(self.iceConfig);
     self.peerConnections[connectionWith] = peerConnection;
     peerConnection.onicecandidate = function(ice_event){
@@ -107,7 +117,11 @@ class RoomRTC{
         
         if (msg.type === 'callee_arrived') {
             console.log('callee_arrived', msg);
-            self.makeOffer(msg.from);
+            if(self.stream){
+                self.makeOffer(msg.from);
+            }else{
+                self.waitingPeers.push(msg.from);
+            }
         }
         
         /**
@@ -169,15 +183,18 @@ class RoomRTC{
     navigator.mediaDevices.getUserMedia(self.constraints)
     .then(function(stream){
         
-        if(!YAWB.user.owner){
-            self.sendMessage({
-                type: "callee_arrived",
-                from: YAWB.user.uid,
-            });
-        }else{
-            //self.videoPlayer.src = window.URL.createObjectURL(stream);
-            //self.videoPlayer.muted = 'muted';
-            self.stream = stream;
+        self.videoPlayer.src = window.URL.createObjectURL(stream);
+        self.videoPlayer.muted = 'muted';
+        self.stream = stream;
+        
+        // if peers entered room before the owner,
+        // make them a late offer.
+        var len = self.waitingPeers.length;
+        if(len > 0){
+            for(var i = 0; i < len; i++){
+                self.makeOffer(self.waitingPeers[i]);
+            }
+            self.waitingPeers = [];
         }
         
     })
