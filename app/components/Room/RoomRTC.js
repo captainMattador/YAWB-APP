@@ -82,11 +82,12 @@ class RoomRTC{
     };
     
     if(!YAWB.user.owner){
-        peerConnection.addStream(self.stream);
         peerConnection.onaddstream = function(event){
             console.log('adding remote stream of the owner');
             self.localVideo.src = window.URL.createObjectURL(event.stream); 
         };
+    }else{
+        peerConnection.addStream(self.stream);
     }
     
     return peerConnection;
