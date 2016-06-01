@@ -63,7 +63,7 @@ class RoomRTC{
    */
   getPeerConnection(connectionWith){
     
-    if (self.peerConnections[connectionWith]) {
+    if (typeof self.peerConnections[connectionWith] !== 'undefined') {
         return self.peerConnections[connectionWith];
     }
     
