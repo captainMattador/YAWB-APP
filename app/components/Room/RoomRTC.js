@@ -63,7 +63,7 @@ class RoomRTC{
    */
   getPeerConnection(connectionWith){
     
-    if (slef.peerConnections[id]) {
+    if (self.peerConnections[id]) {
         return self.peerConnections[id];
     }
     
