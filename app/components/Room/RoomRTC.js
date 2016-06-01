@@ -218,7 +218,8 @@ class RoomRTC{
    */
   removeConnection(connection){
       self.peerConnections[connection].close();
-      self.peerConnections[connection] = null;
+      //self.peerConnections[connection] = null;
+      delete self.peerConnections[connection];
   }
   
   /**
