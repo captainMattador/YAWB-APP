@@ -11,7 +11,14 @@ class WhiteBoardControls extends React.Component {
   render(){
     return (
       <div id="board-controls" className="board-controls">
-          
+        
+        <div className="video control">
+          <div className="video-visual">
+            <i className="fa fa-video-camera" aria-hidden="true" data-text=""></i>
+          </div>
+          <h3>Video</h3>
+        </div>
+        
         <div className="pen-size control">
           <div className="pen-size-visual control-icon">
             <div><span></span></div>
@@ -81,15 +88,16 @@ class WhiteBoardControls extends React.Component {
         {
 
         }
-        <div className="previous control">  
-          <h3>Previous</h3>     
-          <div className="prevBoard control-icon"><i className="fa fa-chevron-left" aria-hidden="true"></i></div> 
-        </div>
-        
-        <div className="next control">  
-          <h3>Next</h3>     
-          <div className="nextBoard control-icon"><i className="fa fa-chevron-right" aria-hidden="true"></i></div> 
-        </div>
+        <div className="pager control">
+                    <h3>Board Pager</h3>
+          <div className="pager-controls">
+              <div className="prevBoard board-pager">
+                  <i className="fa fa-chevron-left" aria-hidden="true"></i>
+              </div>
+              <div className="nextBoard board-pager">
+                  <i className="fa fa-chevron-right" aria-hidden="true"></i>
+              </div>
+          </div>
       </div>
     )
   }
