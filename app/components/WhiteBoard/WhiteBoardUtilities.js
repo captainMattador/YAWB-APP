@@ -112,7 +112,7 @@ class WhiteBoardUtilities{
     this.events.addEvent(document.body, 'mouseup', this.drawOff.bind(this));
     this.events.addEvent(this.prevBoard, 'click', this.prevCanvas.bind(this));
     this.events.addEvent(this.nextBoard, 'click', this.nextCanvas.bind(this));
- //   this.events.addEvent(this.snapshot, 'click', this.snapshot.bind(this));
+ //   this.events.addEvent(this.snapshot, 'click', this.canvasSnapshot.bind(this));
   }
   
   
@@ -124,21 +124,21 @@ class WhiteBoardUtilities{
   
   prevCanvas (e){
     e.preventDefault();
-  //  console.log("go to Previous Board");
-    this.socket.emit('update-page', {
+    console.log("TELL SERVER go to Previous Board");
+    self.socket.emit('update-page', {
       direction: 'previous'
     });
   }
   
   nextCanvas (e){
     e.preventDefault();
-  //  console.log("go to Next Board");
-    this.socket.emit('update-page', {
+    console.log("TELL SERVER go to Next Board");
+    self.socket.emit('update-page', {
       direction: 'next'
     });
   }  
   
-  snapshot (e){
+  canvasSnapshot (e){
     e.preventDefault();
     console.log("go to snapshot");
   //  this.socket.emit('take-snapshot');

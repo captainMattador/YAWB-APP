@@ -85,9 +85,7 @@ class WhiteBoardControls extends React.Component {
               </ul>
           </div>
         </div>
-        {
-
-        }
+       
         <div className="pager control">
                     <h3>Board Pager</h3>
           <div className="pager-controls">
@@ -99,6 +97,7 @@ class WhiteBoardControls extends React.Component {
               </div>
           </div>
       </div>
+     </div>
     )
   }
 }

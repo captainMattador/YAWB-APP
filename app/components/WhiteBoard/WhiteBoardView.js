@@ -167,7 +167,7 @@ textRender(data){
   clearBoard(){
 
 console.log("inside clearBoard") ;
-   this._memCtx.clearRect(0, 0, this._canvasWidth, this._canvas.height);
+    this._memCtx.clearRect(0, 0, this._canvasWidth, this._canvas.height);
     this._ctx.clearRect(0, 0, this._canvasWidth, this._canvas.height);
     this.snapshotBoard();
   }
@@ -205,45 +205,42 @@ console.log("inside clearBoard") ;
     msg('Error', message, true);
   }
 
+  
+  
   updatePage(data){
-
-    var direction = data.direction;
-
-    if (direction === 'previous'){
+      		      
+    var direction = data.direction;		  
+     if (direction === "previous"){		 
       if (this.pageIndex=== 0){
-        this.announcePageError("No previous page");
-        return;
+         this.announcePageError("No previous page");
+         return;
       }
-      var imgData = this._ctx.getImageData(0, 0, this._canvasWidth, this._canvasHeight);
-      this.pages[this.pageIndex] =  imgData;
-
-      this.pageIndex--;
-      this._ctx.putImageData(this.pages[this.pageIndex],0,0);
-      this._history.clear;
-    }
-
-    else{
+       var imgData = this._ctx.getImageData(0, 0, this._canvasWidth, this._canvasHeight);
+       this.pages[this.pageIndex] =  imgData;
+       this.pageIndex--;
+       this._ctx.putImageData(this.pages[this.pageIndex],0,0);
+       this._history.clear;
+     }
+     else {
       if (this.pageIndex === this.maxBoards-1){
-        this.announcePageError("No more pages available");
-        return;
-      }
+         this.announcePageError("No more pages available");
+         return;
+      }  
       var imgData = this._ctx.getImageData(0, 0, this._canvasWidth, this._canvasHeight);
-      this.pages[this.pageIndex]=imgData;
-      this.pageIndex++;
+      this.pages[this.pageIndex]=imgData; 
+      console.log("next, more pages available");
+      this.pageIndex++;  
+       
       if (this.pageIndex===this.pages.length){
-        this.clearBoard();
-        }
-      else{
-      this._history.clear;
-      console.log(this._history);
+         this.clearBoard();
+         this._history.clear;
       }
-    }
-  }
-
-  copy(){
-   var imgData=this._ctx.getImageData(10,10,50,50);
-   this._ctx.putImageData(imgData,10,70);
-  }
+      else{
+        this._ctx.putImageData(this.pages[this.pageIndex],0,0);
+        this._history.clear;
+       }
+     }
+  } 	
 
   addToHistory(){
     this._history.push(this._memCtx.getImageData(0, 0, this._canvasWidth, this._canvas.height));
@@ -257,15 +254,12 @@ console.log("inside clearBoard") ;
   render(){
 
     return (
-      <section className="white-board">
-        {boardControls}
+
         <canvas
               ref="whiteBoard"
               id="canvas"
               width="980"
               height="551"></canvas>
-        <img id="whiteBoardPic"></img>
-      </section>
     )
   }
 }
