@@ -164,8 +164,6 @@ textRender(data){
  *
  */
   clearBoard(){
-
-console.log("inside clearBoard") ;
     this._memCtx.clearRect(0, 0, this._canvasWidth, this._canvas.height);
     this._ctx.clearRect(0, 0, this._canvasWidth, this._canvas.height);
     this.snapshotBoard();
@@ -190,8 +188,6 @@ console.log("inside clearBoard") ;
   */
 
   toggleBoard(){
-    console.log('toggle everyones board');
-    console.log();
     this.refs.whiteBoard.parentNode.classList.toggle('video');
   }
 
@@ -220,13 +216,13 @@ console.log("inside clearBoard") ;
     var imgData = this._ctx.getImageData(0, 0, this._canvasWidth, this._canvasHeight);
     this.pages[this.pageIndex] = imgData;
     this.pageIndex = (previous) ? --this.pageIndex : ++this.pageIndex;
+    this._history.clear();
     if (this.pageIndex===this.pages.length)
       this.clearBoard(); 
     else{
       this._ctx.putImageData(this.pages[this.pageIndex],0,0);
-      this._memCtx.putImageData(this.pages[this.pageIndex], 0, 0);
+      this.snapshotBoard();
     }
-    this._history.clear();
   }
   
   addToHistory(){
@@ -241,19 +237,11 @@ console.log("inside clearBoard") ;
   render(){
 
     return (
-      <div>
-        <canvas
-              ref="whiteBoard"
-              id="canvas"
-              width="980"
-              height="551"></canvas>
-
-        <img
-              id="whiteBoardPic"
-              width="980"
-              height="551"
-              display="none"></img>
-       </div>
+      <canvas
+          ref="whiteBoard"
+          id="canvas"
+          width="980"
+          height="551"></canvas>
     )
   }
 }

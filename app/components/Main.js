@@ -102,7 +102,7 @@ class Main extends React.Component {
   }
 
   getUser(snapshot){
-    console.log(snapshot.val());
+    //console.log(snapshot.val());
     
     if(snapshot.val() === null){
       this._updateTopLevelRoute(this.routes['LOGIN_USER_ACCOUNT_ROUTE']);

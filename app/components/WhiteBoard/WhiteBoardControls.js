@@ -1,5 +1,6 @@
 import React from 'react';
 
+
  /**
  * 
  * HTML for controls
@@ -61,9 +62,6 @@ class WhiteBoardControls extends React.Component {
                 <li data-mode="text" data-icon="fa fa-font" data-text="Text">
                   text: <i className="fa fa-font" aria-hidden="true"></i>
                 </li>
-                <li data-mode="image" data-icon="fa fa-file-image-o" data-text="Image">
-                  image: <i className="fa fa-file-image-o" aria-hidden="true"></i>
-                </li>
               </ul>
           </div>
         </div>
@@ -79,12 +77,9 @@ class WhiteBoardControls extends React.Component {
                 <li data-command="undo" >
                   undo
                 </li>
-              /*  <li data-command="snapshot" id="takeASnapshot">
-                  create a snapshot
-                </li>
-                <li data-command="canvas" id="backToCanvas">
-                  return to white board
-                </li>*/
+                {/*<li data-command="save" >
+                  save to file
+                </li>*/}
               </ul>
           </div>
         </div>
