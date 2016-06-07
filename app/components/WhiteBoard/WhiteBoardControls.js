@@ -1,5 +1,11 @@
 import React from 'react';
 
+ /**
+ * 
+ * HTML for controls
+ * CSS stying in room.scss
+ * 
+ */ 
 class WhiteBoardControls extends React.Component {
   
   render(){
@@ -70,21 +76,19 @@ class WhiteBoardControls extends React.Component {
                 <li data-command="clear">
                   clear
                 </li>
-                <li data-command="undo">
+                <li data-command="undo" >
                   undo
                 </li>
-                <li data-command="save">
-                  save to file
+              /*  <li data-command="snapshot" id="takeASnapshot">
+                  create a snapshot
                 </li>
+                <li data-command="canvas" id="backToCanvas">
+                  return to white board
+                </li>*/
               </ul>
           </div>
         </div>
-        {
-          /**
-           * 
-
-           */
-        }
+       
         <div className="pager control">
                     <h3>Board Pager</h3>
           <div className="pager-controls">
@@ -95,12 +99,10 @@ class WhiteBoardControls extends React.Component {
                   <i className="fa fa-chevron-right" aria-hidden="true"></i>
               </div>
           </div>
-        </div>
-        
-    </div>
+      </div>
+     </div>
     )
   }
-
 }
 
 export default WhiteBoardControls;

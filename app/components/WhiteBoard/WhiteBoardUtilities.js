@@ -1,9 +1,16 @@
 import {clientPosition} from '../../utils/helpers';
 import Stack from '../../datastructures/stack';
 import Events from '../../utils/events-handler';
+import WhiteBoardControls from './WhiteBoardControls';
 
 var self;
+var imgData;
 
+ /**
+ * 
+ *class sends UI interactions to server
+ * 
+ */ 
 class WhiteBoardUtilities{
   
   constructor(canvas, controls, socket){
@@ -28,6 +35,8 @@ class WhiteBoardUtilities{
     this.commandsList = controls.querySelectorAll('.commands.control li');
     this.prevBoard = controls.querySelector('.prevBoard');
     this.nextBoard = controls.querySelector('.nextBoard');
+    this.whiteBoardWrapper = document.querySelector('.white-board');
+
     
     // sockets and storages
     this.socket = socket;
@@ -57,7 +66,7 @@ class WhiteBoardUtilities{
     this.textSize = 16;
     this.createTextForm();
     
-    // set initail drawing tool values
+    // set initial drawing tool values
     this.initVals();
     
     // initialize all the board events and socket events
@@ -78,7 +87,8 @@ class WhiteBoardUtilities{
     this.setMode('pen')
     this.changeColor();
     this.penSize = 1;
-  }
+    this.snapshotToggle = true;
+    }
   // private functions for handling board interactions
   initEvents(){    
     // dom events
@@ -106,6 +116,7 @@ class WhiteBoardUtilities{
     this.events.addEvent(document.body, 'mouseup', this.drawOff.bind(this));
     this.events.addEvent(this.prevBoard, 'click', this.prevCanvas.bind(this));
     this.events.addEvent(this.nextBoard, 'click', this.nextCanvas.bind(this));
+
   }
   
   
@@ -117,16 +128,14 @@ class WhiteBoardUtilities{
   
   prevCanvas (e){
     e.preventDefault();
-  //  console.log("go to Previous Board");
-    this.socket.emit('update-page', {
+    self.socket.emit('update-page', {
       direction: 'previous'
     });
   }
   
   nextCanvas (e){
     e.preventDefault();
-  //  console.log("go to Next Board");
-    this.socket.emit('update-page', {
+    self.socket.emit('update-page', {
       direction: 'next'
     });
   }  
@@ -155,6 +164,11 @@ class WhiteBoardUtilities{
       case 'undo':
         self.undoHistory();
         break;
+      case 'snapshot':
+        self.createSnapshot();
+        break;
+      case 'backtoCanvas':
+        self.returntoCanvas();
     }
     contorl.classList.remove('active');
   }
@@ -187,6 +201,27 @@ class WhiteBoardUtilities{
     self.socket.emit('undo-history');
   }
   
+  createSnapshot(){
+    console.log("inside createSnapshot");
+    var dataUrl;
+    imgData = this.ctx.getImageData(0, 0, this.canvasWidth, this.canvasHeight);
+    dataUrl = this.canvas.toDataURL();
+    whiteBoardPic.src=dataUrl;
+    console.log(whiteBoardPic);
+    this.whiteBoardWrapper.classList.add("snapshot");
+    document.getElementById("takeASnapshot").style.display="none";
+    document.getElementById("backToCanvas").style.display="block";    
+  }
+
+  returntoCanvas(){
+    console.log("inside returntoCanvas");
+    this.whiteBoardWrapper.classList.remove("snapshot");
+    this.ctx.putImageData(imgData, 0,0);
+    document.getElementById("backToCanvas").style.display="none"
+    document.getElementById("takeASnapshot").style.display="block";
+    
+ }
+    
   addPoint(point){
     var rect = this.canvas.getBoundingClientRect(),
         pos = clientPosition(point);

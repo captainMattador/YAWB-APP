@@ -4,27 +4,32 @@ import WhiteBoardUtilities from './WhiteBoardUtilities';
 import Stack from '../../datastructures/stack';
 import {updateRoute, loading, msg} from '../../utils/CustomEvents';
 
+ /**
+ *
+ *class receives commands from server to update interface
+ *
+ */
 class WhiteBoardView extends React.Component {
-  
+
   constructor(){
     super();
-    
+
     this.wbUtils;
     this.socket;
     this._history = new Stack({max: 20});
-   
+
     // dom canvas
     this._canvas;
     this._ctx;
     this._canvasWidth;
     this._canvasHeight;
-    
+
     // in memory canvas
     this._memCanvas;
     this._memCtx;
     this._memCanvasWidth;
     this._memCanvasHeight;
-    
+
     // socket functions
     this.drawRender = this.drawRender.bind(this);
     this.snapshotBoard = this.snapshotBoard.bind(this);
@@ -33,13 +38,13 @@ class WhiteBoardView extends React.Component {
     this.undoHistory = this.undoHistory.bind(this);
     this.updatePage = this.updatePage.bind(this);
     this.toggleBoard = this.toggleBoard.bind(this);
-    
+
     //page manager
-    this.pages = [];   //creates method in WhiteboardView, everything Whiteboard view has access
+    this.pages = [];
     this.maxBoards = 10;
     this.pageIndex = 0;
   }
-  
+
   componentDidMount(){
     //canvas in DOM
     this._canvas = this.refs.whiteBoard;
@@ -52,17 +57,17 @@ class WhiteBoardView extends React.Component {
     this._memCanvas.width = this._canvasWidth;
     this._memCanvas.height = this._canvasHeight;
     this.snapshotBoard(); // capture the blank state for history purposes
-    
+
     // connect grab the socket connect from the Room view.
     this.socket = this.props.socket;
-    
+
     if(YAWB.user.owner){
       this.wbUtils = new WhiteBoardUtilities(
         this._canvas,
-        document.getElementById('board-controls'), 
+        document.getElementById('board-controls'),
         this.socket);
     }
-    
+
     // add events
     this.socket.on('emited-toggle-board', this.toggleBoard);
     this.socket.on('emited-drawing-points', this.drawRender);
@@ -72,7 +77,7 @@ class WhiteBoardView extends React.Component {
     this.socket.on('emited-undo-history', this.undoHistory);
     this.socket.on('emited-update-page', this.updatePage);
   }
-  
+
   componentWillUnmount(){
     if(YAWB.user.owner){
       this.wbUtils.destroy();
@@ -86,12 +91,16 @@ class WhiteBoardView extends React.Component {
     this.socket.removeListener('emited-update-page', this.updatePage);
     this.socket.disconnect();
   }
-  
+
+  /**
+ *
+ * Draws images on whiteboard with data from server
+ *
+ */
   drawRender(data) {
     var len = data.points.length;
     this._ctx.clearRect(0, 0, this._canvasWidth, this._canvas.height);
     this._ctx.drawImage(this._memCanvas, 0, 0);
-    
     this._ctx.save();
     this._ctx.lineWidth = data.penSize;
     this._ctx.lineJoin = 'round';
@@ -100,25 +109,25 @@ class WhiteBoardView extends React.Component {
     this._ctx.shadowColor = data.color;
     this._ctx.strokeStyle = data.color;
     this._ctx.globalAlpha = data.alpha;
-        
+
     if(len === 2){
       data.points[1].x += .5;
       data.points[1].y += .5;
     }
-    
+
     this._ctx.beginPath();
     this._ctx.moveTo(data.points[0].x, data.points[0].y);
-    
+
     for (var i = 1; i < len; i++) {
       this._ctx.lineTo(data.points[i].x, data.points[i].y);
     }
-    
+
     this._ctx.stroke();
     this._ctx.restore();
   }
-  
+
   /**
-   * capture steps of the boad
+   * capture steps of the board
    * as well as put into the history stack
    * (call after any big update to the board)
    */
@@ -129,27 +138,44 @@ class WhiteBoardView extends React.Component {
     this.addToHistory();
     return (data);
   }
- 
-  
-  textRender(data){
+
+
+   /**
+ *
+ * renders text on whiteboard using data from server
+ *
+ */
+textRender(data){
     this._ctx.save();
-    
+
     this._ctx.font = data.font;
     this._ctx.fillStyle = data.color;
     this._ctx.globalAlpha = data.alpha;
-    this._ctx.textBaseline = 'top'; 
+    this._ctx.textBaseline = 'top';
     this._ctx.fillText(data.text, data.pos.x, data.pos.y);
-    
+
     this._ctx.restore();
     this.snapshotBoard();
   }
-  
+
+ /**
+ *
+ * responds to clearBoard command received from server
+ *
+ */
   clearBoard(){
+
+console.log("inside clearBoard") ;
     this._memCtx.clearRect(0, 0, this._canvasWidth, this._canvas.height);
     this._ctx.clearRect(0, 0, this._canvasWidth, this._canvas.height);
     this.snapshotBoard();
   }
-  
+
+  /**
+ *
+ *responds to undo History received from server
+ *
+ */
   undoHistory(){
     if(this._history.size() > 1){
       this._history.pop();
@@ -157,83 +183,79 @@ class WhiteBoardView extends React.Component {
       this._memCtx.putImageData(this._history.peek(), 0, 0);
     }
   }
-  
+
  /**
-  * 
+  *
   * toggle the video board
   */
-  
+
   toggleBoard(){
     console.log('toggle everyones board');
     console.log();
     this.refs.whiteBoard.parentNode.classList.toggle('video');
   }
-  
+
   /**
- * 
- *portion to handle pagination
- * 
+ *
+ *responds to previous/next page received from server
+ *
  */
   announcePageError(message){
     msg('Error', message, true);
-  }  
+  }
+
+
   
   updatePage(data){
     
-    var direction = data.direction;
-    if (this.pageIndex === 0 && direction === "previous"){
+    var direction = (data.direction==="previous")?true:false;	 
+    if (direction && this.pageIndex=== 0){
       this.announcePageError("No previous page");
       return;
-    }
-    else if (this.pageIndex === this.maxBoards-1 && direction ==="next"){
-      this.announcePageError("Maximum pages is reached");
+      }
+    if (!direction && this.pageIndex === this.maxBoards-1){
+      this.announcePageError("No more pages available");
       return;
+    }   
+    var imgData = this._ctx.getImageData(0, 0, this._canvasWidth, this._canvasHeight);
+    this.pages[this.pageIndex] =  imgData;
+    this.pageIndex = (direction)?--this.pageIndex:++this.pageIndex;
+    if (this.pageIndex===this.pages.length)
+      this.clearBoard(); 
+    else{
+      this._ctx.putImageData(this.pages[this.pageIndex],0,0);
+      this._memCtx.putImageData(this.pages[this.pageIndex], 0, 0);
     }
-    this.pageIndex++;
-    console.log(data);
+    this._history.clear();
   }
-  
-  // save current Page (points, ctx, ) to pages, decrement pageIndex, display  
-  // previousPage(pageIndex){
-  //   var imgData;
-  //   if (pageIndex===0){
-  //     announcePageError('No previous page');
-  //     return; 
-  //   }
-  //   imgData = this._ctx.getImageData(0, 0, this._canvasWidth, this._canvasHeight);
-  //   pages[pageIndex]=imgData;
-  //   pageIndex--;
-  //   this._ctx.clearRect(0, 0, this._canvasWidth, this._canvasHeight);
-  //   this._ctx.putImageData(0,0,pages[this.pageIndex]);
-  //   //display new pageIndex?
-  // } 
-  
-  // save current Page (points, ctx, ) to pages, increment pageIndex, restore context and draw board
-  // nextPage(pageIndex){
-  //   var imgData;
-  //   imgData = this._ctx.getImageData(0, 0, this._canvasWidth, this._canvasHeight);
-  //   pages[pageIndex]=imgData;
-  //   this.pageIndex++;
-  //   this._ctx.clearRect(0, 0, this._canvasWidth, this._canvasHeight);
-  //   //display new Page Index?
-    
-  // }*/
   
   addToHistory(){
     this._history.push(this._memCtx.getImageData(0, 0, this._canvasWidth, this._canvas.height));
   }
 
+ /**
+ *
+ *paints screen
+ *
+ */
   render(){
-    
+
     return (
-      <canvas 
-        ref="whiteBoard" 
-        id="canvas"
-        width="980"
-        height="551"></canvas>
+      <div>
+        <canvas
+              ref="whiteBoard"
+              id="canvas"
+              width="980"
+              height="551"></canvas>
+
+        <img
+              id="whiteBoardPic"
+              width="980"
+              height="551"
+              display="none"></img>
+       </div>
     )
   }
-
 }
 
 export default WhiteBoardView;

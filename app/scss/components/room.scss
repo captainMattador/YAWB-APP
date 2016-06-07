@@ -20,6 +20,7 @@ video{
     height:551px;
     background-color: $black-color;
     z-index: 1;
+    opacity: 0;
 }
 
 canvas{
@@ -33,14 +34,36 @@ canvas{
     z-index: 2;
 }
 
+#whiteBoardPic{
+    position: absolute;
+    top:90px;
+    left: 50%;
+    margin-left: -490px;
+    z-index: 1;
+    opacity: 0;   
+}
+
+
+
 .white-board.video video{
     z-index: 2;
+    opacity: 1;
 }
 
 .white-board.video canvas{
     z-index: 1;
+    opacity: 0;
 }
 
+.white-board.snapshot #whiteBoardPic{
+    z-index: 2;
+    opacity: 1;  
+}
+
+.white-board.snapshot canvas{
+    z-index: 1;
+    opacity: 0;
+}
 
 /*controls*/
 .board-controls{
@@ -168,6 +191,7 @@ input[type="range"] {
     @include border-radius();
 }
 
+
 .pen-size-visual span{
     position: absolute;
     display: block;
@@ -223,6 +247,11 @@ input[type="range"] {
     padding-top: 12px;
 }
 
+/* snapshot*/
+#backToCanvas{
+    display: none;
+}
+
 
 /*********************************************
 Cavas and tool stylings
@@ -252,6 +281,7 @@ Cavas and tool stylings
 canvas.text{
     cursor: text;
 }
+
 
 /*********************************************
 User list - display for all
