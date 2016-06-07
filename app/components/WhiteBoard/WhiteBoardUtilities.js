@@ -128,7 +128,6 @@ class WhiteBoardUtilities{
   
   prevCanvas (e){
     e.preventDefault();
-    console.log("TELL SERVER go to Previous Board");
     self.socket.emit('update-page', {
       direction: 'previous'
     });
@@ -136,7 +135,6 @@ class WhiteBoardUtilities{
   
   nextCanvas (e){
     e.preventDefault();
-    console.log("TELL SERVER go to Next Board");
     self.socket.emit('update-page', {
       direction: 'next'
     });

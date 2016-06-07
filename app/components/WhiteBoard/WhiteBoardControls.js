@@ -76,19 +76,15 @@ class WhiteBoardControls extends React.Component {
                 <li data-command="clear">
                   clear
                 </li>
-                <li data-command="undo">
+                <li data-command="undo" >
                   undo
                 </li>
-                <div id="takeASnapshot">
-                <li data-command="snapshot">
+              /*  <li data-command="snapshot" id="takeASnapshot">
                   create a snapshot
                 </li>
-                </div>
-                <div id = "backToCanvas">
-                <li data-command="canvas">
+                <li data-command="canvas" id="backToCanvas">
                   return to white board
-                </li>
-                </div>
+                </li>*/
               </ul>
           </div>
         </div>

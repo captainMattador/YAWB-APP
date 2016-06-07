@@ -101,7 +101,6 @@ class WhiteBoardView extends React.Component {
     var len = data.points.length;
     this._ctx.clearRect(0, 0, this._canvasWidth, this._canvas.height);
     this._ctx.drawImage(this._memCanvas, 0, 0);
-
     this._ctx.save();
     this._ctx.lineWidth = data.penSize;
     this._ctx.lineJoin = 'round';
@@ -205,47 +204,31 @@ console.log("inside clearBoard") ;
     msg('Error', message, true);
   }
 
-  
+
   
   updatePage(data){
-      		      
-    var direction = data.direction;		  
-     if (direction === "previous"){		 
-      if (this.pageIndex=== 0){
-         this.announcePageError("No previous page");
-         return;
+    
+    var direction = (data.direction==="previous")?true:false;	 
+    if (direction && this.pageIndex=== 0){
+      this.announcePageError("No previous page");
+      return;
       }
-       var imgData = this._ctx.getImageData(0, 0, this._canvasWidth, this._canvasHeight);
-       this.pages[this.pageIndex] =  imgData;
-       this.pageIndex--;
-       this.clearBoard();
-       this._ctx.putImageData(this.pages[this.pageIndex],0,0);
-       this._history.clear;
-     }
-     else {
-      if (this.pageIndex === this.maxBoards-1){
-         this.announcePageError("No more pages available");
-         return;
-      }  
-      var imgData = this._ctx.getImageData(0, 0, this._canvasWidth, this._canvasHeight);
-      this.pages[this.pageIndex]=imgData; 
-      console.log("next, more pages available");
-      this.pageIndex++;  
-       
-      if (this.pageIndex===this.pages.length){
-         this.clearBoard();
-         console.log(_history);
-         this._history.clear;
-         console.log(_history);
-      }
-      else{
-        this.clearBoard();
-        this._ctx.putImageData(this.pages[this.pageIndex],0,0);
-        this._history.clear;
-       }
-     }
-  } 	
-
+    if (!direction && this.pageIndex === this.maxBoards-1){
+      this.announcePageError("No more pages available");
+      return;
+    }   
+    var imgData = this._ctx.getImageData(0, 0, this._canvasWidth, this._canvasHeight);
+    this.pages[this.pageIndex] =  imgData;
+    this.pageIndex = (direction)?--this.pageIndex:++this.pageIndex;
+    if (this.pageIndex===this.pages.length)
+      this.clearBoard(); 
+    else{
+      this._ctx.putImageData(this.pages[this.pageIndex],0,0);
+      this._memCtx.putImageData(this.pages[this.pageIndex], 0, 0);
+    }
+    this._history.clear();
+  }
+  
   addToHistory(){
     this._history.push(this._memCtx.getImageData(0, 0, this._canvasWidth, this._canvas.height));
   }
