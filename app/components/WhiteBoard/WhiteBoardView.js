@@ -208,18 +208,18 @@ console.log("inside clearBoard") ;
   
   updatePage(data){
     
-    var direction = (data.direction==="previous")?true:false;	 
-    if (direction && this.pageIndex=== 0){
+    var previous = (data.direction === "previous") ? true : false;	 
+    if (previous && this.pageIndex === 0){
       this.announcePageError("No previous page");
       return;
       }
-    if (!direction && this.pageIndex === this.maxBoards-1){
+    if (!previous && this.pageIndex === this.maxBoards-1){
       this.announcePageError("No more pages available");
       return;
     }   
     var imgData = this._ctx.getImageData(0, 0, this._canvasWidth, this._canvasHeight);
-    this.pages[this.pageIndex] =  imgData;
-    this.pageIndex = (direction)?--this.pageIndex:++this.pageIndex;
+    this.pages[this.pageIndex] = imgData;
+    this.pageIndex = (previous) ? --this.pageIndex : ++this.pageIndex;
     if (this.pageIndex===this.pages.length)
       this.clearBoard(); 
     else{

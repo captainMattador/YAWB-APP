@@ -12,8 +12,7 @@ class RoomUsers extends React.Component {
     };
     this.usersList = [];
     this.socket;
-    this.userJoined = this.userJoined.bind(this);
-    this.userLeft = this.userLeft.bind(this);
+    this.updateUserList = this.updateUserList.bind(this);
     this.toggleUsers = this.toggleUsers.bind(this);
   }
 
@@ -25,16 +24,16 @@ class RoomUsers extends React.Component {
       room: YAWB.room.id
     });
     
-    this.socket.on('user-joining', this.userJoined);
-    this.socket.on('user-leaving', this.userLeft);
+    this.socket.on('user-joining', this.updateUserList);
+    this.socket.on('user-leaving', this.updateUserList);
     this.socket.on('announce-user', this.announceUser);
     this.socket.on('announce-leaving', this.announceUserLeft);
   }
 
   componentWillUnmount(){
-    this.socket.removeListener('user-joining', this.userJoined);
+    this.socket.removeListener('user-joining', this.updateUserList);
     this.socket.removeListener('announce-user', this.announceUser);
-    this.socket.removeListener('user-leaving', this.userLeft);
+    this.socket.removeListener('user-leaving', this.updateUserList);
     this.socket.removeListener('announce-leaving', this.announceUserLeft);
     this.socket.disconnect();
   }
@@ -63,6 +62,12 @@ class RoomUsers extends React.Component {
     msg(userName, 'Left the room', false);
   }
 
+  updateUserList(users){
+    this.usersList = users;
+    this.setState({
+      Users : this.usersList
+    });
+  }
   userJoined(users){
     this.usersList = users;
     this.setState({
@@ -70,14 +75,11 @@ class RoomUsers extends React.Component {
     });
   }
   
-  userLeft(user){
-    var index = this.usersList.indexOf(user);
-    if(index > -1){
-      this.usersList.splice(index, 1);
-      this.setState({
-        Users : this.usersList
-      });
-    }
+  userLeft(users){
+    this.usersList = users;
+    this.setState({
+      Users : this.usersList
+    });
   }
   
   toggleUsers(){
