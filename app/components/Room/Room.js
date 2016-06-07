@@ -17,7 +17,7 @@ class Room extends React.Component {
     }
 
     // connect to the server
-  //  this.socketHost = 'http://localhost:8080/room-users';
+   // this.socketHost = 'http://localhost:8080/room-users';
     this.socketHost = 'https://yawbapp.com/room-users';
     this.socket = io.connect(this.socketHost);
     

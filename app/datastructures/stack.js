@@ -35,7 +35,10 @@ class Stack{
     size(){
        return arr.length;
     }
-    
+
+    clear(){
+        arr=[];
+    }    
 }
 
 export default Stack;

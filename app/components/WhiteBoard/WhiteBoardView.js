@@ -218,6 +218,7 @@ console.log("inside clearBoard") ;
        var imgData = this._ctx.getImageData(0, 0, this._canvasWidth, this._canvasHeight);
        this.pages[this.pageIndex] =  imgData;
        this.pageIndex--;
+       this.clearBoard();
        this._ctx.putImageData(this.pages[this.pageIndex],0,0);
        this._history.clear;
      }
@@ -233,9 +234,12 @@ console.log("inside clearBoard") ;
        
       if (this.pageIndex===this.pages.length){
          this.clearBoard();
+         console.log(_history);
          this._history.clear;
+         console.log(_history);
       }
       else{
+        this.clearBoard();
         this._ctx.putImageData(this.pages[this.pageIndex],0,0);
         this._history.clear;
        }
@@ -254,12 +258,19 @@ console.log("inside clearBoard") ;
   render(){
 
     return (
-
+      <div>
         <canvas
               ref="whiteBoard"
               id="canvas"
               width="980"
               height="551"></canvas>
+
+        <img
+              id="whiteBoardPic"
+              width="980"
+              height="551"
+              display="none"></img>
+       </div>
     )
   }
 }
