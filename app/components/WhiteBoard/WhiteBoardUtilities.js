@@ -3,6 +3,9 @@ import Stack from '../../datastructures/stack';
 import Events from '../../utils/events-handler';
 import WhiteBoardControls from './WhiteBoardControls';
 
+var fs = require('fs');
+const {dialog} = require('electron-prebuilt');
+
 var self;
 var imgData;
 
@@ -163,6 +166,10 @@ class WhiteBoardUtilities{
         break;
       case 'undo':
         self.undoHistory();
+        break;
+      case 'save':
+        console.log('test');
+        //dialog.showOpenDialog({properties: ['openFile', 'openDirectory', 'multiSelections']});
         break;
       case 'snapshot':
         self.createSnapshot();
