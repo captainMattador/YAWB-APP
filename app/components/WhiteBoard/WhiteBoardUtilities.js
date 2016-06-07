@@ -3,8 +3,9 @@ import Stack from '../../datastructures/stack';
 import Events from '../../utils/events-handler';
 import WhiteBoardControls from './WhiteBoardControls';
 
-var fs = require('fs');
-const {dialog} = require('electron-prebuilt');
+// import fs from 'fs';
+// const dialog = require('electron').remote.dialog;
+// let PDFDocument = require('pdfkit');
 
 var self;
 var imgData;
@@ -168,16 +169,33 @@ class WhiteBoardUtilities{
         self.undoHistory();
         break;
       case 'save':
-        console.log('test');
-        //dialog.showOpenDialog({properties: ['openFile', 'openDirectory', 'multiSelections']});
+        self.saveToFile();
         break;
-      case 'snapshot':
-        self.createSnapshot();
-        break;
-      case 'backtoCanvas':
-        self.returntoCanvas();
     }
     contorl.classList.remove('active');
+  }
+
+  saveToFile(){
+    // dialog.showSaveDialog({filters: [{ name: 'text', extensions: ['pdf'] }]}, function(file){
+    //   if (file === undefined) return;
+    //   // console.log(file);
+    //   // fs.writeFile(file, "Hey there!", function(err) {
+    //   //     if(err) {
+    //   //         return console.log(err);
+    //   //     }
+
+    //   //     console.log("The file was saved!");
+    //   // }); 
+    //   // let doc = new PDFDocument();
+    //   // doc.font('Times-Roman');
+    //   //doc.pipe(fs.createWriteStream(file));
+    //   // doc.font('Times-Roman')
+    //   //    .text('Hello from Times Roman!');
+
+    //   // doc.pipe(fs.createWriteStream(file));
+    //   // doc.image(new Buffer(image.replace(imgData,''), 'base64'), 100, 100);
+    //   //doc.end();
+    // });
   }
   
   updateMode(e){
@@ -209,23 +227,23 @@ class WhiteBoardUtilities{
   }
   
   createSnapshot(){
-    console.log("inside createSnapshot");
-    var dataUrl;
-    imgData = this.ctx.getImageData(0, 0, this.canvasWidth, this.canvasHeight);
-    dataUrl = this.canvas.toDataURL();
-    whiteBoardPic.src=dataUrl;
-    console.log(whiteBoardPic);
-    this.whiteBoardWrapper.classList.add("snapshot");
-    document.getElementById("takeASnapshot").style.display="none";
-    document.getElementById("backToCanvas").style.display="block";    
+    // console.log("inside createSnapshot");
+    // var dataUrl;
+    // imgData = this.ctx.getImageData(0, 0, this.canvasWidth, this.canvasHeight);
+    // dataUrl = this.canvas.toDataURL();
+    // whiteBoardPic.src=dataUrl;
+    // console.log(whiteBoardPic);
+    // this.whiteBoardWrapper.classList.add("snapshot");
+    // document.getElementById("takeASnapshot").style.display="none";
+    // document.getElementById("backToCanvas").style.display="block";    
   }
 
   returntoCanvas(){
-    console.log("inside returntoCanvas");
-    this.whiteBoardWrapper.classList.remove("snapshot");
-    this.ctx.putImageData(imgData, 0,0);
-    document.getElementById("backToCanvas").style.display="none"
-    document.getElementById("takeASnapshot").style.display="block";
+    // console.log("inside returntoCanvas");
+    // this.whiteBoardWrapper.classList.remove("snapshot");
+    // this.ctx.putImageData(imgData, 0,0);
+    // document.getElementById("backToCanvas").style.display="none"
+    // document.getElementById("takeASnapshot").style.display="block";
     
  }
     

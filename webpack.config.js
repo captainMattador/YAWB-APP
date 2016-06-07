@@ -1,10 +1,12 @@
 
+'use strict';
+
 var webpack = require('webpack');
 var path = require("path");
+var webpackTargetElectronRenderer = require('webpack-target-electron-renderer');
 var PROD = JSON.parse(process.env.PROD_ENV || '0');
 
-console.log(__dirname);
-module.exports = {
+let options = {
   entry: "./app/App.js",
   output: {
     filename: "public/bundle.js"
@@ -20,8 +22,20 @@ module.exports = {
         query: {
           presets: ['react', 'es2015']
         }
+      },
+      {
+        test: /\.json?$/,
+        loader: 'json'
+      },
+      {
+        test: /\.afm?$/,
+        loader: 'raw'
       }
     ]
+  },
+  resolve: {
+    extensions: ['', '.js', '.jsx'],
+    packageMains: ['webpack', 'browser', 'web', 'browserify', ['jam', 'main'], 'main']
   },
   plugins: PROD ? [
     new webpack.optimize.OccurenceOrderPlugin(),
@@ -45,3 +59,6 @@ module.exports = {
   })
   ] : []
 }
+
+options.target = webpackTargetElectronRenderer(options);
+module.exports = options;

@@ -79,7 +79,7 @@ class RoomRTC{
     
     if(!YAWB.user.owner){
         peerConnection.onaddstream = function(event){
-            console.log('adding remote stream of the owner');
+            //console.log('adding remote stream of the owner');
             self.videoPlayer.src = window.URL.createObjectURL(event.stream);
             self.videoPlayer.play();
         };
@@ -116,7 +116,7 @@ class RoomRTC{
         var pc = self.getPeerConnection(msg.from);
         
         if (msg.type === 'callee_arrived') {
-            console.log('callee_arrived', msg);
+            //console.log('callee_arrived', msg);
             if(self.stream){
                 self.makeOffer(msg.from);
             }else{
@@ -129,7 +129,7 @@ class RoomRTC{
          * comes in
          */
         else if (msg.type === 'new_ice_candidate') {
-            console.log('new_ice_candidate', msg);
+            //console.log('new_ice_candidate', msg);
             
             pc.addIceCandidate(
                 new RTCIceCandidate(msg.candidate)
@@ -141,7 +141,7 @@ class RoomRTC{
          */
         else if (msg.type === 'sdp_offer') {
             pc.setRemoteDescription(new RTCSessionDescription(msg.sdp), function () {
-                console.log('Setting remote description by offer');
+                //console.log('Setting remote description by offer');
                 pc.createAnswer(function(sdp){
                     pc.setLocalDescription(sdp);
                     self.sendMessage({
@@ -159,7 +159,7 @@ class RoomRTC{
          */
         else if (msg.type === 'sdp_answer') {
             pc.setRemoteDescription(new RTCSessionDescription(msg.sdp), function () {
-                console.log('We got an answer');
+                //console.log('We got an answer');
             });
         }
         
@@ -168,7 +168,7 @@ class RoomRTC{
          * the peer list
          */
         else if (msg.type ==='leaving_room'){
-            console.log('someone is leaving the room');
+            //console.log('someone is leaving the room');
             self.removeConnection(msg.from);
         }
         
