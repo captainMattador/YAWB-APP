@@ -3,7 +3,9 @@ import io from 'socket.io-client';
 import {updateRoute, loading, msg} from '../../utils/CustomEvents';
 import CommentsComponent from '../Comments/CommentsComponent';
 import TopBar from '../UiComponents/TopBar';
+import WhiteBoardControls from '../WhiteBoard/WhiteBoardControls';
 import RoomUsers from './RoomUsers';
+import RoomRTC from './RoomRTC';
 import WhiteBoardView from '../WhiteBoard/WhiteBoardView';
 
 class Room extends React.Component {
@@ -18,15 +20,8 @@ class Room extends React.Component {
     //this.socketHost = 'http://localhost:8080/room-users';
     this.socketHost = 'https://yawbapp.com/room-users';
     this.socket = io.connect(this.socketHost);
-
-    // window.navigator.getUserMedia = navigator.webkitGetUserMedia;
-
-    // if(navigator.getUserMedia){
-    //   console.log('good news you have it!');
-    // }else{
-    //   console.log('uh oh');
-    // }
-
+    
+    this.rtcConnect;
     this.returnedUser = this.returnedUser.bind(this);
   }
 
@@ -35,39 +30,10 @@ class Room extends React.Component {
       .child('owner');
     this.ownerRef.once('value', this.returnedUser);
   }
-
-  componentDidMount(){
-     this.connectVideo();
-
-      // var errorCallback = function(e) {
-      //   console.log('Reeeejected!', e);
-      // };
-
-      // navigator.getUserMedia({video: false, audio: true},
-      // function(localMediaStream) {
-      //   console.log(localMediaStream);
-      // }, errorCallback);
+  
+  componentWillUnmount(){
+    this.rtcConnect.destroy();
   }
-
-  connectVideo() {
-     window.navigator.getUserMedia = navigator.webkitGetUserMedia;
-
-     navigator.getUserMedia({ audio: true, video: true }, this.successCallback.bind(this),
-     this.errorCallback);
- }
-
- successCallback( stream ) {
-    if (window.URL) {
-       this.refs.video.src = window.URL.createObjectURL(stream);
-    }
-    else {
-       this.refs.video.src = stream;
-    }
- }
-
- errorCallback() {
-    console.log("Error loading AV Stream");
- }
 
   returnedUser(snapshot){
     YAWB.user.owner = (YAWB.user.uid === snapshot.val()) ? true : false;
@@ -109,6 +75,19 @@ class Room extends React.Component {
       return <li ref="chatIcon" data-chat-box="peer-comments" onClick={this.toggleChatBox}><i className="fa fa-comments" aria-hidden="true"></i></li>;
     }
   }
+  
+  rtcComponents(){
+    if(this.state.userReturned){
+      this.rtcConnect = new RoomRTC(this.socket, this.refs.video);
+    }
+    return (<video ref="video" data-test="test"></video>);
+  }
+  
+  boardControls(){
+    if(YAWB.user.owner){
+      return <WhiteBoardControls/>
+    }
+  }
 
   leaveRoom(){
     YAWB.room = {};
@@ -124,20 +103,22 @@ class Room extends React.Component {
     return (
       <div className={"room" + ((this.state.userReturned && YAWB.user.owner) ? " owner" : "")}>
         <TopBar extraSettings={extendSettings}>
+          {this.boardControls()}
           <ul className="chat-nav">
             {this.chatNav()}
             <li ref="questionIcon" data-chat-box="questions" onClick={this.toggleChatBox}><i className="fa fa-question-circle" aria-hidden="true"></i></li>
           </ul>
         </TopBar>
+        <section className="white-board">
+          {this.boardView()}
+          {this.rtcComponents()}
+        </section>
         <RoomUsers socket={this.socket}/>
-        {this.boardView()}
         {this.chatComponent()}
         <CommentsComponent
           heading="Ask a question"
           commentsClass="questions"
           dbList="Questions"/>
-
-          <video ref="video" autoplay></video>
       </div>
     )
   }

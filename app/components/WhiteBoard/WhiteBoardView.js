@@ -1,6 +1,5 @@
 import React from 'react';
 import io from 'socket.io-client';
-import WhiteBoardControls from './WhiteBoardControls';
 import WhiteBoardUtilities from './WhiteBoardUtilities';
 import Stack from '../../datastructures/stack';
 import {updateRoute, loading, msg} from '../../utils/CustomEvents';
@@ -13,11 +12,7 @@ class WhiteBoardView extends React.Component {
     this.wbUtils;
     this.socket;
     this._history = new Stack({max: 20});
-    
-    if(navigator.getUserMedia){
-      console.log('good news you have getUserMedia!');
-    }
-    
+   
     // dom canvas
     this._canvas;
     this._ctx;
@@ -37,6 +32,7 @@ class WhiteBoardView extends React.Component {
     this.clearBoard = this.clearBoard.bind(this);
     this.undoHistory = this.undoHistory.bind(this);
     this.updatePage = this.updatePage.bind(this);
+    this.toggleBoard = this.toggleBoard.bind(this);
     
     //page manager
     this.pages = [];   //creates method in WhiteboardView, everything Whiteboard view has access
@@ -68,6 +64,7 @@ class WhiteBoardView extends React.Component {
     }
     
     // add events
+    this.socket.on('emited-toggle-board', this.toggleBoard);
     this.socket.on('emited-drawing-points', this.drawRender);
     this.socket.on('emited-finalize-board', this.snapshotBoard);
     this.socket.on('emited-text-added', this.textRender);
@@ -80,6 +77,7 @@ class WhiteBoardView extends React.Component {
     if(YAWB.user.owner){
       this.wbUtils.destroy();
     }
+    this.socket.removeListener('emited-toggle-board', this.toggleBoard);
     this.socket.removeListener('emited-drawing-points', this.drawRender);
     this.socket.removeListener('emited-finalize-board', this.snapshotBoard);
     this.socket.removeListener('emited-text-added', this.textRender);
@@ -159,7 +157,18 @@ class WhiteBoardView extends React.Component {
       this._memCtx.putImageData(this._history.peek(), 0, 0);
     }
   }
-
+  
+ /**
+  * 
+  * toggle the video board
+  */
+  
+  toggleBoard(){
+    console.log('toggle everyones board');
+    console.log();
+    this.refs.whiteBoard.parentNode.classList.toggle('video');
+  }
+  
   /**
  * 
  *portion to handle pagination
@@ -216,20 +225,12 @@ class WhiteBoardView extends React.Component {
 
   render(){
     
-    var boardControls;
-    if(YAWB.user.owner){
-      boardControls = <WhiteBoardControls/>
-    }
-    
     return (
-      <section className="white-board">
-        {boardControls}
-        <canvas 
-              ref="whiteBoard" 
-              id="canvas"
-              width="980"
-              height="551"></canvas>
-      </section>
+      <canvas 
+        ref="whiteBoard" 
+        id="canvas"
+        width="980"
+        height="551"></canvas>
     )
   }
 

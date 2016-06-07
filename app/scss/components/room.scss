@@ -8,19 +8,38 @@ The main canvas where all the magic happens
 
 
 /*********************************************
-Video/Audio
+Video/Audio/ and white board
 *********************************************/
+
 video{
     position: absolute;
-    top:0;
+    top:90px;
     left: 50%;
-    margin-left: -200px;
-    width:100%;
-    max-width: 400px;
-    z-index: 1000;
-    background: black;
+    margin-left: -490px;
+    width: 980px;
+    height:551px;
+    background-color: $black-color;
+    z-index: 1;
 }
 
+canvas{
+    position: absolute;
+    top:90px;
+    left: 50%;
+    margin-left: -490px;
+    background-color: $white-color;
+    -webkit-box-shadow: 0 1px 30px 0 $divider-color;
+    box-shadow: 0 1px 100px 0 $divider-color;
+    z-index: 2;
+}
+
+.white-board.video video{
+    z-index: 2;
+}
+
+.white-board.video canvas{
+    z-index: 1;
+}
 
 
 /*controls*/
@@ -29,8 +48,9 @@ video{
     top: 0;
     left: 50%;
     height: 70px;
-    width: 400px;
-    margin-left: -150px;
+    width: 456px;
+    margin-left: -228px;
+    z-index: 4;
 }
 
 .board-controls h3{
@@ -61,7 +81,6 @@ video{
     padding: 0;
     background: $mid-color;
     border: 1px solid $light-color;
-    box-shadow: 0 1px 10px 0 $divider-color;
     @include border-radius(8px, 8px, 8px, 8px);
 }
 
@@ -116,6 +135,29 @@ input[type="range"] {
     padding: 10px 0;
 }
 
+.video-visual{
+    position: relative;
+    width:42px;
+    height:42px;
+    margin: 5px auto 0;
+    background-color: $divider-color;
+    border: 2px solid $light-color;
+    @include border-radius();
+}
+
+.video-visual .fa {
+    font-size: 1.5em;
+    padding-top: 12px;
+}
+
+.video-visual.videoActive{
+    background-color: $accent-color;
+}
+
+.video-visual.videoActive .fa {
+    color: $divider-color;
+}
+
 .pen-size-visual div, .color-visual div{
     position: relative;
     width:42px;
@@ -159,9 +201,26 @@ input[type="range"] {
     padding-top: 10px;
 }
 
-.white-board{
-    text-align: center;
-    padding: 20px;
+/* pager */
+.pager.control{
+    width: 68px;
+}
+
+.pager-controls{
+    float: left;
+    width: 68px;
+}
+
+.pager-controls .board-pager{
+    float: left;
+    width: 50%;
+    height: 40px;
+    padding-top: 10px;
+}
+
+.pager-controls .board-pager .fa{
+    font-size: 1.8em;
+    padding-top: 12px;
 }
 
 
@@ -174,6 +233,7 @@ Cavas and tool stylings
   display: none;
   position: absolute;
   width:300px;
+  z-index: 3;
 }
 
 .text-mode-input input{
@@ -187,13 +247,6 @@ Cavas and tool stylings
 
 .text-mode-input.active{
     display: block;
-}
-
-canvas{
-    display: inline-block;
-    background-color: $white-color;
-    -webkit-box-shadow: 0 1px 30px 0 $divider-color;
-    box-shadow: 0 1px 100px 0 $divider-color;
 }
 
 canvas.text{
@@ -216,6 +269,7 @@ a room
   border-top:1px solid $mid-color;
   background-color: $white-color;
   transition: height 250ms ease-in;
+  z-index: 3;
 }
 
 .room-users.active{

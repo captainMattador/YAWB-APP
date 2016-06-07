@@ -1,4 +1,3 @@
-import io from 'socket.io-client';
 import {clientPosition} from '../../utils/helpers';
 import Stack from '../../datastructures/stack';
 import Events from '../../utils/events-handler';
@@ -15,6 +14,7 @@ class WhiteBoardUtilities{
     this.textForm;
     this.textInput;
     this.controls = controls;
+    this.vidControl = controls.querySelector('.video-visual');
     this.control = controls.querySelectorAll('.control-icon');
     this.penSizeVisual = controls.querySelector('.pen-size-visual span');
     this.penSizeInput = controls.querySelector('#pen-size');
@@ -91,6 +91,7 @@ class WhiteBoardUtilities{
     for(var i = 0; i < this.commandsList.length; i++){
         this.events.addEvent(this.commandsList[i], 'click', this.executeCommand);
     }
+    this.events.addEvent(this.vidControl, 'click', this.toggleVideo.bind(this));
     this.events.addEvent(this.canvas, 'click', this.addText.bind(this));
     this.events.addEvent(this.canvas, 'mousedown', this.closeControlPanel.bind(this));
     this.events.addEvent(this.rChannel, 'input', this.changeColor.bind(this));
@@ -106,7 +107,14 @@ class WhiteBoardUtilities{
     this.events.addEvent(this.prevBoard, 'click', this.prevCanvas.bind(this));
     this.events.addEvent(this.nextBoard, 'click', this.nextCanvas.bind(this));
   }
-
+  
+  
+  toggleVideo(e){
+    e.preventDefault();
+    e.currentTarget.classList.toggle('videoActive');
+    self.socket.emit('toggle-board');
+  }
+  
   prevCanvas (e){
     e.preventDefault();
   //  console.log("go to Previous Board");
