@@ -71,6 +71,8 @@ class RoomUsers extends React.Component {
   }
   
   userLeft(user){
+    console.log(user);
+
     var index = this.usersList.indexOf(user);
     if(index > -1){
       this.usersList.splice(index, 1);
