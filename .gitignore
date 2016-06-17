@@ -6,6 +6,7 @@ node_modules
 public/bundle.js
 public/styles/
 yawb-desktop-app.iml
+app/app.config.js
 .idea
 
 

@@ -9,6 +9,7 @@
 import React from 'react';
 import Firebase from 'firebase';
 
+import config from '../app.config';
 import LoadingRoute from './LoadingRoute';
 import LoginUserAccount from './LoginUserAccount';
 import CreateUserAccount from './CreateUserAccount';
@@ -22,7 +23,7 @@ class Main extends React.Component {
   constructor(){
     super();
 
-    this.firebaseBaseUrl = 'https://radiant-fire-5562.firebaseio.com/';
+    this.firebaseBaseUrl = config.firebase;
     this.state = {
       currentRoute: 0
     };

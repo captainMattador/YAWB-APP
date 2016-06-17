@@ -1,4 +1,5 @@
 import React from 'react';
+import config from '../../app.config';
 import io from 'socket.io-client';
 import {updateRoute, loading, msg} from '../../utils/CustomEvents';
 import CommentsComponent from '../Comments/CommentsComponent';
@@ -17,8 +18,7 @@ class Room extends React.Component {
     }
 
     // connect to the server
-   // this.socketHost = 'http://localhost:8080/room-users';
-    this.socketHost = 'https://yawbapp.com/room-users';
+    this.socketHost = config.websocket;
     this.socket = io.connect(this.socketHost);
     
     this.rtcConnect;
